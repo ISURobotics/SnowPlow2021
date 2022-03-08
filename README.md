@@ -19,3 +19,5 @@ Hector SLAM testing:
 General Notes:
 Using map for localization
 Check live data (/scan) for actual current obstacles
+
+ros_numpy geometry: https://github.com/eric-wieser/ros_numpy/blob/master/src/ros_numpy/geometry.py
