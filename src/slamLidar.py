@@ -17,6 +17,9 @@ last_loop = time.time()
 
 #https://robotics.stackexchange.com/questions/19290/what-is-the-definition-of-the-contents-of-pointcloud2/20401#20401
 
+oldMeters = 0
+movingForward = false
+
 
 def callback_pointcloud(data):
     global last_loop
@@ -69,34 +72,13 @@ def callback_slam_pose(data):
 
     print(p)
 
-    # for pt in sorted(points, key=lambda x: x[3]):
-    #     print(pt)
-    # points = ros_numpy.point_cloud2.pointcloud2_to_xyz_array(p, remove_nans=False)
-    #global pose
-    # print(points.shape)
-    #pose = points
+    if movingForward:
+        dist = Math.sqrt(Math.pow(p.position.x - oldPos.position.x, 2) + Math.pow(p.position.y - oldPos.position.y, 2) + Math.pow(p.position.z - oldPos.position.z, 2))
+        if dist >= oldMeters:
+            motor.setSpeed(0)
+            movingForward = false
 
-    #x_pts = [pt[0] for pt in points]
-    #y_pts = [pt[1] for pt in points]
-    #col = [pt[3] for pt in points]
-
-    #plt.figure()
-    #plt.scatter(x_pts, y_pts, c=col)
-    #plt.axes([0, 10, 0, 10])
-    #plt.ylim(-15, 15)
-    #plt.xlim(0, 15)
-    # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
-    #plt.show()
-
-    # gen = point_cloud2.read_points(p, field_names=("x", "y", "z"), skip_nans=False)
-    # np_arr = np.array([p for p in gen])
-    # np_arr = np_arr.reshape((p.height, p.width, 3))
-    # print(np_arr.shape)
-    # print(points[0, 0, :], points[0, 1, :])
-    # print(time.time() - last_loop)
     last_loop = time.time()
-    # for p in gen:
-    #     print(" x : %.3f  y: %.3f  z: %.3f" % (p[0], p[1], p[2]))
 def laser_input(data):
     #global last_loop
     assert isinstance(data, LaserScan)
@@ -113,8 +95,8 @@ rospy.init_node('Testing', anonymous=False)
 
 # sub_image = rospy.Subscriber("/camera/color/image_raw", Image, image_callback)
 
-#sub_points = rospy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
-laser_points = rospy.Subscriber("/scan", LaserScan, laser_input)
+curr_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
+#laser_points = rospy.Subscriber("/scan", LaserScan, laser_input)
 
 rospy.spin()
 while not rospy.is_shutdown():
@@ -124,4 +106,8 @@ while not rospy.is_shutdown():
     pass
 
 def move_forward(pose, meters):
-    pass
+    old = pose
+    movingForward = true
+    oldMeters = meters
+    motor.setSpeed(5) # probably not right value
+    
