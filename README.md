@@ -26,4 +26,4 @@ ros_numpy geometry: https://github.com/eric-wieser/ros_numpy/blob/master/src/ros
 To change which git user is used on the nano:  
 ```git config user.email "you@example.com"```  
 ```git config user.name "Your Name"```  
-Remember to update ssh keys as well.  
+Remember to update ssh keys as well  
