@@ -3,21 +3,21 @@
 echo "Enter number of topics to record:"
 read NUM_TOPICS
 i=0
-REG="/(\\/"
+REG="/"
 while [ $NUM_TOPICS -ge 1 ]
 do
     echo "Enter topic to record(no slashes):"
     read TOPIC
     REG+=$TOPIC
-    REG+="|\/"
+    REG+=" /"
     ((NUM_TOPICS--))
 done
-REG+="blahhh)/gm"
+REG+="null"
 echo "Enter duration to record in seconds: "
 read DUR_SECS
 echo "Enter name for bag file(no extension): "
 read FILE_NAME
-rosbag record -O $FILE_NAME.bag --duration=$DUR_SECS -e \"$REG\"
+rosbag record -O $FILE_NAME.bag --duration=$DUR_SECS $REG
 
 
 
