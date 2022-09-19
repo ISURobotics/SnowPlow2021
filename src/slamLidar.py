@@ -12,10 +12,11 @@ import ros_numpy
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+
 point_cloud = None
 last_loop = time.time()
 
-#https://robotics.stackexchange.com/questions/19290/what-is-the-definition-of-the-contents-of-pointcloud2/20401#20401
+# https://robotics.stackexchange.com/questions/19290/what-is-the-definition-of-the-contents-of-pointcloud2/20401#20401
 
 oldMeters = 0
 movingForward = false
@@ -42,7 +43,7 @@ def callback_pointcloud(data):
 
     plt.figure()
     plt.scatter(x_pts, y_pts, c=col)
-    #plt.axes([0, 10, 0, 10])
+    # plt.axes([0, 10, 0, 10])
     plt.ylim(-15, 15)
     plt.xlim(0, 15)
     # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
@@ -58,13 +59,14 @@ def callback_pointcloud(data):
     # for p in gen:
     #     print(" x : %.3f  y: %.3f  z: %.3f" % (p[0], p[1], p[2]))
 
+
 def callback_slam_pose(data):
-    #global last_loop
+    # global last_loop
     p = data.pose
     assert isinstance(p, Pose)
 
-    #if time.time() - last_loop < .5:
-     #   return
+    # if time.time() - last_loop < .5:
+    #   return
     print(p)
     print(p.position.x)
 
@@ -73,22 +75,27 @@ def callback_slam_pose(data):
     print(p)
 
     if movingForward:
-        dist = Math.sqrt(Math.pow(p.position.x - oldPos.position.x, 2) + Math.pow(p.position.y - oldPos.position.y, 2) + Math.pow(p.position.z - oldPos.position.z, 2))
+        dist = Math.sqrt(
+            Math.pow(p.position.x - oldPos.position.x, 2) + Math.pow(p.position.y - oldPos.position.y, 2) + Math.pow(
+                p.position.z - oldPos.position.z, 2))
         if dist >= oldMeters:
             motor.setSpeed(0)
             movingForward = false
 
     last_loop = time.time()
+
+
 def laser_input(data):
-    #global last_loop
+    # global last_loop
     assert isinstance(data, LaserScan)
     s = data.ranges
     i = data.intensities
 
-    #if time.time() - last_loop < .5:
-     #   return
+    # if time.time() - last_loop < .5:
+    #   return
     print(s[190])
     print(i[190])
+
 
 rospy.init_node('Testing', anonymous=False)
 # bridge = CvBridge()
@@ -96,18 +103,18 @@ rospy.init_node('Testing', anonymous=False)
 # sub_image = rospy.Subscriber("/camera/color/image_raw", Image, image_callback)
 
 curr_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
-#laser_points = rospy.Subscriber("/scan", LaserScan, laser_input)
+# laser_points = rospy.Subscriber("/scan", LaserScan, laser_input)
 
 rospy.spin()
 while not rospy.is_shutdown():
-    #print(point_cloud)
+    # print(point_cloud)
     # time.sleep()
     # print('loop')
     pass
+
 
 def move_forward(pose, meters):
     old = pose
     movingForward = true
     oldMeters = meters
-    motor.setSpeed(5) # probably not right value
-    
+    motor.setSpeed(5)  # probably not right value

@@ -1,6 +1,7 @@
 import time
 import rospy
 import sys, os
+import Robot
 
 from sensor_msgs.msg import Image, PointCloud2, LaserScan
 from std_msgs.msg import Int16, Int32
@@ -37,14 +38,14 @@ def callback_slam_pose(data):
 
     print(p)
 
-#move forward and backward
+    #move forward and backward
     if moving != 0:
         d = dist(p, startingPose)
         if dist >= movingMeters:
             motor.setSpeed(0)
             moving = 0
 
-# rotate left and right
+    # rotate left and right
     if rotating != 0:
         a = angleBetween(p, startingPose)
         if a >= rotatingRadians:
@@ -64,15 +65,15 @@ def laser_input(data):
     print(s[190])
     print(i[190])
 
-rospy.init_node('Testing', anonymous=False)
-# bridge = CvBridge()
+    rospy.init_node('Testing', anonymous=False)
+    # bridge = CvBridge()
 
-# sub_image = rospy.Subscriber("/camera/color/image_raw", Image, image_callback)
+    # sub_image = rospy.Subscriber("/camera/color/image_raw", Image, image_callback)
 
-curr_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
-#laser_points = rospy.Subscriber("/scan", LaserScan, laser_input)
+    curr_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
+    #laser_points = rospy.Subscriber("/scan", LaserScan, laser_input)
 
-rospy.spin()
+    rospy.spin()
 while not rospy.is_shutdown():
     #print(point_cloud)
     # time.sleep()
