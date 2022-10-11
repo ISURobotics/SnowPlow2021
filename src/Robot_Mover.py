@@ -1,6 +1,7 @@
 import time
 import rospy
 import sys, os
+from Movement_Threshold import Movement_Threshold
 import Robot
 
 from sensor_msgs.msg import Image, PointCloud2, LaserScan
@@ -14,6 +15,7 @@ import cv2
 import numpy as np
 import math
 from matplotlib import pyplot as plt
+import utils
 
 last_loop = time.time()
 
@@ -33,48 +35,69 @@ class RobotMover:
         """
         self.robot = robot
 
-    def move_forward(self, pose, meters):
+    def move_forward(self, lidar, meters):
         """
             Starts moving forward
-            pose: The pose object produced by the slam_out_pose topic
+            lidar: a lidar object to add listeners to
             meters: the number of meters to move before stopping
         """
-        starting_pose = pose
-        moving = 1
-        moving_meters = meters
+        pose = lidar.get_pose()
+        angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        thres = None
+        if (angle < np.pi / 4 or angle >= np.pi * (7 / 4)): # Moving in roughly positive x direction
+            delta = meters * np.cos(angle)
+            thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.stop())
+        elif (angle >= np.pi / 4 and angle < np.pi * (3 / 4)): # Roughly positive y
+            delta = meters * np.sin(angle)
+            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.stop())
+
+        elif (angle >= np.pi * (3 / 4) and angle < np.pi * (5 / 4)): # Roughly negative x
+            delta = meters * np.cos(angle) # This will be negative
+            thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.stop())
+
+        elif (angle >= np.pi * (5 / 4) and angle < np.pi * (7 / 4)): # Roughly negative y
+            delta = meters * np.sin(angle) # Negative
+            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.stop())
+
+        assert thres != None
+        lidar.add_listener(thres)
+
+        # finished here
+        # moving = 1
+        # moving_meters = meters
         self.robot.set_speeds(5)  # probably not right value
 
-    def move_backward(self, pose, meters):
+    def move_backward(self, lidar, meters):
         """
             Starts moving backward
-            pose: The pose object produced by the slam_out_pose topic
+            lidar: a lidar object to add listeners to
             meters: the number of meters to move before stopping
         """
-        starting_pose = pose
-        moving = -1
-        moving_meters = meters
+        # starting_pose = pose
+        # moving = -1
+        # moving_meters = meters
         self.robot.set_speeds(-5)  # probably not right value
 
-    def rotate_left(self, pose, degrees):
+    def rotate_left(self, lidar, degrees):
         """
             Starts a left/counterclockwise rotation
-            pose: The pose object produced by the slam_out_pose topic
+            lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
-        starting_pose = pose
-        rotating = -1
-        rotating_radians = np.radians(degrees)
+        # starting_pose = pose
+        # rotating = -1
+        # rotating_radians = np.radians(degrees)
         self.robot.set_speed(-5, 5)
 
-    def rotate_right(self, pose, degrees):
+    def rotate_right(self, lidar, degrees):
         """
             Starts a right/clockwise rotation
-            pose: The pose object produced by the slam_out_pose topic
+            lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
-        starting_pose = pose
-        rotating = 1
-        rotating_radians = np.radians(degrees)
+        # starting_pose = pose
+        # rotating = 1
+        # rotating_radians = np.radians(degrees)
         self.robot.set_speed(5, -5)
 
     def stop(self):
@@ -82,8 +105,8 @@ class RobotMover:
             Stop all motion of the robot
         :return:
         """
-        rotating = 0
-        moving = 0
+        # rotating = 0
+        # moving = 0
         self.robot.stop()
 
 
