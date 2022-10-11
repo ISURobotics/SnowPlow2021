@@ -1,6 +1,7 @@
 import rospy
 from std_msgs.msg import Int8
 from sensor_msgs.msg import PointCloud2
+from geometry_msgs.msg import PoseStamped
 import ros_numpy
 import matplotlib as plt
 
@@ -24,15 +25,23 @@ class Motor:
 
 class Lidar:
     def __init__(self):
-        self.points = None
+        self.points = []
+        self.pose = None
         self._sub_points = rospy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
+        self._sub_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
 
     def callback_pointcloud(self, data):
         self.points = ros_numpy.point_cloud2.pointcloud2_to_array(data)  # type: List[tuple]
         # points data is returned as (x, y, color)
 
+    def callback_slam_pose(self, data):
+        self.pose = data
+
     def get_points(self):
         return self.points  # points data is returned as (x, y, color)
+
+    def get_pose(self):
+        return self.pose
 
     def plot_points(self):
         points = self.points
