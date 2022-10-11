@@ -1,10 +1,12 @@
+from matplotlib.pyplot import axis
 import rospy
 from std_msgs.msg import Int8
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
+from Movement_Threshold import Movement_Threshold
 import ros_numpy
 import matplotlib as plt
-import math
+import utils
 
 # Note: Before running this file, be sure to start roscore and rosrun the rosserial_python
 # >> rosrun rosserial_python serial_node.py
@@ -13,7 +15,7 @@ from typing import List
 
 class Motor:
     def __init__(self, path):
-        self._speed_pub = rospy.Publisher(f"{path}/speed", Int8, queue_size=1)
+        self._speed_pub = rospy.Publisher("{}/speed".format(path), Int8, queue_size=1)
         self.speed = 0
 
     def set_speed(self, speed):
@@ -23,13 +25,14 @@ class Motor:
         self.speed = speed
         self._speed_pub.publish(value)
 
-class Lidar:
 
+class Lidar:
     def __init__(self):
         self.points = []
         self.pose = None
         self._sub_points = rospy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
-        self._sub_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
+        self._sub_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
+        self.thresholds = []
 
     def callback_pointcloud(self, data):
         self.points = ros_numpy.point_cloud2.pointcloud2_to_array(data)  # type: List[tuple]
@@ -37,6 +40,20 @@ class Lidar:
 
     def callback_slam_pose(self, data):
         self.pose = data
+        for i in range(0, len(self.thresholds)):
+            t = self.thresholds[i]
+            measured_val = 0
+            if (t.axis == Movement_Threshold.X_AXIS):
+                measured_val = data.position.x
+            elif (t.axis == Movement_Threshold.Y_AXIS):
+                measured_val = data.position.y
+            elif (t.axis == Movement_Threshold.Z_ROTATION):
+                eulers = utils.quaternion_to_euler(data.rotation.x, data.rotation.y, data.rotation.z, data.rotation.w)
+                measured_val = eulers[2] # z rotation or yaw. This needs improvements to avoid bugging out on the 360-0 jump
+
+            if (measured_val > t.value) == t.trigger_when_above:
+                self.thresholds.remove(i)
+                t.function() # run the lamba associated with the threshold
 
     def get_points(self):
         return self.points  # points data is returned as (x, y, color)
@@ -44,19 +61,23 @@ class Lidar:
     def get_pose(self):
         return self.pose
 
-    def plot_points(self):
-        points = self.points
-        x_pts = [pt[0] for pt in points]
-        y_pts = [pt[1] for pt in points]
-        col = [pt[3] for pt in points]
+    # def plot_points(self):
+    #     points = self.points
+    #     x_pts = [pt[0] for pt in points]
+    #     y_pts = [pt[1] for pt in points]
+    #     col = [pt[3] for pt in points]
 
-        plt.figure()
-        plt.scatter(x_pts, y_pts, c=col)
-        # plt.axes([0, 10, 0, 10])
-        plt.ylim(-15, 15)
-        plt.xlim(0, 15)
-        # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
-        plt.show()
+    #     plt.figure()
+    #     plt.scatter(x_pts, y_pts, c=col)
+    #     # plt.axes([0, 10, 0, 10])
+    #     plt.ylim(-15, 15)
+    #     plt.xlim(0, 15)
+    #     # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
+    #     plt.show()
+
+    def add_listener(self, threshold):
+        self.thresholds.append(threshold)
+
 
 
 class Robot:
@@ -74,9 +95,3 @@ class Robot:
     def set_speeds(self, speed):
         self.left.set_speed(speed)
         self.right.set_speed(speed)
-
-    def set_speeds(self, left_speed, right_speed):
-        self.left.set_speed(left_speed)
-        self.right.set_speed(right_speed)
-
-

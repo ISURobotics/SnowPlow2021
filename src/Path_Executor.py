@@ -1,4 +1,4 @@
-class Path_Planner:
+class Path_Executor:
     def __init__(self, mover, lidar):
         self.mover = mover
         self.lidar = lidar
