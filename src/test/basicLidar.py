@@ -28,6 +28,8 @@ rotatingRadians = 0 # Radians to rotate from start before stopping
 moving = 0 # -1 for backward, 0 for not moving, 1 for forward
 startingPose = None # Pose object for moving and rotating
 
+# NOT IN USE ANY LONGER!!!
+
 def callback_pointcloud(data):
     global last_loop
     assert isinstance(data, PointCloud2)
