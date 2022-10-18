@@ -21,6 +21,7 @@ last_loop = time.time()
 oldMeters = 0
 movingForward = False
 
+# NOT IN USE ANY LONGER!!!
 
 def callback_slam_pose(data):
     # global last_loop

@@ -1,3 +1,4 @@
+from multiprocessing.resource_sharer import stop
 import time
 import rospy
 import sys, os
@@ -44,18 +45,18 @@ class RobotMover:
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
         thres = None
-        if (angle < np.pi / 4 or angle >= np.pi * (7 / 4)): # Moving in roughly positive x direction
+        if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
             delta = meters * np.cos(angle)
             thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.stop())
-        elif (angle >= np.pi / 4 and angle < np.pi * (3 / 4)): # Roughly positive y
+        elif (angle >= np.pi * (1 / 4) and angle < np.pi * (3 / 4)): # Roughly positive y
             delta = meters * np.sin(angle)
             thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.stop())
 
-        elif (angle >= np.pi * (3 / 4) and angle < np.pi * (5 / 4)): # Roughly negative x
+        elif (angle >= np.pi * (3 / 4) or angle < np.pi * -(3 / 4)): # Roughly negative x
             delta = meters * np.cos(angle) # This will be negative
             thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.stop())
 
-        elif (angle >= np.pi * (5 / 4) and angle < np.pi * (7 / 4)): # Roughly negative y
+        elif (angle < np.pi * -(1 / 4) and angle > np.pi * -(3 / 4)): # Roughly negative y
             delta = meters * np.sin(angle) # Negative
             thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.stop())
 
@@ -73,6 +74,28 @@ class RobotMover:
             lidar: a lidar object to add listeners to
             meters: the number of meters to move before stopping
         """
+
+        pose = lidar.get_pose()
+        angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        thres = None
+
+        if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
+            delta = meters * np.cos(angle)
+            thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.stop())
+        elif (angle >= np.pi * (1 / 4) and angle < np.pi * (3 / 4)): # Roughly positive y
+            delta = meters * np.sin(angle)
+            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.stop())
+
+        elif (angle >= np.pi * (3 / 4) or angle < np.pi * -(3 / 4)): # Roughly negative x
+            delta = meters * np.cos(angle) # This will be negative
+            thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.stop())
+
+        elif (angle < np.pi * -(1 / 4) and angle > np.pi * -(3 / 4)): # Roughly negative y
+            delta = meters * np.sin(angle) # Negative
+            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.stop())
+
+        assert thres != None
+        lidar.add_listener(thres)
         # starting_pose = pose
         # moving = -1
         # moving_meters = meters
@@ -84,9 +107,18 @@ class RobotMover:
             lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
-        # starting_pose = pose
-        # rotating = -1
-        # rotating_radians = np.radians(degrees)
+        pose = lidar.get_pose()
+        angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        thres = None
+        deltaRadians = degrees * (np.pi / 180)
+        targetRadians = deltaRadians + angle
+        if targetRadians > np.pi:
+            targetRadians -= 2 * np.pi # Going from positive angle to negative
+
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetRadians, lambda: self.stop())
+
+        lidar.add_listener(thres)
+
         self.robot.set_speed(-5, 5)
 
     def rotate_right(self, lidar, degrees):
@@ -95,9 +127,18 @@ class RobotMover:
             lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
-        # starting_pose = pose
-        # rotating = 1
-        # rotating_radians = np.radians(degrees)
+        pose = lidar.get_pose()
+        angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        thres = None
+        deltaRadians = degrees * (np.pi / 180)
+        targetRadians = deltaRadians - angle
+        if targetRadians < np.pi:
+            targetRadians += 2 * np.pi # Going from positive angle to negative
+
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians, lambda: self.stop())
+
+        lidar.add_listener(thres)
+        
         self.robot.set_speed(5, -5)
 
     def stop(self):
