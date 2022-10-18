@@ -18,6 +18,10 @@ last_loop = time.time()
 
 #https://robotics.stackexchange.com/questions/19290/what-is-the-definition-of-the-contents-of-pointcloud2/20401#20401
 
+'''
+    NOT USED ANYMORE!!!!
+'''
+
 movingMeters = 0 # Meters to move from start before stopping
 rotating = 0 # -1 for left/counterclockwise, 0 for not rotating, 1 for right/clockwise
 rotatingRadians = 0 # Radians to rotate from start before stopping
