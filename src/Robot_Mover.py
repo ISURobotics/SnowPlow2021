@@ -1,4 +1,4 @@
-from multiprocessing.resource_sharer import stop
+# from multiprocessing.resource_sharer import stop
 import time
 from matplotlib.hatch import SouthEastHatch
 import rospy
@@ -43,8 +43,9 @@ class RobotMover:
             lidar: a lidar object to add listeners to
             meters: the number of meters to move before stopping
         """
-        print "Moving forward " + meters
+        print "Moving forward " + str(meters)
         pose = lidar.get_pose()
+        print pose
         angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
         thres = None
         if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
@@ -77,7 +78,7 @@ class RobotMover:
             meters: the number of meters to move before stopping
         """
 
-        print "Moving backward " + meters
+        print "Moving backward " + str(meters)
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
         thres = None

@@ -13,9 +13,9 @@ def main():
     rm = RobotMover(r)
     pe = Path_Executor(rm, lidar)
     print "Press enter to continue"
-    input()
+    x = raw_input()
     pe.apply_next_action()
-    exit(0)
+    # exit(0)
 
 
 if __name__ == "__main__":

@@ -41,6 +41,7 @@ class Lidar:
         # points data is returned as (x, y, color)
 
     def callback_slam_pose(self, data):
+        print "poseee"
         self.pose = data
         for i in range(len(self.thresholds) - 1, 0, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
