@@ -14,6 +14,6 @@ class Movement_Threshold:
             Rotating more than pi radians (180 degrees) in a single instruction is not recommended.
         """
         self.axis = axis
-        self.triggerWhenAbove = trigger_when_above
+        self.trigger_when_above = trigger_when_above
         self.value = value
         self.function = function
