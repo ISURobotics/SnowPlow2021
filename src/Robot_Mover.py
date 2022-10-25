@@ -46,7 +46,7 @@ class RobotMover:
         print "Moving forward " + str(meters)
         pose = lidar.get_pose()
         print pose
-        angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
         if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
             delta = meters * np.cos(angle)
@@ -80,7 +80,7 @@ class RobotMover:
 
         print "Moving backward " + str(meters)
         pose = lidar.get_pose()
-        angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
 
         if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
@@ -113,7 +113,7 @@ class RobotMover:
         """
         print "Rotating left " + degrees
         pose = lidar.get_pose()
-        angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
         deltaRadians = degrees * (np.pi / 180)
         targetRadians = deltaRadians + angle
@@ -135,7 +135,7 @@ class RobotMover:
         """
         print "Rotating right " + degrees
         pose = lidar.get_pose()
-        angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
         deltaRadians = degrees * (np.pi / 180)
         targetRadians = deltaRadians - angle
