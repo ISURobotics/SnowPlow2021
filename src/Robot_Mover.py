@@ -1,5 +1,6 @@
 from multiprocessing.resource_sharer import stop
 import time
+from matplotlib.hatch import SouthEastHatch
 import rospy
 import sys, os
 from Movement_Threshold import Movement_Threshold
@@ -42,6 +43,7 @@ class RobotMover:
             lidar: a lidar object to add listeners to
             meters: the number of meters to move before stopping
         """
+        print "Moving forward " + meters
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
         thres = None
@@ -75,6 +77,7 @@ class RobotMover:
             meters: the number of meters to move before stopping
         """
 
+        print "Moving backward " + meters
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
         thres = None
@@ -107,6 +110,7 @@ class RobotMover:
             lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
+        print "Rotating left " + degrees
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
         thres = None
@@ -121,12 +125,14 @@ class RobotMover:
 
         self.robot.set_speed(-5, 5)
 
+
     def rotate_right(self, lidar, degrees):
         """
             Starts a right/clockwise rotation
             lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
+        print "Rotating right " + degrees
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
         thres = None
@@ -146,6 +152,7 @@ class RobotMover:
             Stop all motion of the robot
         :return:
         """
+        print "STOPSTOPSTOPSTOP"
         # rotating = 0
         # moving = 0
         self.robot.stop()
