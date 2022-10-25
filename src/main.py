@@ -16,6 +16,9 @@ def main():
     x = raw_input()
     pe.apply_next_action()
     # exit(0)
+    rospy.spin()
+    while not rospy.is_shutdown():
+        pass
 
 
 if __name__ == "__main__":

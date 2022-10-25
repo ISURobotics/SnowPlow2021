@@ -35,26 +35,29 @@ class Lidar:
         self._sub_points = rospy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
         self._sub_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
         self.thresholds = []
+        self.pose_set = False
 
     def callback_pointcloud(self, data):
         self.points = ros_numpy.point_cloud2.pointcloud2_to_array(data)  # type: List[tuple]
         # points data is returned as (x, y, color)
 
     def callback_slam_pose(self, data):
-        print "poseee"
-        self.pose = data
-        for i in range(len(self.thresholds) - 1, 0, -1): # Gotta iterate backwards as stuff might get removed from the list
+        if not self.pose_set:
+            print "poseee"
+            self.pose_set = True
+        self.pose = data.pose
+        for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
             measured_val = 0
             above_thres = False
             if (t.axis == Movement_Threshold.X_AXIS):
-                measured_val = data.position.x
+                measured_val = self.pose.position.x
                 above_thres = (measured_val >= t.value)
             elif (t.axis == Movement_Threshold.Y_AXIS):
-                measured_val = data.position.y
+                measured_val = self.pose.position.y
                 above_thres = (measured_val >= t.value)
             elif (t.axis == Movement_Threshold.Z_ROTATION):
-                eulers = utils.quaternion_to_euler(data.rotation.x, data.rotation.y, data.rotation.z, data.rotation.w)
+                eulers = utils.quaternion_to_euler(self.pose.orientation.x, self.pose.orientation.y, self.pose.orientation.z, self.pose.orientation.w)
                 measured_val = eulers[2] # z rotation or yaw
                 # NEEDS TESTING. LOTS OF TESTING.
                 if t.trigger_when_above:
@@ -67,7 +70,7 @@ class Lidar:
                         above_thres = (measured_val > t.value) and (measured_val <= t.value + 3 * np.pi / 2)
                     else:
                         above_thres = (measured_val > t.value) or (measured_val <= t.value - np.pi / 4)
-            
+            print above_thres
             if above_thres == t.trigger_when_above:
                 self.thresholds.remove(i)
                 t.function() # run the lamba associated with the threshold
