@@ -1,3 +1,4 @@
+from turtle import right
 from matplotlib.pyplot import axis
 import rospy
 from std_msgs.msg import Int8
@@ -110,3 +111,7 @@ class Robot:
     def set_speeds(self, speed):
         self.left.set_speed(speed)
         self.right.set_speed(speed)
+
+    def set_speed(self, leftSpeed, rightSpeed):
+        self.left.set_speed(leftSpeed)
+        self.right.set_speed(rightSpeed)
