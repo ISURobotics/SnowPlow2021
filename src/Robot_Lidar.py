@@ -15,6 +15,9 @@ from matplotlib import pyplot as plt
 
 point_cloud = None
 last_loop = time.time()
+'''
+    FOR TESTING ONLY
+'''
 
 # https://robotics.stackexchange.com/questions/19290/what-is-the-definition-of-the-contents-of-pointcloud2/20401#20401
 
@@ -74,10 +77,3 @@ while not rospy.is_shutdown():
     # time.sleep()
     # print('loop')
     pass
-
-
-def move_forward(pose, meters):
-    old = pose
-    movingForward = true
-    oldMeters = meters
-    motor.setSpeed(5)  # probably not right value

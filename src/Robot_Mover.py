@@ -12,6 +12,7 @@ from geometry_msgs.msg import Transform, Vector3, Quaternion, Point, Pose, PoseS
 import ros_numpy
 import cv2
 import numpy as np
+import utils
 import math
 from matplotlib import pyplot as plt
 
@@ -20,6 +21,10 @@ last_loop = time.time()
 
 # https://robotics.stackexchange.com/questions/19290/what-is-the-definition-of-the-contents-of-pointcloud2/20401#20401
 
+class StopThreshold:
+    def __init__(self, value, stop_when_greater):
+        self.value = value
+        self.stop_when_greater = stop_when_greater
 
 class RobotMover:
     movingMeters = 0  # Meters to move from start before stopping
@@ -27,11 +32,22 @@ class RobotMover:
     rotatingRadians = 0  # Radians to rotate from start before stopping
     moving = 0  # -1 for backward, 0 for not moving, 1 for forward
 
+
     def __init__(self, robot):
         """
         :param robot: A Robot object. The functions to set motor speeds will be run on it.
         """
         self.robot = robot
+        self.stop_x = None
+        self.stop_y = None
+        self.stop_rot = None
+        # self._sub_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
+
+
+    # def callback_slam_pose(self, data):
+    #     pose = data.pose
+    #     pose_np = ros_numpy.geometry.pose_to_numpy(pose)
+
 
     def move_forward(self, pose, meters):
         """
@@ -42,6 +58,13 @@ class RobotMover:
         starting_pose = pose
         moving = 1
         moving_meters = meters
+        yaw_rot = utils.euler_from_quaternion(pose.rotation.x, pose.rotation.y, pose.rotation.z, pose.rotation.w)[2]
+        # yaw_rot is the rotation in radians from the positive x-axis
+        target_x = meters * np.cos(yaw_rot) + pose.position.x
+        target_y = meters * np.sin(yaw_rot) + pose.position.y
+        self.stop_x = StopThreshold(target_x, pose.position.x < target_x)
+        self.stop_y = StopThreshold(target_y, pose.position.y < target_y)
+
         self.robot.set_speeds(5)  # probably not right value
 
     def move_backward(self, pose, meters):

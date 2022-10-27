@@ -3,6 +3,7 @@ from std_msgs.msg import Int8
 from sensor_msgs.msg import PointCloud2
 import ros_numpy
 import matplotlib as plt
+import math
 
 # Note: Before running this file, be sure to start roscore and rosrun the rosserial_python
 # >> rosrun rosserial_python serial_node.py
@@ -21,8 +22,8 @@ class Motor:
         self.speed = speed
         self._speed_pub.publish(value)
 
-
 class Lidar:
+
     def __init__(self):
         self.points = None
         self._sub_points = rospy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
@@ -64,3 +65,9 @@ class Robot:
     def set_speeds(self, speed):
         self.left.set_speed(speed)
         self.right.set_speed(speed)
+
+    def set_speeds(self, left_speed, right_speed):
+        self.left.set_speed(left_speed)
+        self.right.set_speed(right_speed)
+
+
