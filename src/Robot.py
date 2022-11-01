@@ -51,13 +51,13 @@ class Lidar:
             measured_val = 0
             above_thres = False
             if (t.axis == Movement_Threshold.X_AXIS):
-                measured_val = data.position.x
+                measured_val = self.pose.position.x
                 above_thres = (measured_val >= t.value)
             elif (t.axis == Movement_Threshold.Y_AXIS):
-                measured_val = data.position.y
+                measured_val = self.pose.position.y
                 above_thres = (measured_val >= t.value)
             elif (t.axis == Movement_Threshold.Z_ROTATION):
-                eulers = utils.quaternion_to_euler(data.rotation.x, data.rotation.y, data.rotation.z, data.rotation.w)
+                eulers = utils.quaternion_to_euler(self.pose.orientation.x, self.pose.orientation.y, self.pose.orientation.z, self.pose.orientation.w)
                 measured_val = eulers[2] # z rotation or yaw
                 # NEEDS TESTING. LOTS OF TESTING.
                 if t.trigger_when_above:
