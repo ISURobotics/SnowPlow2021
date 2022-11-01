@@ -35,6 +35,7 @@ class Lidar:
         self._sub_points = rospy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
         self._sub_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
         self.thresholds = []
+        self.pose_set = False
 
     def callback_pointcloud(self, data):
         self.points = ros_numpy.point_cloud2.pointcloud2_to_array(data)  # type: List[tuple]
@@ -42,7 +43,9 @@ class Lidar:
 
     def callback_slam_pose(self, data):
         print "poseee"
-        self.pose = data
+        if not self.pose_set:
+            self.pose = data
+            self.pose_set = True
         for i in range(len(self.thresholds) - 1, 0, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
             measured_val = 0
@@ -67,7 +70,7 @@ class Lidar:
                         above_thres = (measured_val > t.value) and (measured_val <= t.value + 3 * np.pi / 2)
                     else:
                         above_thres = (measured_val > t.value) or (measured_val <= t.value - np.pi / 4)
-            
+            print above_thres
             if above_thres == t.trigger_when_above:
                 self.thresholds.remove(i)
                 t.function() # run the lamba associated with the threshold
