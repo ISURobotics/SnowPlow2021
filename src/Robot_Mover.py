@@ -26,16 +26,16 @@ last_loop = time.time()
 
 
 class RobotMover:
-    movingMeters = 0  # Meters to move from start before stopping
-    rotating = 0  # -1 for left/counterclockwise, 0 for not rotating, 1 for right/clockwise
-    rotatingRadians = 0  # Radians to rotate from start before stopping
-    moving = 0  # -1 for backward, 0 for not moving, 1 for forward
 
     def __init__(self, robot):
         """
         :param robot: A Robot object. The functions to set motor speeds will be run on it.
         """
         self.robot = robot
+        self.finish_listeners = [] # list of lambda functions
+
+    def add_finish_listener(self, func):
+        self.finish_listeners.append(func)
 
     def move_forward(self, lidar, meters):
         """
@@ -50,18 +50,18 @@ class RobotMover:
         thres = None
         if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
             delta = meters * np.cos(angle)
-            thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.stop())
+            thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.finish_step())
         elif (angle >= np.pi * (1 / 4) and angle < np.pi * (3 / 4)): # Roughly positive y
             delta = meters * np.sin(angle)
-            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.stop())
+            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.finish_step())
 
         elif (angle >= np.pi * (3 / 4) or angle < np.pi * -(3 / 4)): # Roughly negative x
             delta = meters * np.cos(angle) # This will be negative
-            thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.stop())
+            thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.finish_step())
 
         elif (angle < np.pi * -(1 / 4) and angle > np.pi * -(3 / 4)): # Roughly negative y
             delta = meters * np.sin(angle) # Negative
-            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.stop())
+            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.finish_step())
 
         assert thres != None
         lidar.add_listener(thres)
@@ -85,18 +85,18 @@ class RobotMover:
 
         if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
             delta = meters * np.cos(angle)
-            thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.stop())
+            thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.finish_step())
         elif (angle >= np.pi * (1 / 4) and angle < np.pi * (3 / 4)): # Roughly positive y
             delta = meters * np.sin(angle)
-            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.stop())
+            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.finish_step())
 
         elif (angle >= np.pi * (3 / 4) or angle < np.pi * -(3 / 4)): # Roughly negative x
             delta = meters * np.cos(angle) # This will be negative
-            thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.stop())
+            thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.finish_step())
 
         elif (angle < np.pi * -(1 / 4) and angle > np.pi * -(3 / 4)): # Roughly negative y
             delta = meters * np.sin(angle) # Negative
-            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.stop())
+            thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.finish_step())
 
         assert thres != None
         lidar.add_listener(thres)
@@ -120,7 +120,7 @@ class RobotMover:
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
 
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetRadians, lambda: self.stop())
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetRadians, lambda: self.finish_step())
 
         lidar.add_listener(thres)
 
@@ -142,12 +142,18 @@ class RobotMover:
         if targetRadians < np.pi:
             targetRadians += 2 * np.pi # Going from positive angle to negative
 
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians, lambda: self.stop())
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians, lambda: self.finish_step())
 
         lidar.add_listener(thres)
         
         self.robot.set_speed(5, -5)
 
+    def finish_step(self):
+        self.robot.stop()
+        print "Step done"
+        for l in self.finish_listeners:
+            l()
+    
     def stop(self):
         """
             Stop all motion of the robot

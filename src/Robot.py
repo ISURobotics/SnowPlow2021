@@ -42,22 +42,22 @@ class Lidar:
         # points data is returned as (x, y, color)
 
     def callback_slam_pose(self, data):
+        print "poseee"
         if not self.pose_set:
-            print "poseee"
+            self.pose = data
             self.pose_set = True
-        self.pose = data.pose
-        for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
+        for i in range(len(self.thresholds) - 1, 0, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
             measured_val = 0
             above_thres = False
             if (t.axis == Movement_Threshold.X_AXIS):
-                measured_val = self.pose.position.x
+                measured_val = data.position.x
                 above_thres = (measured_val >= t.value)
             elif (t.axis == Movement_Threshold.Y_AXIS):
-                measured_val = self.pose.position.y
+                measured_val = data.position.y
                 above_thres = (measured_val >= t.value)
             elif (t.axis == Movement_Threshold.Z_ROTATION):
-                eulers = utils.quaternion_to_euler(self.pose.orientation.x, self.pose.orientation.y, self.pose.orientation.z, self.pose.orientation.w)
+                eulers = utils.quaternion_to_euler(data.rotation.x, data.rotation.y, data.rotation.z, data.rotation.w)
                 measured_val = eulers[2] # z rotation or yaw
                 # NEEDS TESTING. LOTS OF TESTING.
                 if t.trigger_when_above:
