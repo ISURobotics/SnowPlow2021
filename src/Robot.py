@@ -42,11 +42,11 @@ class Lidar:
         # points data is returned as (x, y, color)
 
     def callback_slam_pose(self, data):
-        print "poseee"
         if not self.pose_set:
-            self.pose = data
+            print "poseee"
             self.pose_set = True
-        for i in range(len(self.thresholds) - 1, 0, -1): # Gotta iterate backwards as stuff might get removed from the list
+        self.pose = data.pose
+        for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
             measured_val = 0
             above_thres = False
