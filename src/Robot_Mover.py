@@ -48,19 +48,19 @@ class RobotMover:
         print pose
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
-        if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
+        if (angle >= np.pi * -(1.0 / 4) and angle < np.pi * (1.0 / 4)): # Moving in roughly positive x direction
             delta = meters * np.cos(angle)
             thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.finish_step())
             print "moving in +x"
-        elif (angle >= np.pi * (1 / 4) and angle < np.pi * (3 / 4)): # Roughly positive y
+        elif (angle >= np.pi * (1.0 / 4) and angle < np.pi * (3.0 / 4)): # Roughly positive y
             delta = meters * np.sin(angle)
             thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.finish_step())
             print "moving in +y"
-        elif (angle >= np.pi * (3 / 4) or angle < np.pi * -(3 / 4)): # Roughly negative x
+        elif (angle >= np.pi * (3.0 / 4) or angle < np.pi * -(3.0 / 4)): # Roughly negative x
             delta = meters * np.cos(angle) # This will be negative
             thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.finish_step())
             print "moving in -x"
-        elif (angle < np.pi * -(1 / 4) and angle > np.pi * -(3 / 4)): # Roughly negative y
+        elif (angle < np.pi * -(1.0 / 4) and angle > np.pi * -(3.0 / 4)): # Roughly negative y
             delta = meters * np.sin(angle) # Negative
             thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.finish_step())
             print "moving in -y"
@@ -84,19 +84,20 @@ class RobotMover:
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
 
-        if (angle >= np.pi * -(1 / 4) and angle < np.pi * (1 / 4)): # Moving in roughly positive x direction
-            delta = meters * np.cos(angle)
+        if (angle >= np.pi * -(1.0 / 4) and angle < np.pi * (1.0 / 4)): # Pointing in roughly positive x direction
+            delta = -meters * np.cos(angle)
             thres = Movement_Threshold(Movement_Threshold.X_AXIS, False, pose.position.x + delta, lambda: self.finish_step())
-        elif (angle >= np.pi * (1 / 4) and angle < np.pi * (3 / 4)): # Roughly positive y
-            delta = meters * np.sin(angle)
+            print "positive x"
+        elif (angle >= np.pi * (1.0 / 4) and angle < np.pi * (3.0 / 4)): # Roughly positive y
+            delta = -meters * np.sin(angle)
             thres = Movement_Threshold(Movement_Threshold.Y_AXIS, False, pose.position.y + delta, lambda: self.finish_step())
 
-        elif (angle >= np.pi * (3 / 4) or angle < np.pi * -(3 / 4)): # Roughly negative x
-            delta = meters * np.cos(angle) # This will be negative
+        elif (angle >= np.pi * (3.0 / 4) or angle < np.pi * -(3.0 / 4)): # Roughly negative x
+            delta = -meters * np.cos(angle)
             thres = Movement_Threshold(Movement_Threshold.X_AXIS, True, pose.position.x + delta, lambda: self.finish_step())
 
-        elif (angle < np.pi * -(1 / 4) and angle > np.pi * -(3 / 4)): # Roughly negative y
-            delta = meters * np.sin(angle) # Negative
+        elif (angle < np.pi * -(1.0 / 4) and angle > np.pi * -(3.0 / 4)): # Roughly negative y
+            delta = -meters * np.sin(angle)
             thres = Movement_Threshold(Movement_Threshold.Y_AXIS, True, pose.position.y + delta, lambda: self.finish_step())
 
         assert thres != None
