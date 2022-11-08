@@ -122,6 +122,8 @@ class RobotMover:
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
 
+        print "Current: " + angle
+        print "Target: " + str(targetRadians)
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetRadians, lambda: self.finish_step())
 
         lidar.add_listener(thres)
@@ -142,8 +144,10 @@ class RobotMover:
         deltaRadians = degrees * (np.pi / 180)
         targetRadians = deltaRadians - angle
         if targetRadians < -np.pi:
-            targetRadians += 2 * np.pi # Going from positive angle to negative
+            targetRadians += 2 * np.pi # Going from negative angle to positive
 
+        print "Current: " + angle
+        print "Target: " + str(targetRadians)
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians, lambda: self.finish_step())
 
         lidar.add_listener(thres)
