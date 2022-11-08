@@ -118,7 +118,7 @@ class RobotMover:
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
         deltaRadians = degrees * (np.pi / 180)
-        targetRadians = deltaRadians + angle
+        targetRadians = angle + deltaRadians
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
 
@@ -142,7 +142,7 @@ class RobotMover:
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
         deltaRadians = degrees * (np.pi / 180)
-        targetRadians = deltaRadians - angle
+        targetRadians = angle - deltaRadians
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
 
