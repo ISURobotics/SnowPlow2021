@@ -141,7 +141,7 @@ class RobotMover:
         thres = None
         deltaRadians = degrees * (np.pi / 180)
         targetRadians = deltaRadians - angle
-        if targetRadians < np.pi:
+        if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from positive angle to negative
 
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians, lambda: self.finish_step())
