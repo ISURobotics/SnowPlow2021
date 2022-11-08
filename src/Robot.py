@@ -52,8 +52,8 @@ class Lidar:
             above_thres = False
             if (t.axis == Movement_Threshold.X_AXIS):
                 measured_val = self.pose.position.x
-                print t.value
-                print measured_val
+                #print t.value
+                #print measured_val
                 above_thres = (measured_val >= t.value)
             elif (t.axis == Movement_Threshold.Y_AXIS):
                 measured_val = self.pose.position.y
