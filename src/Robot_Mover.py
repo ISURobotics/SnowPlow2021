@@ -113,7 +113,7 @@ class RobotMover:
             lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
-        print "Rotating left " + degrees
+        print "Rotating left " + str(degrees)
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
@@ -135,7 +135,7 @@ class RobotMover:
             lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
-        print "Rotating right " + degrees
+        print "Rotating right " + str(degrees)
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
