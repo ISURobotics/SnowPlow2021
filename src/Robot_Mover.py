@@ -70,7 +70,7 @@ class RobotMover:
         # finished here
         # moving = 1
         # moving_meters = meters
-        self.robot.set_speeds(5)  # probably not right value
+        self.robot.set_speeds(100)  # probably not right value
 
     def move_backward(self, lidar, meters):
         """
@@ -105,7 +105,7 @@ class RobotMover:
         # starting_pose = pose
         # moving = -1
         # moving_meters = meters
-        self.robot.set_speeds(-5)  # probably not right value
+        self.robot.set_speeds(-100)  # probably not right value
 
     def rotate_left(self, lidar, degrees):
         """
@@ -126,7 +126,7 @@ class RobotMover:
 
         lidar.add_listener(thres)
 
-        self.robot.set_speed(-5, 5)
+        self.robot.set_speed(-50, 50)
 
 
     def rotate_right(self, lidar, degrees):
@@ -148,7 +148,7 @@ class RobotMover:
 
         lidar.add_listener(thres)
         
-        self.robot.set_speed(5, -5)
+        self.robot.set_speed(50, -50)
 
     def finish_step(self):
         self.robot.stop()
