@@ -122,7 +122,7 @@ class RobotMover:
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
 
-        print "Current: " + angle
+        print "Current: " + str(angle)
         print "Target: " + str(targetRadians)
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetRadians, lambda: self.finish_step())
 
@@ -146,7 +146,7 @@ class RobotMover:
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
 
-        print "Current: " + angle
+        print "Current: " + str(angle)
         print "Target: " + str(targetRadians)
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians, lambda: self.finish_step())
 
