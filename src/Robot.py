@@ -52,6 +52,8 @@ class Lidar:
             above_thres = False
             if (t.axis == Movement_Threshold.X_AXIS):
                 measured_val = self.pose.position.x
+                print t.value
+                print measured_val
                 above_thres = (measured_val >= t.value)
             elif (t.axis == Movement_Threshold.Y_AXIS):
                 measured_val = self.pose.position.y
@@ -72,8 +74,9 @@ class Lidar:
                         above_thres = (measured_val > t.value) or (measured_val <= t.value - np.pi / 4)
             print above_thres
             print t.trigger_when_above
+            print ""
             if above_thres == t.trigger_when_above:
-                self.thresholds.remove(i)
+                self.thresholds.pop(i)
                 t.function() # run the lamba associated with the threshold
 
     def get_points(self):
