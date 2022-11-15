@@ -7,11 +7,11 @@ import rospy
 import Robot
 import time
 import keyboard
-import PySimpleGUI as sg
+import PySimpleGUI27 as sg
 from shapely.geometry import *
 
-from src.Path_Executor import Path_Executor
-from src.Robot_Mover import RobotMover
+from Path_Executor import Path_Executor
+from Robot_Mover import RobotMover
 
 
 class Agent:

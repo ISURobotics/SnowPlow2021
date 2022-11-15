@@ -72,9 +72,9 @@ class Lidar:
                         above_thres = (measured_val > t.value) and (measured_val <= t.value + 3 * np.pi / 2)
                     else:
                         above_thres = (measured_val > t.value) or (measured_val <= t.value - np.pi / 4)
-            print above_thres
-            print t.trigger_when_above
-            print ""
+           # print above_thres
+           # print t.trigger_when_above
+           # print ""
             if above_thres == t.trigger_when_above:
                 self.thresholds.pop(i)
                 t.function() # run the lamba associated with the threshold
