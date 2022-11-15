@@ -71,14 +71,16 @@ def initializeGraphics(field):
 def run(agent, field):
     window, graph = initializeGraphics(field)
 
+    index = 1
     while True:
         try:
             if keyboard.is_pressed('q'):
                 break
             else:
-                agent.update(poseData[random.randrange(0, len(poseData))], field, graph)
+                agent.update(poseData[index], field, graph)
                 window.refresh()
                 time.sleep(0.01)
+                index += 1
         except IndexError:
             continue
 
