@@ -19,16 +19,18 @@ class Agent:
         self.origin = (800, 150)
         self.size = 5
 
+
     def update(self, pose, field, graph):
         if self.withinBounds(pose, field):
-            graph.DrawCircle((self.origin[0] + round(pose.getPosition()['X'] * 100),
-                              self.origin[1] + round(pose.getPosition()['Y'] * 100)), self.size, fill_color="red")
+            graph.DrawCircle((self.origin[0] + round(pose.position.x * 100),
+                              self.origin[1] + round(pose.position.y * 100)), self.size, fill_color="red")
+
         #else:
         #   print("Pose Failure: Out of Bounds")
 
     def withinBounds(self, pose, field):
-        po = Point((self.origin[0] + round(pose.getPosition()['X'] * 100),
-                    self.origin[1] + round(pose.getPosition()['Y'] * 100)))
+        po = Point((self.origin[0] + round(pose.position.x * 100),
+                    self.origin[1] + round(pose.position.y * 100)))
         return field.innerBounds.contains(po)
 
 
