@@ -19,13 +19,12 @@ class Agent:
         self.origin = (800, 150)
         self.size = 5
 
-
     def update(self, pose, field, graph):
         if self.withinBounds(pose, field):
             graph.DrawCircle((self.origin[0] + round(pose.position.x * 100),
                               self.origin[1] + round(pose.position.y * 100)), self.size, fill_color="red")
 
-        #else:
+        # else:
         #   print("Pose Failure: Out of Bounds")
 
     def withinBounds(self, pose, field):
@@ -41,7 +40,7 @@ class Field:
         self.cordsOrigin = (0, 0)
         self.cordsExtent = (self.absWidth, self.absHeight)
         self.primaryConnectors = [(0, 300), (550, 300), (550, 0), (1050, 0), (1050, 300), (1500, 300),
-                          (self.absWidth, self.absHeight), (0, self.absHeight)]
+                                  (self.absWidth, self.absHeight), (0, self.absHeight)]
         self.innerBounds = Polygon(self.primaryConnectors)
 
 
@@ -65,20 +64,18 @@ def initializeGraphics(field):
     graph.DrawPolygon(field.primaryConnectors, fill_color='#3C3C3C', line_color="white", line_width=4)
 
     gridScale = 25
-    for x in range(gridScale, field.absWidth+1, gridScale):
-        for y in range(gridScale, field.absHeight+1, gridScale):
+    for x in range(gridScale, field.absWidth + 1, gridScale):
+        for y in range(gridScale, field.absHeight + 1, gridScale):
             graph.DrawRectangle((x - gridScale, y - gridScale), (x, y), line_color="#434343", line_width=2)
 
     return window, graph
-
-
 
 
 def run():
     agent = Agent()
     field = Field()
     lidar = Robot.Lidar()
-    r = Robot()
+    r = Robot.Robot()
     rm = RobotMover(r)
     pe = Path_Executor(rm, lidar)
     print
@@ -102,7 +99,6 @@ def run():
                 time.sleep(0.01)
         except IndexError:
             continue
-
 
 
 if __name__ == '__main__':
