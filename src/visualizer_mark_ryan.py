@@ -61,12 +61,12 @@ def initializeGraphics(field):
                        finalize=True)
     graph = window.Element("graph")
 
-    graph.DrawPolygon(field.primaryConnectors, fill_color='#3C3C3C', line_color="white", line_width=4)
+#    graph.DrawPolygon(field.primaryConnectors, fill_color='#3C3C3C', line_color="white", line_width=4)
 
     gridScale = 25
     for x in range(gridScale, field.absWidth + 1, gridScale):
         for y in range(gridScale, field.absHeight + 1, gridScale):
-            graph.DrawRectangle((x - gridScale, y - gridScale), (x, y), line_color="#434343", line_width=2)
+            graph.DrawRectangle((x - gridScale, y - gridScale), (x, y), line_color="#434343")
 
     return window, graph
 
@@ -76,25 +76,24 @@ def run():
     field = Field()
     lidar = Robot.Lidar()
     r = Robot.Robot()
-    rm = RobotMover(r)
-    pe = Path_Executor(rm, lidar)
-    print
-    "Press enter to continue"
+    # rm = RobotMover(r)
+    # pe = Path_Executor(rm, lidar)
+    print "Press enter to continue"
     x = raw_input()
-    pe.apply_next_action()
+    # pe.apply_next_action()
     # exit(0)
-    rospy.spin()
-    while not rospy.is_shutdown():
-        pass
-
+    print "1"
     window, graph = initializeGraphics(field)
-
-    while True:
+    print "2"
+    # rospy.spin()
+    while not rospy.is_shutdown():
+        print "3"
         try:
             if keyboard.is_pressed('q'):
                 break
             else:
-                agent.update(Robot.get_pose(), field, graph)
+                print(lidar.get_pose())
+                agent.update(lidar.get_pose(), field, graph)
                 window.refresh()
                 time.sleep(0.01)
         except IndexError:
