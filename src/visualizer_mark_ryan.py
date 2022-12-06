@@ -7,11 +7,11 @@ import rospy
 import Robot
 import time
 import keyboard
-import PySimpleGUI as sg
+import PySimpleGUI27 as sg
 from shapely.geometry import *
 
-from src.Path_Executor import Path_Executor
-from src.Robot_Mover import RobotMover
+from Path_Executor import Path_Executor
+from Robot_Mover import RobotMover
 
 
 class Agent:
@@ -21,14 +21,15 @@ class Agent:
 
     def update(self, pose, field, graph):
         if self.withinBounds(pose, field):
-            graph.DrawCircle((self.origin[0] + round(pose.getPosition()['X'] * 100),
-                              self.origin[1] + round(pose.getPosition()['Y'] * 100)), self.size, fill_color="red")
-        #else:
+            graph.DrawCircle((self.origin[0] + round(pose.position.x * 100),
+                              self.origin[1] + round(pose.position.y * 100)), self.size, fill_color="red")
+
+        # else:
         #   print("Pose Failure: Out of Bounds")
 
     def withinBounds(self, pose, field):
-        po = Point((self.origin[0] + round(pose.getPosition()['X'] * 100),
-                    self.origin[1] + round(pose.getPosition()['Y'] * 100)))
+        po = Point((self.origin[0] + round(pose.position.x * 100),
+                    self.origin[1] + round(pose.position.y * 100)))
         return field.innerBounds.contains(po)
 
 
@@ -39,7 +40,7 @@ class Field:
         self.cordsOrigin = (0, 0)
         self.cordsExtent = (self.absWidth, self.absHeight)
         self.primaryConnectors = [(0, 300), (550, 300), (550, 0), (1050, 0), (1050, 300), (1500, 300),
-                          (self.absWidth, self.absHeight), (0, self.absHeight)]
+                                  (self.absWidth, self.absHeight), (0, self.absHeight)]
         self.innerBounds = Polygon(self.primaryConnectors)
 
 
@@ -60,47 +61,43 @@ def initializeGraphics(field):
                        finalize=True)
     graph = window.Element("graph")
 
-    graph.DrawPolygon(field.primaryConnectors, fill_color='#3C3C3C', line_color="white", line_width=4)
+#    graph.DrawPolygon(field.primaryConnectors, fill_color='#3C3C3C', line_color="white", line_width=4)
 
     gridScale = 25
-    for x in range(gridScale, field.absWidth+1, gridScale):
-        for y in range(gridScale, field.absHeight+1, gridScale):
-            graph.DrawRectangle((x - gridScale, y - gridScale), (x, y), line_color="#434343", line_width=2)
+    for x in range(gridScale, field.absWidth + 1, gridScale):
+        for y in range(gridScale, field.absHeight + 1, gridScale):
+            graph.DrawRectangle((x - gridScale, y - gridScale), (x, y), line_color="#434343")
 
     return window, graph
-
-
 
 
 def run():
     agent = Agent()
     field = Field()
     lidar = Robot.Lidar()
-    r = Robot()
-    rm = RobotMover(r)
-    pe = Path_Executor(rm, lidar)
-    print
-    "Press enter to continue"
+    r = Robot.Robot()
+    # rm = RobotMover(r)
+    # pe = Path_Executor(rm, lidar)
+    print "Press enter to continue"
     x = raw_input()
-    pe.apply_next_action()
+    # pe.apply_next_action()
     # exit(0)
-    rospy.spin()
-    while not rospy.is_shutdown():
-        pass
-
+    print "1"
     window, graph = initializeGraphics(field)
-
-    while True:
+    print "2"
+    # rospy.spin()
+    while not rospy.is_shutdown():
+        print "3"
         try:
             if keyboard.is_pressed('q'):
                 break
             else:
-                agent.update(Robot.get_pose(), field, graph)
+                print(lidar.get_pose())
+                agent.update(lidar.get_pose(), field, graph)
                 window.refresh()
                 time.sleep(0.01)
         except IndexError:
             continue
-
 
 
 if __name__ == '__main__':
