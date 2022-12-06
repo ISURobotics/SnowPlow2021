@@ -102,7 +102,13 @@ class Lidar:
     def add_listener(self, threshold):
         self.thresholds.append(threshold)
 
-
+    def remove_listeners(self, tag):
+        """
+            Removes all listeners with the given tag
+        """
+        for i in range(len(self.thresholds) - 1, -1, -1):
+            if self.thresholds[i].tag == tag:
+                self.thresholds.pop(i)
 
 class Robot:
     def __init__(self, rospy_init=True):
@@ -123,3 +129,9 @@ class Robot:
     def set_speed(self, leftSpeed, rightSpeed):
         self.left.set_speed(leftSpeed)
         self.right.set_speed(rightSpeed)
+
+    def get_speeds(self):
+        """
+            Returns (left speed, right speed)
+        """
+        return (self.left.speed, self.right.speed)
