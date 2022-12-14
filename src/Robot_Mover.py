@@ -186,6 +186,7 @@ class RobotMover:
         """
             To use when rotation starts drifting left
         """
+        print "correcting to the right"
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, self.maintain_angle, lambda: self.stop_correcting(lidar, True, backing_up), "stop correct")
         if backing_up:
             self.robot.set_speeds(self.robot.get_speeds[0] * self.correction_mult, self.robot.get_speeds[1])
@@ -195,6 +196,7 @@ class RobotMover:
         lidar.add_listener(thres)
 
     def correct_left(self, lidar, backing_up):
+        print "correcting to the left"
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, self.maintain_angle, lambda: self.stop_correcting(lidar, False, backing_up), "stop correct")
         if backing_up:
             self.robot.set_speeds(self.robot.get_speeds[0], self.robot.get_speeds[1] * self.correction_mult)
@@ -204,6 +206,7 @@ class RobotMover:
         lidar.add_listener(thres)
 
     def stop_correcting(self, lidar, correcting_right, backing_up):
+        print "back to straight"
         lidar.remove_listeners('stop correct')
         if correcting_right:
             self.robot.set_speeds(self.robot.get_speeds[0], self.robot.get_speeds[1] / self.correction_mult)
