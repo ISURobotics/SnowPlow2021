@@ -122,11 +122,11 @@ class Robot:
         self.left.set_speed(0)
         self.right.set_speed(0)
 
-    def set_speeds(self, speed):
+    def set_speed(self, speed):
         self.left.set_speed(speed)
         self.right.set_speed(speed)
 
-    def set_speed(self, leftSpeed, rightSpeed):
+    def set_speeds(self, leftSpeed, rightSpeed):
         self.left.set_speed(leftSpeed)
         self.right.set_speed(rightSpeed)
 

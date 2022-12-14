@@ -4,10 +4,8 @@ class Path_Executor:
         self.mover.add_finish_listener(lambda: self.mover_finished_action())
         self.lidar = lidar
         self.path = [
-            lambda p_lidar: mover.rotate_left(p_lidar, 45), 
             lambda p_lidar: mover.move_forward(p_lidar, .5),
             lambda p_lidar: mover.move_backward(p_lidar, .5),
-            lambda p_lidar: mover.rotate_right(p_lidar, 45)
         ]
         self.current_step = 0
 
