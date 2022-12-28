@@ -69,22 +69,22 @@ class RobotMover:
             print "moving in -y"
         assert thres != None
         lidar.add_listener(thres)
-        low_correct = angle - 0.01745 # 1 degree
+        low_correct = angle - self.correction_thres
         if (low_correct < -np.pi):
             low_correct += 2 * np.pi
-        high_correct = angle + 0.01745
+        high_correct = angle + self.correction_thres
         if (high_correct > np.pi):
             high_correct -= 2 * np.pi
         # For correction
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_right(lidar, False), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(lidar, False), "correct")
         lidar.add_listener(thres)
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_left(lidar, False), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(lidar, False), "correct")
         lidar.add_listener(thres)
 
         # finished here
         # moving = 1
         # moving_meters = meters
-        self.robot.set_speeds(25)  # probably not right value
+        self.robot.set_speed(25)  # probably not right value
 
     def move_backward(self, lidar, meters):
         """
@@ -118,21 +118,21 @@ class RobotMover:
         assert thres != None
         lidar.add_listener(thres)
 
-        low_correct = angle - 0.01745 # 1 degree
+        low_correct = angle - self.correction_thres # 1 degree
         if (low_correct < -np.pi):
             low_correct += 2 * np.pi
-        high_correct = angle + 0.01745
+        high_correct = angle + self.correction_thres
         if (high_correct > np.pi):
             high_correct -= 2 * np.pi
         # For correction
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_right(lidar, True), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(lidar, True), "correct")
         lidar.add_listener(thres)
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_left(lidar, True), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(lidar, True), "correct")
         lidar.add_listener(thres)
         # starting_pose = pose
         # moving = -1
         # moving_meters = meters
-        self.robot.set_speeds(-25)  # probably not right value
+        self.robot.set_speed(-25)  # probably not right value
 
     def rotate_left(self, lidar, degrees):
         """
@@ -155,7 +155,7 @@ class RobotMover:
 
         lidar.add_listener(thres)
 
-        self.robot.set_speed(-25, 25)
+        self.robot.set_speeds(-25, 25)
 
 
     def rotate_right(self, lidar, degrees):
@@ -179,7 +179,7 @@ class RobotMover:
 
         lidar.add_listener(thres)
         
-        self.robot.set_speed(25, -25)
+        self.robot.set_speeds(25, -25)
 
 
     def correct_right(self, lidar, backing_up):
@@ -187,11 +187,11 @@ class RobotMover:
             To use when rotation starts drifting left
         """
         print "correcting to the right"
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, self.maintain_angle, lambda: self.stop_correcting(lidar, True, backing_up), "stop correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, self.maintain_angle, lambda: self.stop_correcting(lidar, True, backing_up), "stop correct")
         if backing_up:
-            self.robot.set_speeds(self.robot.get_speeds[0] * self.correction_mult, self.robot.get_speeds[1])
+            self.robot.set_speeds(self.robot.get_speeds()[0] * self.correction_mult, self.robot.get_speeds()[1])
         else:
-            self.robot.set_speeds(self.robot.get_speeds[0], self.robot.get_speeds[1] * self.correction_mult)
+            self.robot.set_speeds(self.robot.get_speeds()[0], self.robot.get_speeds()[1] * self.correction_mult)
         lidar.remove_listeners('correct')
         lidar.add_listener(thres)
 
@@ -199,9 +199,9 @@ class RobotMover:
         print "correcting to the left"
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, self.maintain_angle, lambda: self.stop_correcting(lidar, False, backing_up), "stop correct")
         if backing_up:
-            self.robot.set_speeds(self.robot.get_speeds[0], self.robot.get_speeds[1] * self.correction_mult)
+            self.robot.set_speeds(self.robot.get_speeds()[0], self.robot.get_speeds()[1] * self.correction_mult)
         else:
-            self.robot.set_speeds(self.robot.get_speeds[0] * self.correction_mult, self.robot.get_speeds[1])
+            self.robot.set_speeds(self.robot.get_speeds()[0] * self.correction_mult, self.robot.get_speeds()[1])
         lidar.remove_listeners('correct')
         lidar.add_listener(thres)
 
@@ -209,20 +209,20 @@ class RobotMover:
         print "back to straight"
         lidar.remove_listeners('stop correct')
         if correcting_right:
-            self.robot.set_speeds(self.robot.get_speeds[0], self.robot.get_speeds[1] / self.correction_mult)
+            self.robot.set_speeds(self.robot.get_speeds()[0], self.robot.get_speeds()[1] / self.correction_mult)
         else:
-            self.robot.set_speeds(self.robot.get_speeds[0] / self.correction_mult, self.robot.get_speeds[1] / self.correction_mult)
+            self.robot.set_speeds(self.robot.get_speeds()[0] / self.correction_mult, self.robot.get_speeds()[1] / self.correction_mult)
 
-        low_correct = self.maintain_angle - 0.01745 # 1 degree
+        low_correct = self.maintain_angle - self.correction_thres
         if (low_correct < -np.pi):
             low_correct += 2 * np.pi
-        high_correct = self.maintain_angle + 0.01745
+        high_correct = self.maintain_angle + self.correction_thres
         if (high_correct > np.pi):
             high_correct -= 2 * np.pi
         # For correction
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_right(lidar, backing_up), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(lidar, backing_up), "correct")
         lidar.add_listener(thres)
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_left(lidar, backing_up), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(lidar, backing_up), "correct")
         lidar.add_listener(thres)
 
     def finish_step(self, lidar):
