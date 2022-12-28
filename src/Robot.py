@@ -1,12 +1,12 @@
-from turtle import right
-from matplotlib.pyplot import axis
+# from turtle import right
+# from matplotlib.pyplot import axis
 import rospy
 from std_msgs.msg import Int8
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
 from Movement_Threshold import Movement_Threshold
 import ros_numpy
-import matplotlib as plt
+# import matplotlib as plt
 import utils
 import numpy as np
 
