@@ -1,12 +1,12 @@
-from turtle import right
-from matplotlib.pyplot import axis
+# from turtle import right
+# from matplotlib.pyplot import axis
 import rospy
 from std_msgs.msg import Int8
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
 from Movement_Threshold import Movement_Threshold
 import ros_numpy
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import utils
 import numpy as np
 
@@ -42,11 +42,11 @@ class Lidar:
         # points data is returned as (x, y, color)
 
     def callback_slam_pose(self, data):
-        print "poseee"
         if not self.pose_set:
-            self.pose = data
+            print "poseee"
             self.pose_set = True
-        for i in range(len(self.thresholds) - 1, 0, -1): # Gotta iterate backwards as stuff might get removed from the list
+        self.pose = data.pose
+        for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
             measured_val = 0
             above_thres = False
@@ -85,19 +85,19 @@ class Lidar:
     def get_pose(self):
         return self.pose
 
-    # def plot_points(self):
-    #     points = self.points
-    #     x_pts = [pt[0] for pt in points]
-    #     y_pts = [pt[1] for pt in points]
-    #     col = [pt[3] for pt in points]
+    def plot_points(self):
+        points = self.points
+        x_pts = [pt[0] for pt in points]
+        y_pts = [pt[1] for pt in points]
+        col = [pt[3] for pt in points]
 
-    #     plt.figure()
-    #     plt.scatter(x_pts, y_pts, c=col)
-    #     # plt.axes([0, 10, 0, 10])
-    #     plt.ylim(-15, 15)
-    #     plt.xlim(0, 15)
-    #     # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
-    #     plt.show()
+        plt.figure()
+        plt.scatter(x_pts, y_pts, c=col)
+        # plt.axes([0, 10, 0, 10])
+        plt.ylim(-15, 15)
+        plt.xlim(0, 15)
+        # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
+        plt.show()
 
     def add_listener(self, threshold):
         self.thresholds.append(threshold)
