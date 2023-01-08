@@ -187,8 +187,8 @@ def display_path(grid, path):
 
 
 
-def generate_path(obstacles):
-# if __name__ == '__main__':
+# def generate_path(obstacles):
+if __name__ == '__main__':
     """
     Generates a path according to preset hardcoded path, avoiding points in obstacles[]
     """
@@ -222,13 +222,13 @@ def generate_path(obstacles):
 
     # sets up hardcoded obstacle zone values, for testing
     # grid[17, 26] = 0
-    # grid[17, 27] = 0
-    # grid[8, 19] = 0
+    grid[17, 27] = 0
+    grid[8, 19] = 0
 
     # sets up obstacle zones from parameter
-    for obstacle in enumerate(obstacles):
+    # for obstacle in enumerate(obstacles):
         # axes are reversed here so flip x,y locations
-        grid[obstacle[1], obstacle[0]] = 0
+        # grid[obstacle[1], obstacle[0]] = 0
 
     print(grid)
 

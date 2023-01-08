@@ -2,7 +2,6 @@ from Robot import *
 from Robot_Mover import RobotMover
 from Path_Executor import *
 from Func_Generator import FuncGenerator
-import Path_Finder
 
 def main():
     """
@@ -15,7 +14,7 @@ def main():
     rm = RobotMover(r)
     fg = FuncGenerator(rm)
     # points = [(3, 1), (2, 1), (2, 2), (2, 3), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (4, 7), (4, 6), (3, 6), (2, 6)]
-    points = [(3, 1), (2.5, 1), (2.5, 4), (1.75, 4), (1.75, 2.5), (2.5, 2.5)] # replace with output of Ryan's Dijkstra stuff
+    points = [(3, 0), (2.5, 0), (2, 0), (1, 0)] #, (1.75, 2.5), (2.5, 2.5)] # replace with output of Ryan's Dijkstra stuff
     funcs = fg.get_funcs(points)
     pe = Path_Executor(rm, lidar, funcs)
     print "Wait for Ready, then press enter to continue"
