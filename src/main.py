@@ -15,7 +15,9 @@ def main():
     rm = RobotMover(r)
     fg = FuncGenerator(rm)
     # points = [(3, 1), (2, 1), (2, 2), (2, 3), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (4, 7), (4, 6), (3, 6), (2, 6)]
-    points = [(3, 1), (2.5, 1), (2.5, 4), (1.75, 4), (1.75, 2.5), (2.5, 2.5)] # replace with output of Ryan's Dijkstra stuff
+    #points = [(3, 1), (2.5, 1), (2.5, 4), (1.75, 4), (1.75, 2.5), (2.5, 2.5)] # replace with output of Ryan's Dijkstra stuff
+    obstacles = lidar.prepare_obstacle_points()
+    points = lidar.prepare_movement_points(Path_Finder.generate_path(obstacles))
     funcs = fg.get_funcs(points)
     pe = Path_Executor(rm, lidar, funcs)
     print "Wait for Ready, then press enter to continue"
