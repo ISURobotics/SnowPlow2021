@@ -6,7 +6,7 @@ from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
 from Movement_Threshold import Movement_Threshold
 import ros_numpy
-# import matplotlib as plt
+import matplotlib.pyplot as plt
 import utils
 import numpy as np
 
@@ -85,19 +85,19 @@ class Lidar:
     def get_pose(self):
         return self.pose
 
-    # def plot_points(self):
-    #     points = self.points
-    #     x_pts = [pt[0] for pt in points]
-    #     y_pts = [pt[1] for pt in points]
-    #     col = [pt[3] for pt in points]
+    def plot_points(self):
+        points = self.points
+        x_pts = [pt[0] for pt in points]
+        y_pts = [pt[1] for pt in points]
+        col = [pt[3] for pt in points]
 
-    #     plt.figure()
-    #     plt.scatter(x_pts, y_pts, c=col)
-    #     # plt.axes([0, 10, 0, 10])
-    #     plt.ylim(-15, 15)
-    #     plt.xlim(0, 15)
-    #     # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
-    #     plt.show()
+        plt.figure()
+        plt.scatter(x_pts, y_pts, c=col)
+        # plt.axes([0, 10, 0, 10])
+        plt.ylim(-15, 15)
+        plt.xlim(0, 15)
+        # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
+        plt.show()
 
     def add_listener(self, threshold):
         self.thresholds.append(threshold)
