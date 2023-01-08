@@ -99,7 +99,7 @@ class Lidar:
         # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
         plt.show()
 
-    def prepare_points(self):
+    def prepare_obstacle_points(self):
         #We only care about obstacles in the range of: (may need to be changed)
         #Y: .2 < y < 4.2
         #X: -4 < x < 6
@@ -119,10 +119,20 @@ class Lidar:
         final_list = []
         for pt in new_list:
             final_pt = [1]
-            final_pt[0] = 26 + (pt[0] * 4)
-            final_pt[1] = 28 - (pt[1] * 4)
+            final_pt[0] = round(26 + (pt[0] * 4))
+            final_pt[1] = round(28 - (pt[1] * 4))
             final_list.append(final_pt)
         #Return list of points
+        return final_list
+
+    def prepare_movement_points(self, points_list):
+        #Reverse from prepare obstacle points
+        final_list = []
+        for pt in points_list:
+            final_pt = [1]
+            final_pt[0] = round(((26 - pt[0]) / 4))
+            final_pt[1] = round(((28 + pt[1]) / 4))
+            final_list.append(final_pt)
         return final_list
 
     def add_listener(self, threshold):
