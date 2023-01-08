@@ -43,7 +43,7 @@ class Lidar:
 
     def callback_slam_pose(self, data):
         if not self.pose_set:
-            print "poseee"
+            print "Ready"
             self.pose_set = True
         self.pose = data.pose
         for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list

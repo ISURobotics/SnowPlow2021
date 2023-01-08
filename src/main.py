@@ -2,10 +2,11 @@ from Robot import *
 from Robot_Mover import RobotMover
 from Path_Executor import *
 from Func_Generator import FuncGenerator
+import Path_Finder
 
 def main():
     """
-    This function will initialize the robot and lider,
+    This function will initialize the robot and lidar,
     create the object map with lidar data,
     and begin motion of the robot
     """
@@ -17,7 +18,7 @@ def main():
     points = [(3, 1), (2.5, 1), (2.5, 4), (1.75, 4), (1.75, 2.5), (2.5, 2.5)] # replace with output of Ryan's Dijkstra stuff
     funcs = fg.get_funcs(points)
     pe = Path_Executor(rm, lidar, funcs)
-    print "Press enter to continue"
+    print "Wait for Ready, then press enter to continue"
     x = raw_input()
     pe.apply_next_action()
     # exit(0)

@@ -35,6 +35,7 @@ class RobotMover:
         self.finish_listeners = [] # list of lambda functions
         self.maintain_angle = 0
         self.correction_mult = 0.7
+        self.correction_thres = 1
 
     def add_finish_listener(self, func):
         self.finish_listeners.append(func)

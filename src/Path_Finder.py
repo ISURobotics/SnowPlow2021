@@ -1,10 +1,9 @@
-#Ryan Madigan
+# Ryan Madigan
 
 import pandas as pd
 import numpy as np
 from queue import PriorityQueue
 from matplotlib import pyplot
-
 
 
 def identify_direction_snow(grid, start, end):
@@ -42,7 +41,8 @@ def identify_direction_snow(grid, start, end):
         for c in range(grid.shape[1]):
             grid[start[0] - 1, c] = float('inf')
             if grid[start[0] + 1, c] != 0:
-                grid[start[0] + 1, c] = grid[start[0] + 1, c] + 1
+                for r in range(start[0] - 1):
+                    grid[r - 1, c] = grid[r - 1, c] + 5
 
 
 
@@ -54,6 +54,13 @@ def identify_direction_snow(grid, start, end):
             (1, 0, 2),  # go down
         ]
 
+
+        for r in range(grid.shape[0]):
+            grid[r, start[1] - 1] = float('inf')
+            if grid[r, start[1] + 1] != 0:
+                for c in range(grid.shape[1] - start[1] - 1):
+                    grid[r, c + start[1] + 1] = grid[r, c + start[1] + 1] + 5
+
     else:
         movements = [
             (1, 0, 1),  # go down
@@ -63,14 +70,10 @@ def identify_direction_snow(grid, start, end):
 
         ]
 
-
-
     return movements
 
 
-
 def identify_direction_gravel(grid, start, end):
-
     for c in range(7, 49):
         grid[5, c] = float('inf')
         grid[10, c] = float('inf')
@@ -82,7 +85,6 @@ def identify_direction_gravel(grid, start, end):
     for r in range(11, 15):
         grid[r, 22] = float('inf')
         grid[r, 32] = float('inf')
-
 
     movements = [
         (0, 1, 1),  # go right
@@ -99,10 +101,10 @@ def path_finder(grid, start, end, on_snow):
     # the value of each tuple represents the movement's direction and the weight of the edge
     grid_copy = np.array(grid, copy=True)
 
-    if on_snow:
-        movements = identify_direction_snow(grid_copy, start, end)
-    else:
-        movements = identify_direction_gravel(grid_copy, start, end)
+    #if on_snow:
+    movements = identify_direction_snow(grid_copy, start, end)
+    #else:
+    #   movements = identify_direction_gravel(grid_copy, start, end)
 
     # keep track of the visited cells
     visited = set()
@@ -126,15 +128,11 @@ def path_finder(grid, start, end, on_snow):
     pq.put((0, start))
     dist[start] = 0
 
-
     print(grid_copy)
     # repeat until the priority queue is empty
     while not pq.empty():
         # get the cell with the smallest distance
         _, current_point = pq.get()
-
-
-
 
         # if the cell has not been visited
         if current_point not in visited:
@@ -146,24 +144,20 @@ def path_finder(grid, start, end, on_snow):
                 # get the destination cell
                 new_point = (current_point[0] + r, current_point[1] + c)
 
-
-
                 # if the destination cell is inside the grid and has not been visited
-                if 0 <= new_point[0] < grid_copy.shape[0] and 0 <= new_point[1] < grid_copy.shape[1] and new_point not in visited:
+                if 0 <= new_point[0] < grid_copy.shape[0] and 0 <= new_point[1] < grid_copy.shape[
+                    1] and new_point not in visited:
                     if grid_copy[new_point] == 0 or grid_copy[new_point] == float('inf'):
                         continue
 
                     # if the distance from the starting point to the destination cell is smaller
                     # than the current distance, update the distance and the previous cell
-                    if dist[current_point] + (w * grid_copy[current_point])< dist[new_point]:
+                    if dist[current_point] + (w * grid_copy[current_point]) < dist[new_point]:
                         dist[new_point] = dist[current_point] + (w * grid_copy[current_point])
                         prev[new_point] = current_point
 
-
                         # add the destination cell to the priority queue
                         pq.put((dist[new_point], new_point))
-
-
 
     # initialize the path with the ending point
     path = [end]
@@ -175,60 +169,11 @@ def path_finder(grid, start, end, on_snow):
 
     # reverse the path and print it
     path = path[::-1]
+    for
     return path
 
-if __name__ == '__main__':
-    pd.set_option('display.width', 50)
-    np.set_printoptions(linewidth=400)
-    np.set_printoptions(threshold=np.inf)
 
-    grid = np.ones((28, 56))
-    for r in range(16,28):
-        for c in range(18):
-            grid[r, c] = 0
-            grid[r, c+38] = 0
-
-    for r in range(6):
-        for c in range(56):
-            grid[r, c] = 4
-            grid[r+10, c] = 4
-
-    for r in range(10, 14):
-        for c in range(24, 32):
-            grid[r, c] = 2
-
-    for r in range(16):
-        for c in range(8):
-            grid[r, c] = 4
-            grid[r, c+48] = 4
-
-    for r in range(16, 28):
-        for c in range(18, 38):
-            grid[r, c] = 4
-
-    grid[7, 24] = 0
-    grid[6, 24] = 0
-
-    #grid[7, 49] = 0
-
-
-    print(grid)
-
-
-    start = (22, 26)
-    end = (7, 6)
-
-    path = path_finder(grid, start, end, False)
-    path.extend(path_finder(grid, (7, 7), (7, 49), True))
-    path.extend(path_finder(grid, (8, 49), (8, 6), True))
-    path.extend(path_finder(grid, (9, 6), (11, 21), False))
-
-    print(path)
-
-
-
-    print(grid)
-
+def display_path(grid, path):
     pyplot.imshow(grid, cmap='magma')
     pyplot.pause(2)
     for point in range(len(path)):
@@ -239,3 +184,64 @@ if __name__ == '__main__':
     pyplot.show()
 
 
+
+# def generate_path(obstacles):
+if __name__ == '__main__':
+    """
+    Generates a path according to preset hardcoded path, avoiding points in obstacles[]
+    """
+    pd.set_option('display.width', 50)
+    np.set_printoptions(linewidth=400)
+    np.set_printoptions(threshold=np.inf)
+
+    grid = np.ones((28, 56))
+    for r in range(16, 28):
+        for c in range(18):
+            grid[r, c] = 0
+            grid[r, c + 38] = 0
+
+    for r in range(6):
+        for c in range(56):
+            grid[r, c] = 4
+            grid[r + 10, c] = 4
+
+    for r in range(10, 14):
+        for c in range(24, 32):
+            grid[r, c] = 2
+
+    for r in range(16):
+        for c in range(8):
+            grid[r, c] = 4
+            grid[r, c + 48] = 4
+
+    for r in range(16, 28):
+        for c in range(18, 38):
+            grid[r, c] = 4
+
+    # sets up hardcoded obstacle zone values, for testing
+    grid[17, 26] = 0
+    grid[17, 27] = 0
+
+    # sets up obstacle zones from parameter
+    # for obstacle in enumerate(obstacles):
+    # axes are reversed here so flip x,y locations
+    # grid[obstacle[1], obstacle[0]] = 0
+
+    print(grid)
+
+    # hardcoded first step start and end points
+    start = (22, 26)
+    end = (8, 26)
+
+    # generate the complete path in an array
+    # look at later, consecutive points should have different end and start points?
+    path = path_finder(grid, start, end, False)
+    path.extend(path_finder(grid, (7, 7), (7, 49), True))
+    #path.extend(path_finder(grid, (8, 49), (8, 6), True))
+    #path.extend(path_finder(grid, (9, 6), (11, 21), False))
+
+    print(path)
+
+    print(grid)
+
+    display_path(grid, path)
