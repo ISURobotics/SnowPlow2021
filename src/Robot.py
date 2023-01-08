@@ -99,6 +99,32 @@ class Lidar:
         # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
         plt.show()
 
+    def prepare_points(self):
+        #We only care about obstacles in the range of: (may need to be changed)
+        #Y: .2 < y < 4.2
+        #X: -4 < x < 6
+        #To convert: 
+        #Multiply values by 4
+        #Subtract y value from 28
+        #Add 26 to x value
+
+        #Get points to prepare
+        point_list = self.points
+        #FIlter points to only use those in the range of the field
+        new_list = []
+        for pt in point_list:
+            if pt[0] < 6 and pt[0] > -4 and pt[1] < 4.2 and pt[1] > .2:
+                new_list.append(pt)
+        #Convert points to correspond with the pathfinding grid
+        final_list = []
+        for pt in new_list:
+            final_pt = [1]
+            final_pt[0] = 26 + (pt[0] * 4)
+            final_pt[1] = 28 - (pt[1] * 4)
+            final_list.append(final_pt)
+        #Return list of points
+        return final_list
+
     def add_listener(self, threshold):
         self.thresholds.append(threshold)
 
