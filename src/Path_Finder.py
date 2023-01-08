@@ -40,9 +40,9 @@ def identify_direction_snow(grid, start, end):
 
         for c in range(grid.shape[1]):
             grid[start[0] - 1, c] = float('inf')
-            if grid[start[0] + 1, c] != 0:
-                for r in range(start[0] - 1):
-                    grid[r - 1, c] = grid[r - 1, c] + 5
+            for r in range(grid.shape[0] - start[0] - 1):
+                if grid[r + start[0] + 1, c] != 0:
+                    grid[r + start[0] + 1, c] = grid[r + start[0] + 1, c] + 5
 
 
 
@@ -57,8 +57,8 @@ def identify_direction_snow(grid, start, end):
 
         for r in range(grid.shape[0]):
             grid[r, start[1] - 1] = float('inf')
-            if grid[r, start[1] + 1] != 0:
-                for c in range(grid.shape[1] - start[1] - 1):
+            for c in range(grid.shape[1] - start[1] - 1):
+                if grid[r, c + start[1] + 1] != 0:
                     grid[r, c + start[1] + 1] = grid[r, c + start[1] + 1] + 5
 
     else:
@@ -169,7 +169,9 @@ def path_finder(grid, start, end, on_snow):
 
     # reverse the path and print it
     path = path[::-1]
-    for
+    for i in range(len(path) - 1):
+        if path[i] == path[i + 1]:
+            del path[i + 1]
     return path
 
 
@@ -185,8 +187,8 @@ def display_path(grid, path):
 
 
 
-# def generate_path(obstacles):
-if __name__ == '__main__':
+def generate_path(obstacles):
+# if __name__ == '__main__':
     """
     Generates a path according to preset hardcoded path, avoiding points in obstacles[]
     """
@@ -219,13 +221,14 @@ if __name__ == '__main__':
             grid[r, c] = 4
 
     # sets up hardcoded obstacle zone values, for testing
-    grid[17, 26] = 0
-    grid[17, 27] = 0
+    # grid[17, 26] = 0
+    # grid[17, 27] = 0
+    # grid[8, 19] = 0
 
     # sets up obstacle zones from parameter
-    # for obstacle in enumerate(obstacles):
-    # axes are reversed here so flip x,y locations
-    # grid[obstacle[1], obstacle[0]] = 0
+    for obstacle in enumerate(obstacles):
+        # axes are reversed here so flip x,y locations
+        grid[obstacle[1], obstacle[0]] = 0
 
     print(grid)
 
@@ -236,7 +239,7 @@ if __name__ == '__main__':
     # generate the complete path in an array
     # look at later, consecutive points should have different end and start points?
     path = path_finder(grid, start, end, False)
-    path.extend(path_finder(grid, (7, 7), (7, 49), True))
+    path.extend(path_finder(grid, (8, 26), (8, 8), True))
     #path.extend(path_finder(grid, (8, 49), (8, 6), True))
     #path.extend(path_finder(grid, (9, 6), (11, 21), False))
 
