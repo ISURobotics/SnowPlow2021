@@ -1,12 +1,7 @@
 #!/bin/bash
-#runs the basic laserscan with slami
-# wait for "started core service [/rosout]
+# initializes ROS, lidar launch, and arduino serial
+# then runs the main python script
 source /home/karterk/catkin_ws/install/setup.bash
-# output=$( roscore )
-# until [ $output="Node listening" ]
-# do
-#    echo $output
-# done
 
 # run core ros service
 roscore &
@@ -30,8 +25,12 @@ done
 
 echo "***Hector SLAM Initialized. Setting up arduino serial node..."
 
+# boot up the rosserial node for arduino communication
 rosrun rosserial_python serial_node.py /dev/ttyACM0 &
 
-sleep 5
+sleep 10
+
+# run the python program to start the plow's path calculations and movement
+python /home/karterk/catkin_ws/SnowPlow2021/src/main.py
 
 echo "All done!"
