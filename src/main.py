@@ -3,6 +3,7 @@ from Robot_Mover import RobotMover
 from Path_Executor import *
 from Func_Generator import FuncGenerator
 import Path_Finder
+import time
 
 def main():
     """
@@ -29,8 +30,9 @@ def main():
 
     funcs = fg.get_funcs(points)
     pe = Path_Executor(rm, lidar, funcs)
-    print "Wait for Ready, then press enter to continue"
-    x = raw_input()
+    # print "Wait for Ready, then press enter to continue"
+    # x = raw_input()
+    lidar.wait_for_pose_set()
     pe.apply_next_action()
     # exit(0)
     rospy.spin()

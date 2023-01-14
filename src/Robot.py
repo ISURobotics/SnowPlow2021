@@ -1,5 +1,7 @@
 # from turtle import right
 # from matplotlib.pyplot import axis
+import time
+
 import rospy
 from std_msgs.msg import Int8
 from sensor_msgs.msg import PointCloud2
@@ -84,6 +86,11 @@ class Lidar:
 
     def get_pose(self):
         return self.pose
+
+    def wait_for_pose_set(self):
+        while not self.pose_set:
+            time.sleep(1)
+        return
 
     def plot_points(self):
         points = self.points
