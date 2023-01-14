@@ -1,4 +1,10 @@
-Snowplow project for 2020-2021.
+Snowplow project for 2021-2023.
+
+The Jetson Nano has a number of bash scripts which can be executed from anywhere via alias:  
+```initplow``` : initializes ROS core, ROS lidar functionality/Hector SLAM, and rosserial for arduino communication.  
+```startplow``` : executes ```main.py``` in this directory's ```src``` folder.  
+```runplow``` : executes the above 2 functions in sequence, initializes then starts the plow's movement.  
+```stopplow``` : ```pkill``` all the processes spawned by the above scripts.
 
 To run SICK-LMS-511 with ROS and jetson nano:  
 1. ensure Jetson connection to router via ethernet with DHCP, disable Jetson wifi  
