@@ -30,7 +30,7 @@ def prepare_movement_points(points_list):
     for pt in points_list:
         final_pt = []
         final_pt.append(round(((pt[0] - 26) / 4)))
-        final_pt.append(round(((pt[1] + 28) / 4)))
+        final_pt.append(round(((pt[1] - 28) / (-4))))
         final_list.append(final_pt)
     return final_list
 

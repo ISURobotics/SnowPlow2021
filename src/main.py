@@ -2,6 +2,7 @@ from Robot import *
 from Robot_Mover import RobotMover
 from Path_Executor import *
 from Func_Generator import FuncGenerator
+import Path_Finder
 
 def main():
     """
@@ -9,12 +10,22 @@ def main():
     create the object map with lidar data,
     and begin motion of the robot
     """
+    # for debugging
+    use_pathfinding = 1
+
     lidar = Lidar()
     r = Robot()
     rm = RobotMover(r)
     fg = FuncGenerator(rm)
+
     # points = [(3, 1), (2, 1), (2, 2), (2, 3), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (4, 7), (4, 6), (3, 6), (2, 6)]
     points = [(3, 0), (2.5, 0), (2, 0), (1, 0)] #, (1.75, 2.5), (2.5, 2.5)] # replace with output of Ryan's Dijkstra stuff
+
+    if use_pathfinding:
+        object_points = lidar.prepare_obstacle_points()
+        path_points = Path_Finder.generate_path(object_points)
+        points = lidar.prepare_movement_points(path_points)
+
     funcs = fg.get_funcs(points)
     pe = Path_Executor(rm, lidar, funcs)
     print "Wait for Ready, then press enter to continue"
