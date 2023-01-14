@@ -1,7 +1,7 @@
 #!/bin/bash
 #runs the basic laserscan with slami
 # wait for "started core service [/rosout]
-source install/setup.bash
+source /home/karterk/catkin_ws/install/setup.bash
 # output=$( roscore )
 # until [ $output="Node listening" ]
 # do
@@ -15,7 +15,7 @@ echo "Waiting on roscore"
 # wait for roscore to complete
 while ! rostopic list | grep "^/rosout$" >/dev/null; do
 	echo -n "."	
-	sleep 10
+	sleep 5
 done
 
 echo "roscore started. Starting Lidar"
@@ -25,7 +25,13 @@ roslaunch slam_lidar.launch hostname:=192.168.1.2 &
 
 while ! rostopic list | grep "^/slam_out_pose$" >/dev/null; do
         echo -n "."     
-        sleep 10
+        sleep 5
 done
 
-echo "all done!"
+echo "***Hector SLAM Initialized. Setting up arduino serial node..."
+
+rosrun rosserial_python serial_node.py /dev/ttyACM0 &
+
+sleep 5
+
+echo "All done!"

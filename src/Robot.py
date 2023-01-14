@@ -130,8 +130,8 @@ class Lidar:
         final_list = []
         for pt in points_list:
             final_pt = [1]
-            final_pt[0] = round(((26 - pt[0]) / 4))
-            final_pt[1] = round(((28 + pt[1]) / 4))
+            final_pt[0] = round(((pt[0] - 26) / 4))
+            final_pt[1] = round(((pt[1] - 28) / (-4)))
             final_list.append(final_pt)
         return final_list
 
