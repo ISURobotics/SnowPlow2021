@@ -30,8 +30,8 @@ def prepare_movement_points(points_list):
     final_list = []
     for pt in points_list:
         final_pt = []
-        final_pt.append((pt[0] - 28) / (-4))
-        final_pt.append((pt[1] - 26) / 4)
+        final_pt.append((pt[0] - 28) / 4)  # robot starts by looking in the negative x direction
+        final_pt.append((pt[1] - 26) / 4)  # left of robot is negative y direction
         final_list.append(final_pt)
     return final_list
 
