@@ -120,14 +120,14 @@ class Lidar:
         #FIlter points to only use those in the range of the field
         new_list = []
         for pt in point_list:
-            if pt[0] < 6 and pt[0] > -4 and pt[1] < 4.2 and pt[1] > .2:
+            if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
                 new_list.append(pt)
         #Convert points to correspond with the pathfinding grid
         final_list = []
         for pt in new_list:
             final_pt = [1]
-            final_pt[0] = round(26 + (pt[0] * 4))
-            final_pt[1] = round(28 - (pt[1] * 4))
+            final_pt.append(round(28 - (pt[0] * 4)))
+            final_pt.append(round(26 + (pt[1] * 4)))
             final_list.append(final_pt)
         #Return list of points
         return final_list
@@ -137,8 +137,8 @@ class Lidar:
         final_list = []
         for pt in points_list:
             final_pt = [1]
-            final_pt[0] = round(((pt[0] - 26) / 4))
-            final_pt[1] = round(((pt[1] - 28) / (-4)))
+            final_pt.append((pt[0] - 28) / (-4))
+            final_pt.append((pt[1] - 26) / 4)
             final_list.append(final_pt)
         return final_list
 
