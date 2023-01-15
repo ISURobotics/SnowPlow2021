@@ -25,6 +25,8 @@ def main():
 
     if use_pathfinding:
         object_points = lidar.prepare_obstacle_points()
+        print "Obstacles at: "
+        print object_points
         path_points = Path_Finder.generate_path(object_points)
         points = lidar.prepare_movement_points(path_points)
 
