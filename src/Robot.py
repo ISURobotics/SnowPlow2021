@@ -122,14 +122,16 @@ class Lidar:
         #FIlter points to only use those in the range of the field
         new_list = []
         for pt in point_list:
-            if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
+            # if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
+            if 4.9 > pt[0] > .9 and 7.25 > pt[1] > 0:
                 new_list.append(pt)
+		print pt
         #Convert points to correspond with the pathfinding grid
         final_list = []
         for pt in new_list:
-            final_pt = [1]
-            final_pt.append(round(28 - (pt[0] * 4)))
-            final_pt.append(round(26 + (pt[1] * 4)))
+            final_pt = []
+            final_pt.append(int(round(20 - (pt[0] * 4)))) # 20 because the robot lidar starts 2 meters from the bottom of the possible area
+            final_pt.append(int(round(26 + (pt[1] * (-4)))))
             final_list.append(final_pt)
         #Return list of points
         return final_list
@@ -138,9 +140,9 @@ class Lidar:
         #Reverse from prepare obstacle points
         final_list = []
         for pt in points_list:
-            final_pt = [1]
-            final_pt.append((pt[0] - 28) / 4)  # robot starts by looking in the negative x direction
-            final_pt.append((pt[1] - 26) / 4)  # left of robot is negative y direction
+            final_pt = []
+            final_pt.append((pt[0] - 20) / 4.0)  # robot starts by looking in the negative x direction
+            final_pt.append((pt[1] - 26) / 4.0)  # left of robot is negative y direction
             final_list.append(final_pt)
         return final_list
 

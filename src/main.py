@@ -12,7 +12,7 @@ def main():
     and begin motion of the robot
     """
     # for debugging
-    use_pathfinding = 0
+    use_pathfinding = 1
 
     lidar = Lidar()
     r = Robot()
@@ -23,12 +23,13 @@ def main():
 
     points = [(0, 0), (-2, 0), (-2, -1), (-1, -1), (-1, 0), (-2, 0)] #, (1.75, 2.5), (2.5, 2.5)] # replace with output of Ryan's Dijkstra stuff
 
-    #if use_pathfinding:
-    object_points = lidar.prepare_obstacle_points()
-    print "Obstacles at: "
-    print object_points
     if use_pathfinding:
-        path_points = Path_Finder.generate_path(object_points)
+    	object_points = lidar.prepare_obstacle_points()
+    	print "Obstacles at: "
+    	print object_points
+    #if use_pathfinding:
+        path_points = Path_Finder.path_generator(object_points)
+	print path_points
         points = lidar.prepare_movement_points(path_points)
 
     funcs = fg.get_funcs(points)

@@ -384,7 +384,7 @@ def display_path(grid, path):
     for point in range(len(path)):
         grid[path[point]] = grid[path[point]] + 1
         pyplot.imshow(grid, cmap='magma')
-        pyplot.pause(0.05)
+        #pyplot.pause(0.05)
 
     pyplot.show()
 
