@@ -28,6 +28,7 @@ class Motor:
         value.data = speed
         self.speed = speed
         self._speed_pub.publish(value)
+        print "speed published " + str(value)
 
 
 class Lidar:
@@ -64,6 +65,7 @@ class Lidar:
                 eulers = utils.quaternion_to_euler(self.pose.orientation.x, self.pose.orientation.y, self.pose.orientation.z, self.pose.orientation.w)
                 measured_val = eulers[2] # z rotation or yaw
                 # NEEDS TESTING. LOTS OF TESTING.
+                print "measured: " + str(measured_val)
                 if t.trigger_when_above:
                     if (t.value > np.pi / 2):
                         above_thres = (measured_val >= t.value) or (measured_val < t.value - 3 * np.pi / 2) # target is close to 180 degrees (pi radians)
@@ -74,9 +76,9 @@ class Lidar:
                         above_thres = (measured_val > t.value) and (measured_val <= t.value + 3 * np.pi / 2)
                     else:
                         above_thres = (measured_val > t.value) or (measured_val <= t.value - np.pi / 4)
-           # print above_thres
-           # print t.trigger_when_above
-           # print ""
+                print above_thres
+                print t.trigger_when_above
+                print ""
             if above_thres == t.trigger_when_above:
                 self.thresholds.pop(i)
                 t.function() # run the lamba associated with the threshold
@@ -168,11 +170,12 @@ class Robot:
     def set_speed(self, speed):
         self.left.set_speed(speed)
         self.right.set_speed(speed)
+        print "speed set"
 
     def set_speeds(self, leftSpeed, rightSpeed):
         self.left.set_speed(leftSpeed)
         self.right.set_speed(rightSpeed)
-
+        print "speeds set"
     def get_speeds(self):
         """
             Returns (left speed, right speed)

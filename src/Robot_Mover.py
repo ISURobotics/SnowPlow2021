@@ -35,11 +35,11 @@ class RobotMover:
         self.finish_listeners = [] # list of lambda functions
         self.maintain_angle = 0
         self.correction_mult = 0.7
-        self.correction_thres = 0.05 # radians off of maintain_angle (1 rad = around 58 degrees)
+        self.correction_thres = 0.03 # radians off of maintain_angle (1 rad = around 58 degrees)
         self.slow_thres = 0.5
-        self.slow_mult = 0.3
-        self.slow_angle_thres = 0.1
-        self.slow_angle_mult = 0.3
+        self.slow_mult = 0.5
+        self.slow_angle_thres = 0.05
+        self.slow_angle_mult = 0.7
 
     def add_finish_listener(self, func):
         self.finish_listeners.append(func)
@@ -240,7 +240,7 @@ class RobotMover:
         if correcting_right:
             self.robot.set_speeds(self.robot.get_speeds()[0], self.robot.get_speeds()[1] / self.correction_mult)
         else:
-            self.robot.set_speeds(self.robot.get_speeds()[0] / self.correction_mult, self.robot.get_speeds()[1] / self.correction_mult)
+            self.robot.set_speeds(self.robot.get_speeds()[0] / self.correction_mult, self.robot.get_speeds()[1])
 
         low_correct = self.maintain_angle - self.correction_thres
         if (low_correct < -np.pi):
@@ -266,11 +266,11 @@ class RobotMover:
             l()
 
     def slow_movement(self, lidar):
-        self.robot.set_speeds(self.robot.get_speeds()[0] * self.slow_mult, self.robot.get_speeds()[1] * self.robot.get_speeds()[0] * self.slow_mult)
+        self.robot.set_speeds(self.robot.get_speeds()[0] * self.slow_mult, self.robot.get_speeds()[1] * self.slow_mult)
         lidar.remove_listeners("slow")
 
     def slow_rotation(self, lidar):
-        self.robot.set_speeds(self.robot.get_speeds()[0] * self.slow_angle_mult, self.robot.get_speeds()[1] * self.robot.get_speeds()[0] * self.slow_angle_mult)
+        self.robot.set_speeds(self.robot.get_speeds()[0] * self.slow_angle_mult, self.robot.get_speeds()[1] * self.slow_angle_mult)
         lidar.remove_listeners("slow")
     
     def stop(self):
