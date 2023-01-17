@@ -90,8 +90,10 @@ class Lidar:
         return self.pose
 
     def wait_for_pose_set(self):
+	print "Waiting for lidar data..."
         while not self.pose_set:
             time.sleep(1)
+	print "Lidar data received."
         return
 
     def plot_points(self):
@@ -122,8 +124,8 @@ class Lidar:
         #FIlter points to only use those in the range of the field
         new_list = []
         for pt in point_list:
-            # if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
-            if 4.9 > pt[0] > .9 and 7.25 > pt[1] > 0:
+            if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
+            # if 4.9 > pt[0] > .9 and 7.25 > pt[1] > 0:
                 new_list.append(pt)
 		print pt
         #Convert points to correspond with the pathfinding grid
@@ -178,8 +180,19 @@ class Robot:
         self.left.set_speed(leftSpeed)
         self.right.set_speed(rightSpeed)
         print "speeds set"
+
     def get_speeds(self):
         """
             Returns (left speed, right speed)
         """
         return (self.left.speed, self.right.speed)
+
+    def wait_for_pub(self):
+	print "Waiting for publishers.."
+	topics = rospy.get_published_topics()
+	print topics
+	while not (['/left_motor/speed', 'std_msgs/Int8'] in topics) or not(['/right_motor/speed', 'std_msgs/Int8'] in topics):
+	    topics = rospy.get_published_topics()
+	    time.sleep(1)
+	print "Publishers active."
+	return

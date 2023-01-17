@@ -7,4 +7,7 @@ pkill -9 roscore
 pkill -9 rosout
 pkill -9 rosmaster
 
+#get the arduino pid
+kill -9 $(cat ~/ino_pid.txt)
+
 echo "Shutdown completed"

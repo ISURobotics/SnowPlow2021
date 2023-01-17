@@ -432,8 +432,8 @@ def path_generator(pos_of_cones):
     #deletes consectutive duplicates
     path = delete_duplicates(path)
 
-    #displays path
-    display_path(grid, path)
+    # displays path
+    # display_path(grid, path)
     return path
 
 
