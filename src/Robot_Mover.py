@@ -40,6 +40,7 @@ class RobotMover:
         self.slow_mult = 0.5
         self.slow_angle_thres = 0.05
         self.slow_angle_mult = 0.7
+        self.correction_overshoot = 0.01 # To get closer to the original course, correct until we're this many radians past the correct angle
 
     def add_finish_listener(self, func):
         self.finish_listeners.append(func)
@@ -173,11 +174,14 @@ class RobotMover:
         targetRadians = angle + deltaRadians
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
+        slowRadians = targetRadians - self.slow_angle_thres
+        if slowRadians < -np.pi:
+            slowRadians += 2 * np.pi
 
         print "Current: " + str(angle)
         print "Target: " + str(targetRadians)
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetRadians, lambda: self.finish_step(lidar), "rotate")
-        slow = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetRadians - self.slow_angle_thres, lambda: self.slow_rotation(lidar), "slow")
+        slow = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, slowRadians, lambda: self.slow_rotation(lidar), "slow")
 
         lidar.add_listener(thres)
         lidar.add_listener(slow)
@@ -199,11 +203,14 @@ class RobotMover:
         targetRadians = angle - deltaRadians
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
+        slowRadians = targetRadians + self.slow_angle_thres
+        if slowRadians > np.pi:
+            slowRadians -= 2 * np.pi
 
         print "Current: " + str(angle)
         print "Target: " + str(targetRadians)
         thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians, lambda: self.finish_step(lidar), "rotate")
-        slow = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians + self.slow_angle_thres, lambda: self.slow_rotation(lidar), "slow")
+        slow = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, slowRadians, lambda: self.slow_rotation(lidar), "slow")
 
         lidar.add_listener(thres)
         lidar.add_listener(slow)
@@ -216,7 +223,10 @@ class RobotMover:
             To use when rotation starts drifting left
         """
         print "correcting to the right"
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, self.maintain_angle, lambda: self.stop_correcting(lidar, True, backing_up), "stop correct")
+        targetAngle = self.maintain_angle - self.correction_overshoot
+        if targetAngle < -np.pi:
+            targetAngle += 2 * np.pi
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetAngle, lambda: self.stop_correcting(lidar, True, backing_up), "stop correct")
         if backing_up:
             self.robot.set_speeds(self.robot.get_speeds()[0] * self.correction_mult, self.robot.get_speeds()[1])
         else:
@@ -226,7 +236,10 @@ class RobotMover:
 
     def correct_left(self, lidar, backing_up):
         print "correcting to the left"
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, self.maintain_angle, lambda: self.stop_correcting(lidar, False, backing_up), "stop correct")
+        targetAngle = self.maintain_angle + self.correction_overshoot
+        if targetAngle > np.pi:
+            targetAngle -= 2 * np.pi
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetAngle, lambda: self.stop_correcting(lidar, False, backing_up), "stop correct")
         if backing_up:
             self.robot.set_speeds(self.robot.get_speeds()[0], self.robot.get_speeds()[1] * self.correction_mult)
         else:
