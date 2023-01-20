@@ -32,7 +32,7 @@ def main():
     	print "Obstacles at: "
     	print object_points
         path_points = Path_Finder.path_generator(object_points)
-	    print path_points
+        print path_points
         points = lidar.prepare_movement_points(path_points)
     else:
         points = [[0, 0], [-0.25, 0], [-0.25, 0.25], [-0.5, 0.25]]
