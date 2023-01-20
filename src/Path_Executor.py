@@ -27,7 +27,7 @@ class Path_Executor:
             Runs when finishing an action in the path sequence
             (Extra pausing or debugging stuff can be done here)
         """
-        x = raw_input()
-        if x == 'q':
-            exit()
+        # x = raw_input()
+        # if x == 'q':
+        #     exit()
         self.apply_next_action()

@@ -30,6 +30,8 @@ def main():
     if use_pathfinding:
         path_points = Path_Finder.generate_path(object_points)
         points = lidar.prepare_movement_points(path_points)
+    else:
+        points = [[0, 0], [-0.25, 0], [-0.25, 0.25], [-0.5, 0.25]]
 
     funcs = fg.get_funcs(points)
     pe = Path_Executor(rm, lidar, funcs)
