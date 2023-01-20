@@ -90,8 +90,10 @@ class Lidar:
         return self.pose
 
     def wait_for_pose_set(self):
+	print "Waiting for lidar data..."
         while not self.pose_set:
             time.sleep(1)
+	print "Lidar data received."
         return
 
     def plot_points(self):
@@ -123,13 +125,15 @@ class Lidar:
         new_list = []
         for pt in point_list:
             if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
+            # if 4.9 > pt[0] > .9 and 7.25 > pt[1] > 0:
                 new_list.append(pt)
+		print pt
         #Convert points to correspond with the pathfinding grid
         final_list = []
         for pt in new_list:
-            final_pt = [1]
-            final_pt.append(round(28 - (pt[0] * 4)))
-            final_pt.append(round(26 + (pt[1] * 4)))
+            final_pt = []
+            final_pt.append(int(round(20 - (pt[0] * 4)))) # 20 because the robot lidar starts 2 meters from the bottom of the possible area
+            final_pt.append(int(round(26 + (pt[1] * (-4)))))
             final_list.append(final_pt)
         #Return list of points
         return final_list
@@ -138,9 +142,9 @@ class Lidar:
         #Reverse from prepare obstacle points
         final_list = []
         for pt in points_list:
-            final_pt = [1]
-            final_pt.append((pt[0] - 28) / 4)  # robot starts by looking in the negative x direction
-            final_pt.append((pt[1] - 26) / 4)  # left of robot is negative y direction
+            final_pt = []
+            final_pt.append((pt[0] - 20) / 4.0)  # robot starts by looking in the negative x direction
+            final_pt.append((pt[1] - 26) / 4.0)  # left of robot is negative y direction
             final_list.append(final_pt)
         return final_list
 
@@ -176,8 +180,19 @@ class Robot:
         self.left.set_speed(leftSpeed)
         self.right.set_speed(rightSpeed)
         print "speeds set"
+
     def get_speeds(self):
         """
             Returns (left speed, right speed)
         """
         return (self.left.speed, self.right.speed)
+
+    def wait_for_pub(self):
+	print "Waiting for publishers.."
+	topics = rospy.get_published_topics()
+	print topics
+	while not (['/left_motor/speed', 'std_msgs/Int8'] in topics) or not(['/right_motor/speed', 'std_msgs/Int8'] in topics):
+	    topics = rospy.get_published_topics()
+	    time.sleep(1)
+	print "Publishers active."
+	return

@@ -12,32 +12,38 @@ def main():
     and begin motion of the robot
     """
     # for debugging
-    use_pathfinding = 0
+    use_pathfinding = 1
 
     lidar = Lidar()
     r = Robot()
     rm = RobotMover(r)
     fg = FuncGenerator(rm)
 
-    # points = [(3, 1), (2, 1), (2, 2), (2, 3), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (4, 7), (4, 6), (3, 6), (2, 6)]
 
-    points = [(0, 0), (-2, 0), (-2, -1), (-1, -1), (-1, 0), (-2, 0)] #, (1.75, 2.5), (2.5, 2.5)] # replace with output of Ryan's Dijkstra stuff
+    points = [(0, 0), (-2, 0), (-2, -1), (-1, -1), (-1, 0), (-2, 0)]
 
-    #if use_pathfinding:
-    object_points = lidar.prepare_obstacle_points()
-    print "Obstacles at: "
-    print object_points
+    lidar.wait_for_pose_set()
+
+    print "Preparing path..."
+
+
     if use_pathfinding:
-        path_points = Path_Finder.generate_path(object_points)
+    	object_points = lidar.prepare_obstacle_points()
+    	print "Obstacles at: "
+    	print object_points
+        path_points = Path_Finder.path_generator(object_points)
+	print path_points
         points = lidar.prepare_movement_points(path_points)
     else:
         points = [[0, 0], [-0.25, 0], [-0.25, 0.25], [-0.5, 0.25]]
 
     funcs = fg.get_funcs(points)
+
+    r.wait_for_pub()
+
     pe = Path_Executor(rm, lidar, funcs)
-    print "Wait for Ready, then press enter to continue"
-    x = raw_input()
-    #lidar.wait_for_pose_set()
+    # print "Wait for Ready, then press enter to continue"
+    # x = raw_input()
     pe.apply_next_action()
     # exit(0)
     rospy.spin()
