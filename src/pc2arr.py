@@ -2,6 +2,7 @@ from Robot import *
 from Robot_Mover import RobotMover
 from Path_Executor import *
 from Func_Generator import FuncGenerator
+import Lidar
 
 def main():
     """

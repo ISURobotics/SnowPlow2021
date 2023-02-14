@@ -2,6 +2,8 @@
     File: visualizer_mark_ryan.py
     Author: ISU Robotics - Snow Plow
     Creation Date: 11/14/2022
+
+    Doesn't work with the new sensors setup
 """
 import rospy
 import Robot

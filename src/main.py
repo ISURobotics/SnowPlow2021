@@ -42,7 +42,7 @@ def main():
 
     r.wait_for_pub()
 
-    pe = Path_Executor(rm, sensors.lidar, funcs)
+    pe = Path_Executor(rm, sensors, funcs)
     # print "Wait for Ready, then press enter to continue"
     # x = raw_input()
     pe.apply_next_action()

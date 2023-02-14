@@ -17,7 +17,6 @@ class Path_Executor:
         """
             Runs the next action in the path sequence
         """
-        # pose = self.lidar.get_pose()
         self.path[self.current_step](self.sensors)
         self.current_step += 1
         return self.current_step >= len(self.path)
