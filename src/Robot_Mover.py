@@ -47,7 +47,7 @@ class RobotMover:
 
     def move_forward(self, sensors, meters):
         """
-            Starts moving forward
+            Starts moving forward and creates a listener to stop at a certain distance
             sensors: a sensors object to add listeners to
             meters: the number of meters to move before stopping
         """
@@ -112,7 +112,7 @@ class RobotMover:
 
     def move_backward(self, sensors, meters):
         """
-            Starts moving backward
+            Starts moving backward and creates a listener to stop at a certain distance
             sensors: a sensors object to add listeners to
             meters: the number of meters to move before stopping
         """
@@ -178,7 +178,7 @@ class RobotMover:
 
     def rotate_left(self, sensors, degrees):
         """
-            Starts a left/counterclockwise rotation
+            Starts a left/counterclockwise rotation and creates a listener to stop at a certain angle
             sensors: a sensors object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
@@ -207,7 +207,7 @@ class RobotMover:
 
     def rotate_right(self, sensors, degrees):
         """
-            Starts a right/clockwise rotation
+            Starts a right/clockwise rotation and creates a listener to stop at a certain angle
             sensors: a sensors object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
@@ -236,7 +236,7 @@ class RobotMover:
 
     def correct_right(self, sensors, backing_up):
         """
-            To use when rotation starts drifting left
+            To use when the robot starts drifting left. Slows down the right wheels until the angle is back to straight
         """
         print "correcting to the right"
         targetAngle = self.maintain_angle - self.correction_overshoot
@@ -251,6 +251,9 @@ class RobotMover:
         sensors.add_listener(thres)
 
     def correct_left(self, sensors, backing_up):
+        """
+            To use when the robot starts drifting right. Slows down the left wheels until the angle is back to straight
+        """
         print "correcting to the left"
         targetAngle = self.maintain_angle + self.correction_overshoot
         if targetAngle > np.pi:
@@ -264,6 +267,9 @@ class RobotMover:
         sensors.add_listener(thres)
 
     def stop_correcting(self, sensors, correcting_right, backing_up):
+        """
+            Re-equalizes the speed of the wheels. Use when the robot is back to straight after correcting
+        """
         print "back to straight"
         sensors.remove_listeners('stop correct')
         if correcting_right:
@@ -284,6 +290,9 @@ class RobotMover:
         sensors.add_listener(thres)
 
     def finish_step(self, sensors):
+        """
+            Stops all wheel motion and removes all movement listeners. Runs finish listeners.
+        """
         self.robot.stop()
         print "Step done"
         sensors.remove_listeners('move')
@@ -295,17 +304,22 @@ class RobotMover:
             l()
 
     def slow_movement(self, sensors):
+        """
+            Multiplies both wheel speeds by slow_mult. Use this when close to the goal for a forward or backward movement.
+        """
         self.robot.set_speeds(self.robot.get_speeds()[0] * self.slow_mult, self.robot.get_speeds()[1] * self.slow_mult)
         sensors.remove_listeners("slow")
 
     def slow_rotation(self, sensors):
+        """
+            Multiplies both wheel speeds by slow_angle_mult. Use this when close to the goal for a rotation
+        """
         self.robot.set_speeds(self.robot.get_speeds()[0] * self.slow_angle_mult, self.robot.get_speeds()[1] * self.slow_angle_mult)
         sensors.remove_listeners("slow")
     
     def stop(self):
         """
             Stop all motion of the robot
-        :return:
         """
         print "STOPSTOPSTOPSTOP"
         # rotating = 0
