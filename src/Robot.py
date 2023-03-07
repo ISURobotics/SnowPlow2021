@@ -48,12 +48,12 @@ class Robot:
         return (self.left.speed, self.right.speed)
 
     def wait_for_pub(self):
-	print "Waiting for publishers.."
-	topics = rospy.get_published_topics()
-	print topics
-	while not (['/left_motor/speed', 'std_msgs/Int8'] in topics) or not(['/right_motor/speed', 'std_msgs/Int8'] in topics):
-	    topics = rospy.get_published_topics()
-	    time.sleep(1)
-	time.sleep(20)
-        print "Publishers active."
-	return
+    print "Waiting for publishers.."
+    topics = rospy.get_published_topics()
+    print topics
+    while not (['/left_motor/speed', 'std_msgs/Int8'] in topics) or not(['/right_motor/speed', 'std_msgs/Int8'] in topics):
+        topics = rospy.get_published_topics()
+        time.sleep(1)
+    time.sleep(20)
+    print "Publishers active."
+    return

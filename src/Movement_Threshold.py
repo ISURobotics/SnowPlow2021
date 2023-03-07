@@ -3,7 +3,7 @@ class Movement_Threshold:
     Y_AXIS = 1
     Z_ROTATION = 2
 
-    def __init__(self, axis, trigger_when_above, value, function, tag):
+    def __init__(self, axis_func, trigger_when_above, value, function, tag):
         """
             axis: X_AXIS, Y_AXIS, or Z_ROTATION (0, 1, or 2)
             trigger_when_above: true if this threshold should trigger when a value greater than this is detected, false otherwise
@@ -13,7 +13,7 @@ class Movement_Threshold:
             of the range [-pi, pi], subtract or add 2pi to bring it back into the range.
             Rotating more than pi radians (180 degrees) in a single instruction is not recommended.
         """
-        self.axis = axis
+        self.axis_func = axis_func
         self.trigger_when_above = trigger_when_above
         self.value = value
         self.function = function
