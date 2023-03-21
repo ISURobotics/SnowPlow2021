@@ -19,14 +19,20 @@ class Sensors:
     def init_imu(self):
         pass
     
-    def callback_lidar_pose(self, pose):
-        self.lidar_pose = pose
-        self.check_threshold()
+    def callback_sensor_data(self):
+        """
+            To be run every time any sensor recieves new data
+        """
+        self.check_thresholds()
 
     def check_thresholds(self):
+        """
+            To be run every time we get new data from a sensor. Iterates through the list of thresholds and runs their function if their
+            axis_func returns true
+        """
         for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
-            triggered = t.axis_func(self.lidar_pose, t)
+            triggered = t.axis_func(self, t)
             if triggered:
                 self.thresholds.pop(i)
                 t.function() # run the lamba associated with the threshold
