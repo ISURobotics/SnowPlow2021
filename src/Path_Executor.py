@@ -1,5 +1,14 @@
 class Path_Executor:
     def __init__(self, mover, sensors, path):
+        """
+            Initializes with a sequence of movement functions
+            :param: mover: The in-use instance of the Robot_Mover object.
+                    Only used when hardcoding a path for testing
+            :param: sensors: An instance of the sensors facade, to be 
+                    fed into the movement functions
+            :param: path: a list of lambdas pointing to functions in a 
+                    Robot_Mover object
+        """
         self.mover = mover
         # The robot mover has a listener system for when it finishes an action
         self.mover.add_finish_listener(lambda: self.mover_finished_action())
@@ -15,18 +24,19 @@ class Path_Executor:
 
     def apply_next_action(self):
         """
-            Runs the next action in the path sequence
+            Runs the next action in the path sequence. Returns false if there are no actions to run
         """
+        if self.current_step >= len(self.path):
+            return False
         self.path[self.current_step](self.sensors)
         self.current_step += 1
-        return self.current_step >= len(self.path)
+        return True
 
     def mover_finished_action(self):
         """
             Runs when finishing an action in the path sequence
             (Extra pausing or debugging stuff can be done here)
         """
-        # x = raw_input()
-        # if x == 'q':
-        #     exit()
-        self.apply_next_action()
+        if not self.apply_next_action():
+            print "path ended"
+            exit()
