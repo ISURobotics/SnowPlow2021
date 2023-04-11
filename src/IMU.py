@@ -1,3 +1,5 @@
+from msg import Vector3
+
 class IMU:
     """
         Gets acceleration, gyroscope, and magnetometer data from the Inertial Measurement Unit.
