@@ -18,6 +18,10 @@
 #include <Servo.h>
 #include <ros.h>
 #include <std_msgs/Int8.h>
+#include <string.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
+#include ($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 //motors
 Servo leftMotor;
@@ -26,8 +30,6 @@ Servo rightMotor;
 //motor pins
 #define leftMotorPin 9
 #define rightMotorPin 10
-
-
 
 
 //setting node name
@@ -69,6 +71,30 @@ ros::Subscriber<std_msgs::Int8> subLeft("/left_motor/speed", &readInLeft);
 ros::Subscriber<std_msgs::Int8> subRight("/right_motor/speed", &readInRight);
 
 
+//IMU Data Setup
+std_msgs::Float32MultiArray euler_array;
+std_msgs::Float32MultiArray accel_array;
+ros::Publisher<std_msgs::Float32MultiArray> pub_euler("/imu/euler", &euler_array);
+ros::Publisher<std_msgs::Float32MultiArray> pub_accel("/imu/accel", &accel_array);
+arduino.advertise(pub_euler);
+arduino.advertise(pub_accel);
+
+
+void getEuler(){
+  imu::Vector<3> euler bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+  std_msgs::Float32MultiArray eulerVector;
+  eulerVector.data = [euler.x(), euler.y(), euler.z()];
+  eulerVector.data_length = 3;
+  pub_euler.publish(&eulerVector);
+}
+
+void getAccel(){
+  imu::Vector<3> accel bno.getVecotr(Adafruit_BNO055::VECTOR_LINEARACCEL);
+  std_msgs::Float32MultiArray accelVector;
+  accelVector.data = [accel.x(), accel.y(), accel.z()];
+  accelVector.data_length = 3;
+  pub_accel.publish(&accelVector);
+}
 
 
 
