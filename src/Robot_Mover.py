@@ -37,9 +37,9 @@ class RobotMover:
         self.correction_mult = 0.7
         self.correction_thres = 0.03 # radians off of maintain_angle (1 rad = around 58 degrees)
         self.slow_thres = 0.5
-        self.slow_mult = 0.5
+        self.slow_mult = 0.7
         self.slow_angle_thres = 0.05
-        self.slow_angle_mult = 0.7
+        self.slow_angle_mult = 0.9
         self.correction_overshoot = 0.01 # To get closer to the original course, correct until we're this many radians past the correct angle
 
     def add_finish_listener(self, func):

@@ -1,3 +1,4 @@
+import time
 class Path_Executor:
     def __init__(self, mover, lidar, path):
         self.mover = mover
@@ -30,4 +31,5 @@ class Path_Executor:
         # x = raw_input()
         # if x == 'q':
         #     exit()
+        time.sleep(1)
         self.apply_next_action()

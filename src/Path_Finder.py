@@ -54,17 +54,17 @@ def find_cone_buffer(grid, pos_of_cones):
     #loops for number of cones on the field
     for num in range(len(pos_of_cones)):
         #loops to place a 5 row buffer
-        for r in range(9):
+        for r in range(5):
             #loops to place a 5 column buffer
             for c in range(11):
                 #checks if the position is out of bounds on the snowfield/grid
-                if (pos_of_cones[num][0] + r - 4) < 0 or (pos_of_cones[num][0] + r - 4) > (grid.shape[0] - 1) or (pos_of_cones[num][1] + c - 5) < 0 or (pos_of_cones[num][1] + c - 5) > (grid.shape[1] - 1):
+                if (pos_of_cones[num][0] + r - 2) < 0 or (pos_of_cones[num][0] + r - 2) > (grid.shape[0] - 1) or (pos_of_cones[num][1] + c - 5) < 0 or (pos_of_cones[num][1] + c - 5) > (grid.shape[1] - 1):
                     continue
                 #otherwise, adds that position to the cone buffer position list
                 else:
                     #checks to make sure position not already accounted for
-                    if [pos_of_cones[num][0] + r - 4, pos_of_cones[num][1] + c - 5] not in cone_buffer:
-                        cone_buffer.append([pos_of_cones[num][0] + r - 4, pos_of_cones[num][1] + c - 5])
+                    if [pos_of_cones[num][0] + r - 2, pos_of_cones[num][1] + c - 5] not in cone_buffer:
+                        cone_buffer.append([pos_of_cones[num][0] + r - 2, pos_of_cones[num][1] + c - 5])
     return cone_buffer
 
 
@@ -411,7 +411,7 @@ def path_generator(pos_of_cones):
     end4 = (7, 49)
     end5 = (8, 49)
     end6 = (8, 29)
-    end7 = (20, 29)
+    end7 = (22, 29)
 
     #for all predetermined start and endpoints, finds the best path between the two and then adds it on to the end of the
     #previously found paths

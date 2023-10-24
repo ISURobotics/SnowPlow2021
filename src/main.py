@@ -12,7 +12,7 @@ def main():
     and begin motion of the robot
     """
     # for debugging
-    use_pathfinding = 1
+    use_pathfinding = 0
 
     lidar = Lidar()
     r = Robot()
@@ -35,15 +35,15 @@ def main():
         print path_points
         points = lidar.prepare_movement_points(path_points)
     else:
-        points = [[0, 0], [-0.25, 0], [-0.25, 0.25], [-0.5, 0.25]]
+        points = [[0, 0], [-3, 0], [-3, -0.5], [-0.5, -0.5]]
 
     funcs = fg.get_funcs(points)
 
     r.wait_for_pub()
 
     pe = Path_Executor(rm, lidar, funcs)
-    # print "Wait for Ready, then press enter to continue"
-    # x = raw_input()
+    print "Wait for Ready, then press enter to continue"
+    x = raw_input()
     pe.apply_next_action()
     # exit(0)
     rospy.spin()

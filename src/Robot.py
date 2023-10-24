@@ -4,6 +4,7 @@ import time
 
 import rospy
 from std_msgs.msg import Int8
+from std_msgs.msg import Float64MultiArray
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
 from Movement_Threshold import Movement_Threshold
@@ -19,7 +20,7 @@ from typing import List
 
 class Motor:
     def __init__(self, path):
-        self._speed_pub = rospy.Publisher("{}/speed".format(path), Int8, queue_size=1)
+        self._speed_pub = rospy.Publisher("{}/speed".format(path), Int8, queue_size=5)
         self.speed = 0
 
     def set_speed(self, speed):
@@ -124,7 +125,7 @@ class Lidar:
         #FIlter points to only use those in the range of the field
         new_list = []
         for pt in point_list:
-            if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
+            if 4.0 > pt[0] > 1.1 and 7.25 > pt[1] > -7.75:
             # if 4.9 > pt[0] > .9 and 7.25 > pt[1] > 0:
                 new_list.append(pt)
 		print pt
@@ -159,6 +160,15 @@ class Lidar:
             if self.thresholds[i].tag == tag:
                 self.thresholds.pop(i)
 
+class IMU:
+    def __init__(self):
+        print("IMU sub activating...")
+        self._sub_euler = rospy.Subscriber("/imu_euler", Float64MultiArray, self.callback_euler)
+        print("IMU sub active")
+
+    def callback_euler(self, data):
+        print(data.data[0], data.data[1], data.data[2])
+
 class Robot:
     def __init__(self, rospy_init=True):
         if rospy_init:
@@ -166,6 +176,7 @@ class Robot:
         self.left = Motor('left_motor')
         self.right = Motor('right_motor')
         self.lidar = Lidar()
+        self.imu = IMU()
 
     def stop(self):
         self.left.set_speed(0)
