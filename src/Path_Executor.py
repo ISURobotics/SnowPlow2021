@@ -1,10 +1,9 @@
 import time
 class Path_Executor:
-    def __init__(self, mover, lidar, path):
+    def __init__(self, mover, path):
         self.mover = mover
         # The robot mover has a listener system for when it finishes an action
         self.mover.add_finish_listener(lambda: self.mover_finished_action())
-        self.lidar = lidar
         self.path = path
         # self.path = [
         #     lambda p_lidar: mover.rotate_left(p_lidar, 45), 
@@ -19,7 +18,7 @@ class Path_Executor:
             Runs the next action in the path sequence
         """
         # pose = self.lidar.get_pose()
-        self.path[self.current_step](self.lidar)
+        self.path[self.current_step]()
         self.current_step += 1
         return self.current_step >= len(self.path)
 

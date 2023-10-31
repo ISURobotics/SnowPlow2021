@@ -10,8 +10,8 @@ class FuncGenerator(object):
         print "move forward " + str(meters)
         if meters < 0:
             print "returning move_backward instead"
-            return lambda p_lidar: self.mover.move_backward(p_lidar, -meters)
-        return lambda p_lidar: self.mover.move_forward(p_lidar, meters)
+            return lambda: self.mover.move_backward(-meters)
+        return lambda: self.mover.move_forward(meters)
 
     def move_backward(self, meters):
         """
@@ -21,22 +21,24 @@ class FuncGenerator(object):
         print "move back " + str(meters)
         if meters < 0:
             print "returning move_forward instead"
-            return lambda p_lidar: self.mover.move_forward(p_lidar, -meters)
-        return lambda p_lidar: self.mover.move_backward(p_lidar, meters)
+            return lambda: self.mover.move_forward(-meters)
+        return lambda: self.mover.move_backward(meters)
 
     def rotate_left(self, degrees):
         """
             Returns a function to tell the mover to turn left degrees degrees
         """
         print "rotate left " + str(degrees)
-        return lambda p_lidar: self.mover.rotate_left(p_lidar, degrees)
+        #return lambda p_lidar: self.mover.rotate_left(p_lidar, degrees)
+        return lambda: self.mover.rotate_left_imu(degrees)
 
     def rotate_right(self, degrees):
         """
             Returns a function to tell the mover to turn right degrees degrees
         """
         print "rotate right " + str(degrees)
-        return lambda p_lidar: self.mover.rotate_right(p_lidar, degrees)
+        #return lambda p_lidar: self.mover.rotate_right(p_lidar, degrees)
+        return lambda: self.mover.rotate_right_imu(degrees)
 
     def get_funcs(self, points):
         """

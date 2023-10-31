@@ -35,13 +35,13 @@ def main():
         print path_points
         points = lidar.prepare_movement_points(path_points)
     else:
-        points = [[0, 0], [-3, 0], [-3, -0.5], [-0.5, -0.5]]
+        points = [[0, 0], [-0.5, 0], [-0.5, -0.5], [-1, -0.5]]
 
     funcs = fg.get_funcs(points)
 
     r.wait_for_pub()
 
-    pe = Path_Executor(rm, lidar, funcs)
+    pe = Path_Executor(rm, funcs)
     print "Wait for Ready, then press enter to continue"
     x = raw_input()
     pe.apply_next_action()

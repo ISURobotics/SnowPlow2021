@@ -45,12 +45,13 @@ class RobotMover:
     def add_finish_listener(self, func):
         self.finish_listeners.append(func)
 
-    def move_forward(self, lidar, meters):
+    def move_forward(self, meters):
         """
             Starts moving forward
             lidar: a lidar object to add listeners to
             meters: the number of meters to move before stopping
         """
+        lidar = self.robot.lidar
         print "Moving forward " + str(meters)
         pose = lidar.get_pose()
         print pose
@@ -100,9 +101,9 @@ class RobotMover:
         if (high_correct > np.pi):
             high_correct -= 2 * np.pi
         # For correction
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(lidar, False), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(False), "correct")
         lidar.add_listener(thres)
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(lidar, False), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(False), "correct")
         lidar.add_listener(thres)
 
         # finished here
@@ -110,13 +111,13 @@ class RobotMover:
         # moving_meters = meters
         self.robot.set_speed(25)  # probably not right value
 
-    def move_backward(self, lidar, meters):
+    def move_backward(self, meters):
         """
             Starts moving backward
             lidar: a lidar object to add listeners to
             meters: the number of meters to move before stopping
         """
-
+        lidar = self.robot.lidar
         print "Moving backward " + str(meters)
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
@@ -167,21 +168,22 @@ class RobotMover:
         if (high_correct > np.pi):
             high_correct -= 2 * np.pi
         # For correction
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(lidar, True), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(True), "correct")
         lidar.add_listener(thres)
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(lidar, True), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(True), "correct")
         lidar.add_listener(thres)
         # starting_pose = pose
         # moving = -1
         # moving_meters = meters
         self.robot.set_speed(-25)  # probably not right value
 
-    def rotate_left(self, lidar, degrees):
+    def rotate_left(self, degrees):
         """
             Starts a left/counterclockwise rotation
             lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
+        lidar = self.robot.lidar
         print "Rotating left " + str(degrees)
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
@@ -204,13 +206,43 @@ class RobotMover:
 
         self.robot.set_speeds(-25, 25)
 
+    def rotate_left_imu(self, degrees):
+        """
+            Starts a left/counterclockwise rotation
+            lidar: a lidar object to add listeners to
+            degrees: The number of degrees to turn from the current pose before stopping
+        """
+        imu = self.robot.imu
+        print "Rotating left " + str(degrees)
+        #pose = lidar.get_pose()
+        #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
+        angle = imu.get_euler()[0]
+        thres = None
+        deltaRadians = degrees * (np.pi / 180)
+        targetRadians = angle + deltaRadians
+        if targetRadians > np.pi:
+            targetRadians -= 2 * np.pi # Going from positive angle to negative
+        slowRadians = targetRadians - self.slow_angle_thres
+        if slowRadians < -np.pi:
+            slowRadians += 2 * np.pi
 
-    def rotate_right(self, lidar, degrees):
+        print "Current: " + str(angle)
+        print "Target: " + str(targetRadians)
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetRadians, lambda: self.finish_step(imu), "rotate")
+        slow = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, slowRadians, lambda: self.slow_rotation(imu), "slow")
+
+        imu.add_listener(thres)
+        imu.add_listener(slow)
+
+        self.robot.set_speeds(-25, 25)
+
+    def rotate_right(self, degrees):
         """
             Starts a right/clockwise rotation
             lidar: a lidar object to add listeners to
             degrees: The number of degrees to turn from the current pose before stopping
         """
+        lidar = self.robot.lidar
         print "Rotating right " + str(degrees)
         pose = lidar.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
@@ -233,16 +265,44 @@ class RobotMover:
         
         self.robot.set_speeds(25, -25)
 
+    def rotate_right_imu(self, degrees):
+        """
+            Starts a right/clockwise rotation
+            lidar: a lidar object to add listeners to
+            degrees: The number of degrees to turn from the current pose before stopping
+        """
+        imu = self.robot.imu
+        print "Rotating right " + str(degrees)
+        angle = imu.get_euler()[0]
+        thres = None
+        deltaRadians = degrees * (np.pi / 180)
+        targetRadians = angle - deltaRadians
+        if targetRadians < -np.pi:
+            targetRadians += 2 * np.pi # Going from negative angle to positive
+        slowRadians = targetRadians + self.slow_angle_thres
+        if slowRadians > np.pi:
+            slowRadians -= 2 * np.pi
 
-    def correct_right(self, lidar, backing_up):
+        print "Current: " + str(angle)
+        print "Target: " + str(targetRadians)
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetRadians, lambda: self.finish_step(imu), "rotate")
+        slow = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, slowRadians, lambda: self.slow_rotation(imu), "slow")
+
+        imu.add_listener(thres)
+        imu.add_listener(slow)
+        
+        self.robot.set_speeds(25, -25)
+
+    def correct_right(self, backing_up):
         """
             To use when rotation starts drifting left
         """
+        lidar = self.robot.lidar
         print "correcting to the right"
         targetAngle = self.maintain_angle - self.correction_overshoot
         if targetAngle < -np.pi:
             targetAngle += 2 * np.pi
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetAngle, lambda: self.stop_correcting(lidar, True, backing_up), "stop correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, targetAngle, lambda: self.stop_correcting(True, backing_up), "stop correct")
         if backing_up:
             self.robot.set_speeds(self.robot.get_speeds()[0] * self.correction_mult, self.robot.get_speeds()[1])
         else:
@@ -250,12 +310,13 @@ class RobotMover:
         lidar.remove_listeners('correct')
         lidar.add_listener(thres)
 
-    def correct_left(self, lidar, backing_up):
+    def correct_left(self, backing_up):
+        lidar = self.robot.lidar
         print "correcting to the left"
         targetAngle = self.maintain_angle + self.correction_overshoot
         if targetAngle > np.pi:
             targetAngle -= 2 * np.pi
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetAngle, lambda: self.stop_correcting(lidar, False, backing_up), "stop correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, targetAngle, lambda: self.stop_correcting(False, backing_up), "stop correct")
         if backing_up:
             self.robot.set_speeds(self.robot.get_speeds()[0], self.robot.get_speeds()[1] * self.correction_mult)
         else:
@@ -263,7 +324,8 @@ class RobotMover:
         lidar.remove_listeners('correct')
         lidar.add_listener(thres)
 
-    def stop_correcting(self, lidar, correcting_right, backing_up):
+    def stop_correcting(self, correcting_right, backing_up):
+        lidar = self.robot.lidar
         print "back to straight"
         lidar.remove_listeners('stop correct')
         if correcting_right:
@@ -278,29 +340,32 @@ class RobotMover:
         if (high_correct > np.pi):
             high_correct -= 2 * np.pi
         # For correction
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(lidar, backing_up), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, False, low_correct, lambda: self.correct_left(backing_up), "correct")
         lidar.add_listener(thres)
-        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(lidar, backing_up), "correct")
+        thres = Movement_Threshold(Movement_Threshold.Z_ROTATION, True, high_correct, lambda: self.correct_right(backing_up), "correct")
         lidar.add_listener(thres)
 
-    def finish_step(self, lidar):
+    def finish_step(self, listening_object):
+        """
+            Removes all listeners from the given object, stops all motion, and runs the functions in finish_listeners
+        """
         self.robot.stop()
         print "Step done"
-        lidar.remove_listeners('move')
-        lidar.remove_listeners('rotate')
-        lidar.remove_listeners('correct')
-        lidar.remove_listeners('stop correct')
-        lidar.remove_listeners('slow')
+        listening_object.remove_listeners('move')
+        listening_object.remove_listeners('rotate')
+        listening_object.remove_listeners('correct')
+        listening_object.remove_listeners('stop correct')
+        listening_object.remove_listeners('slow')
         for l in self.finish_listeners:
             l()
 
-    def slow_movement(self, lidar):
+    def slow_movement(self, listening_object):
         self.robot.set_speeds(self.robot.get_speeds()[0] * self.slow_mult, self.robot.get_speeds()[1] * self.slow_mult)
-        lidar.remove_listeners("slow")
+        listening_object.remove_listeners("slow")
 
-    def slow_rotation(self, lidar):
+    def slow_rotation(self, listening_object):
         self.robot.set_speeds(self.robot.get_speeds()[0] * self.slow_angle_mult, self.robot.get_speeds()[1] * self.slow_angle_mult)
-        lidar.remove_listeners("slow")
+        listening_object.remove_listeners("slow")
     
     def stop(self):
         """

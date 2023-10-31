@@ -164,10 +164,53 @@ class IMU:
     def __init__(self):
         print("IMU sub activating...")
         self._sub_euler = rospy.Subscriber("/imu_euler", Float64MultiArray, self.callback_euler)
+        self.euler = [0, 0, 0]
+        self.thresholds = []
+        
         print("IMU sub active")
 
     def callback_euler(self, data):
-        print(data.data[0], data.data[1], data.data[2])
+        self.euler = [data.data[0] * np.pi / 180, data.data[1] * np.pi / 180, data.data[2] * np.pi / 180]
+        for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
+            t = self.thresholds[i]
+            measured_val = 0
+            above_thres = False
+            if (t.axis == Movement_Threshold.Z_ROTATION):
+                eulers = self.euler
+                measured_val = eulers[2] # z rotation or yaw
+                # NEEDS TESTING. LOTS OF TESTING.
+                print "measured: " + str(measured_val)
+                if t.trigger_when_above:
+                    if (t.value > np.pi / 2):
+                        above_thres = (measured_val >= t.value) or (measured_val < t.value - 3 * np.pi / 2) # target is close to 180 degrees (pi radians)
+                    else:
+                        above_thres = (measured_val >= t.value) and (measured_val < t.value + np.pi / 4)
+                else:
+                    if (t.value < np.pi / 2):
+                        above_thres = (measured_val > t.value) and (measured_val <= t.value + 3 * np.pi / 2)
+                    else:
+                        above_thres = (measured_val > t.value) or (measured_val <= t.value - np.pi / 4)
+                #print above_thres
+                #print t.trigger_when_above
+                #print ""
+            if above_thres == t.trigger_when_above:
+                self.thresholds.pop(i)
+                t.function() # run the lamba associated with the threshold
+        #print(data.data[0], data.data[1], data.data[2])
+
+    def get_euler(self):
+        return self.euler
+
+    def add_listener(self, threshold):
+        self.thresholds.append(threshold)
+
+    def remove_listeners(self, tag):
+        """
+            Removes all listeners with the given tag
+        """
+        for i in range(len(self.thresholds) - 1, -1, -1):
+            if self.thresholds[i].tag == tag:
+                self.thresholds.pop(i)
 
 class Robot:
     def __init__(self, rospy_init=True):
