@@ -170,6 +170,7 @@ class IMU:
         print("IMU sub active")
 
     def callback_euler(self, data):
+        print "new imu data"
         self.euler = [data.data[0] * np.pi / 180, data.data[1] * np.pi / 180, data.data[2] * np.pi / 180]
         for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]

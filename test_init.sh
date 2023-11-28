@@ -16,7 +16,8 @@ done
 echo "roscore started. Starting arduino serial node..."
 
 # boot up the rosserial node for arduino communication
-rosrun rosserial_python serial_node.py /dev/ttyACM0 &
+rosrun rosserial_python serial_node.py __name:="arduino1" /dev/ttyACM0 &
+rosrun rosserial_python serial_node.py __name:="arduino2" /dev/ttyACM1 &
 echo "$!" > ~/ino_pid.txt 
 
 sleep 5

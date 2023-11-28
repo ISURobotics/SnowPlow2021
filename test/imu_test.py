@@ -15,3 +15,5 @@ def main():
     rospy.spin()
     while not rospy.is_shutdown():
         pass
+
+main()
