@@ -13,6 +13,7 @@
                  - Arduino will use the right joystick (elevator - up/down, & aileron - left/right) to control steering
   * 3. ROS Mode  - Controller must be be connected and in FULL THROTTLE POSITION, then disconnected/turned off to go into ROS mode
                  - Arduino will listen for inputs from (-100 - full reverse)  
+  Try uploading this to the motor arduino, don't use the other sketches.
 */
 
 #include <Servo.h>
