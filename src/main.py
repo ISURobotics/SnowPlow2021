@@ -26,7 +26,7 @@ def main():
 
     print "Preparing path..."
 
-    points = []
+   # points = []
     if use_pathfinding:
     	object_points = lidar.prepare_obstacle_points()
     	print "Obstacles at: "
@@ -35,15 +35,16 @@ def main():
         print path_points
         points = lidar.prepare_movement_points(path_points)
     else:
-        points = [[0, 0], [-0.5, 0], [-0.5, -0.5], [-1, -0.5]]
-
+        pass
+        #points = [[0, 0], [-10, 0]]
+    print points
     funcs = fg.get_funcs(points)
 
     r.wait_for_pub()
 
     pe = Path_Executor(rm, funcs)
-    print "Wait for Ready, then press enter to continue"
-    x = raw_input()
+    # print "Wait for Ready, then press enter to continue"
+    # x = raw_input()
     pe.apply_next_action()
     # exit(0)
     rospy.spin()
