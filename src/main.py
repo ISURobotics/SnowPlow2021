@@ -20,7 +20,7 @@ def main():
     fg = FuncGenerator(rm)
 
 
-    points = [(0, 0), (-2, 0), (-2, -1), (-1, -1), (-1, 0), (-2, 0)]
+    points = [(0, 0), (-0.5, 0), (-0.5, -1), (-1, -1), (-1, 0), (-2, 0)]
 
     lidar.wait_for_pose_set()
 
