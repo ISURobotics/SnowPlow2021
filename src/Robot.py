@@ -178,7 +178,7 @@ class IMU:
             above_thres = False
             if (t.axis == Movement_Threshold.Z_ROTATION):
                 eulers = self.euler
-                measured_val = eulers[2] # z rotation or yaw
+                measured_val = eulers[0] # z rotation or yaw
                 # NEEDS TESTING. LOTS OF TESTING.
                 print "measured: " + str(measured_val)
                 if t.trigger_when_above:
