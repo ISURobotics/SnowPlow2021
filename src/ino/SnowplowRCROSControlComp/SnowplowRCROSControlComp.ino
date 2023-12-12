@@ -244,7 +244,11 @@ void loop() {
   rightMotorOutputRC = elevatorOutput - alieronOutput;
 
 
-
+  if (pulseTimeT > 1600 && controllerConnect) {
+    digitalWrite(13, HIGH);
+  } else {
+    digitalWrite(13, LOW);
+  }
   
 
   //if the throttle is all the way up and the controller is connected, the arduino will be in RC mode and listen to input from elevator and aileron inputs
@@ -264,15 +268,19 @@ void loop() {
   }
   //otherwise, the controller must be disconnected so the arduino be be in ROS mode, listening to topics listed above over rosserial
   else {
-    leftMotor.writeMicroseconds(map(leftMotorInputROS, -100, 100, 1000, 2000));
-    rightMotor.writeMicroseconds(flipPolarity(map(rightMotorInputROS, -100, 100, 1000, 2000)));
+    leftMotor.writeMicroseconds(flipPolarity(map(leftMotorInputROS, -100, 100, 1000, 2000)));
+    rightMotor.writeMicroseconds(map(rightMotorInputROS, -100, 100, 1000, 2000));
   }
   
   //calls all callbacks waiting to be called
   arduino.spinOnce();
 
   
-  delay(20);
+  delay(10);
+  if ((leftMotorInputROS != 0 || rightMotorInputROS != 0) && (!controllerConnect || pulseTimeT <= 1600)) {
+      digitalWrite(13, HIGH);
+  }
+  delay(10);
 
 }
 
