@@ -258,8 +258,8 @@ void loop() {
       leftMotorOutputRC = 1500;
     if(rightMotorOutputRC > 1460 && rightMotorOutputRC < 1540)
       rightMotorOutputRC = 1500;
-    leftMotor.writeMicroseconds(leftMotorOutputRC);
-    rightMotor.writeMicroseconds(flipPolarity(rightMotorOutputRC));
+    leftMotor.writeMicroseconds(flipPolarity(leftMotorOutputRC));
+    rightMotor.writeMicroseconds(rightMotorOutputRC);
   }
   //otherwise, if the throttle is not all the way up and the controller is connected, the arduino will be in dead mode, sending no movement commands
   else if (pulseTimeT < 1600 && controllerConnect){
@@ -286,7 +286,7 @@ void loop() {
 
 
 //changes the direction the motor is spinning
-//this is needed for our setup since the right motor's polarity needs to be reversed
+//this is needed for our setup since the left motor's polarity needs to be reversed
 int flipPolarity(int motorSpeed) {
   motorSpeed -= 1500;
   motorSpeed = -motorSpeed;
