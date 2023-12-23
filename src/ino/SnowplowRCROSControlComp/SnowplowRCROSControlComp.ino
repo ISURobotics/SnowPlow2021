@@ -243,14 +243,54 @@ void loop() {
   leftMotorOutputRC = elevatorOutput + alieronOutput;
   rightMotorOutputRC = elevatorOutput - alieronOutput;
 
+   //Debug
+//  if (pulseTimeT > 1600 && controllerConnect) {
+//    digitalWrite(13, HIGH);
+//  } else {
+//    digitalWrite(13, LOW);
+//  }
+//  
 
-  if (pulseTimeT > 1600 && controllerConnect) {
-    digitalWrite(13, HIGH);
-  } else {
-    digitalWrite(13, LOW);
+
+
+
+
+
+
+
+//if the throttle is all the way up and the controller is connected, the arduino should be in ROS mode, listening to topics listed above over rosserial
+  if(pulseTimeT >= 1575 && controllerConnect) {
+    
+    leftMotor.writeMicroseconds(flipPolarity(map(leftMotorInputROS, -100, 100, 1000, 2000)));
+    rightMotor.writeMicroseconds(map(rightMotorInputROS, -100, 100, 1000, 2000));
+    
   }
-  
+//If the throttle is in the middle, the arduino will be in RC mode and listen to input from elevator and aileron inputs
+  else if (pulseTimeT < 1575 && pulseTimeT > 1450 && controllerConnect){
+    
+    //Applying dead zones to both motor controllers since the RC remote being used isn't exact
+    if(leftMotorOutputRC > 1460 && leftMotorOutputRC < 1540) 
+      leftMotorOutputRC = 1500;
+    if(rightMotorOutputRC > 1460 && rightMotorOutputRC < 1540)
+      rightMotorOutputRC = 1500;
+    leftMotor.writeMicroseconds(flipPolarity(leftMotorOutputRC));
+    rightMotor.writeMicroseconds(rightMotorOutputRC);
+    
+  }
+//Otherwise, if the throttle is all the way down, the controller will be in dead mode and will not move
+  else {
+    leftMotor.writeMicroseconds(1500);
+    rightMotor.writeMicroseconds(1500);
+  }
 
+
+
+
+
+
+
+
+/*
   //if the throttle is all the way up and the controller is connected, the arduino will be in RC mode and listen to input from elevator and aileron inputs
   if(pulseTimeT >= 1600 && controllerConnect) {
     //Applying dead zones to both motor controllers since the RC remote being used isn't exact
@@ -266,21 +306,29 @@ void loop() {
     leftMotor.writeMicroseconds(1500);
     rightMotor.writeMicroseconds(1500);
   }
-  //otherwise, the controller must be disconnected so the arduino be be in ROS mode, listening to topics listed above over rosserial
+  //otherwise, the controller must be disconnected so the arduino should be in ROS mode, listening to topics listed above over rosserial
   else {
     leftMotor.writeMicroseconds(flipPolarity(map(leftMotorInputROS, -100, 100, 1000, 2000)));
     rightMotor.writeMicroseconds(map(rightMotorInputROS, -100, 100, 1000, 2000));
   }
+  */
+
+
+
+
+
+
+
   
   //calls all callbacks waiting to be called
   arduino.spinOnce();
 
-  
-  delay(10);
-  if ((leftMotorInputROS != 0 || rightMotorInputROS != 0) && (!controllerConnect || pulseTimeT <= 1600)) {
-      digitalWrite(13, HIGH);
-  }
-  delay(10);
+  //Debug
+//  delay(10);
+//  if ((leftMotorInputROS != 0 || rightMotorInputROS != 0) && (!controllerConnect || pulseTimeT <= 1600)) {
+//      digitalWrite(13, HIGH);
+//  }
+//  delay(10);
 
 }
 
