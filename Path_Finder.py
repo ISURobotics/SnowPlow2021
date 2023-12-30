@@ -412,8 +412,8 @@ def path_generator(pos_of_cones):
 # all predetermined start and endpoints
     start1 = (20, 26)
     end1 = (8, 26)
-    end2 = (8, 5.5)
-    end3 = (8.5,5.5)
+    end2 = (8, 6.5)
+    end3 = (8.5,6.5)
     end4 = (8.5,6)
     end5 = (7, 6)
     end6 = (7, 48.5)
