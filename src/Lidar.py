@@ -23,7 +23,7 @@ class Lidar:
             print "Ready"
             self.pose_set = True
         self.pose = data.pose
-        self.sensors.callback_lidar_pose(self.pose)
+        self.sensors.sensor_data()
 
     def get_points(self):
         return self.points  # points data is returned as (x, y, color)

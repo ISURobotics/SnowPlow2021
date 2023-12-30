@@ -12,8 +12,8 @@ def main():
     create the object map with lidar data,
     and begin motion of the robot
     """
-    # for debugging
-    use_pathfinding = 1
+    # for debugging - set to True for competition
+    use_pathfinding = False
 
     sensors = Sensors()
     r = Robot()
@@ -21,13 +21,14 @@ def main():
     fg = FuncGenerator(rm)
 
     sensors.init_lidar()
+    sensors.init_imu()
 
-    points = [(0, 0), (-2, 0), (-2, -1), (-1, -1), (-1, 0), (-2, 0)]
+    points = [(0, 0), (-0.5, 0), (-0.5, -1), (-1, -1), (-1, 0), (-2, 0)]
 
 
     print "Preparing path..."
 
-    points = []
+   # points = []
     if use_pathfinding:
         object_points = sensors.get_obstacle_points()
         print "Obstacles at: "
@@ -36,13 +37,14 @@ def main():
         print path_points
         points = sensors.get_movement_points(path_points)
     else:
-        points = [[0, 0], [-0.25, 0], [-0.25, 0.25], [-0.5, 0.25]]
-
+        pass
+        #points = [[0, 0], [-10, 0]]
+    print points
     funcs = fg.get_funcs(points)
 
     r.wait_for_pub()
 
-    pe = Path_Executor(rm, sensors, funcs)
+    pe = Path_Executor(rm, funcs)
     # print "Wait for Ready, then press enter to continue"
     # x = raw_input()
     pe.apply_next_action()

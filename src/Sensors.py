@@ -56,3 +56,6 @@ class Sensors:
     
     def get_movement_points(self, points_list):
         return self.lidar.prepare_movement_points(points_list)
+    
+    def get_euler(self):
+        return self.imu.get_euler()
