@@ -33,3 +33,7 @@ To change which git user is used on the nano:
 ```git config user.email "you@example.com"```  
 ```git config user.name "Your Name"```  
 Remember to update ssh keys as well  
+
+Lidar IPs:  
+SICK LMS511: 192.168.1.2  
+SICK TiM551: 192.168.1.3

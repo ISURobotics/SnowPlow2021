@@ -4,6 +4,7 @@ from Path_Executor import *
 from Func_Generator import FuncGenerator
 import Path_Finder
 import time
+import Sensors
 
 def main():
     """
@@ -11,29 +12,30 @@ def main():
     create the object map with lidar data,
     and begin motion of the robot
     """
-    # for debugging
-    use_pathfinding = 0
+    # for debugging - set to True for competition
+    use_pathfinding = False
 
-    lidar = Lidar()
+    sensors = Sensors()
     r = Robot()
     rm = RobotMover(r)
     fg = FuncGenerator(rm)
 
+    sensors.init_lidar()
+    sensors.init_imu()
 
     points = [(0, 0), (-0.5, 0), (-0.5, -1), (-1, -1), (-1, 0), (-2, 0)]
 
-    lidar.wait_for_pose_set()
 
     print "Preparing path..."
 
    # points = []
     if use_pathfinding:
-    	object_points = lidar.prepare_obstacle_points()
-    	print "Obstacles at: "
-    	print object_points
+        object_points = sensors.get_obstacle_points()
+        print "Obstacles at: "
+        print object_points
         path_points = Path_Finder.path_generator(object_points)
         print path_points
-        points = lidar.prepare_movement_points(path_points)
+        points = sensors.get_movement_points(path_points)
     else:
         pass
         #points = [[0, 0], [-10, 0]]
