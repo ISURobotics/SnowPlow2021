@@ -59,33 +59,19 @@ def find_cone_buffer(grid, pos_of_cones):
     cone_buffer = []
     # loops for number of cones on the field
     for num in range(len(pos_of_cones)):
-<<<<<<< HEAD
+        # I'm suspicious about the most recent change. Test if possible
         # loops to place a row buffer around the cone
         for r in range(2 * cb_height + 1):
             # loops to place a column buffer around the cones
             for c in range(2 * cb_width + 1):
                 # checks if the position is out of bounds on the snowfield/grid
                 if (pos_of_cones[num][0] + r - cb_height) < 0 or (pos_of_cones[num][0] + r - cb_height) > (grid.shape[0] - 1) or (pos_of_cones[num][1] + c - cb_width) < 0 or (pos_of_cones[num][1] + c - cb_width) > (grid.shape[1] - 1):
-=======
-        #loops to place a 5 row buffer
-        for r in range(5):
-            #loops to place a 5 column buffer
-            for c in range(11):
-                #checks if the position is out of bounds on the snowfield/grid
-                if (pos_of_cones[num][0] + r - 2) < 0 or (pos_of_cones[num][0] + r - 2) > (grid.shape[0] - 1) or (pos_of_cones[num][1] + c - 5) < 0 or (pos_of_cones[num][1] + c - 5) > (grid.shape[1] - 1):
->>>>>>> imu-full-integration
                     continue
                 # otherwise, adds that position to the cone buffer position list
                 else:
-<<<<<<< HEAD
                     # checks to make sure position not already accounted for
                     if [pos_of_cones[num][0] + r - cb_height, pos_of_cones[num][1] + c - cb_width] not in cone_buffer:
                         cone_buffer.append([pos_of_cones[num][0] + r - cb_height, pos_of_cones[num][1] + c - cb_width])
-=======
-                    #checks to make sure position not already accounted for
-                    if [pos_of_cones[num][0] + r - 2, pos_of_cones[num][1] + c - 5] not in cone_buffer:
-                        cone_buffer.append([pos_of_cones[num][0] + r - 2, pos_of_cones[num][1] + c - 5])
->>>>>>> imu-full-integration
     return cone_buffer
 
 
