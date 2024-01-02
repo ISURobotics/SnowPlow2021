@@ -5,11 +5,11 @@ import numpy as np
 class IMU:
     def __init__(self, sensors):
         self.sensors = sensors
-        print("IMU sub activating...")
+        print "IMU sub activating..."
         self._sub_euler = rospy.Subscriber("/imu_euler", Float64MultiArray, self.callback_euler)
         self.euler = [0, 0, 0]
         
-        print("IMU sub active")
+        print "IMU sub active"
 
     def callback_euler(self, data):
         print "new imu data"
