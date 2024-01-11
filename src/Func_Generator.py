@@ -1,5 +1,8 @@
-class FuncGenerator(object):
-
+class Func_Generator(object):
+    """
+        This class is used to convert a path of (row, column) points into a list of movement functions, 
+        which the Path_Executor can run in seqence.
+    """
     def __init__(self, mover):
         self.mover = mover
 

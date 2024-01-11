@@ -5,6 +5,7 @@ def dist(p, oldPos):
     """
         Returns the distance between two pose objects
         p and oldPos are both pose objects
+        This isn't used anywhere; we track the distance moved using another method
     """
     return np.sqrt(
         np.power(p.position.x - oldPos.position.x, 2) + np.power(p.position.y - oldPos.position.y, 2) + np.power(
@@ -17,6 +18,7 @@ def angle_between(pose1, pose2):
         Return value will be in the range [0, pi]
         pose1 and pose2 are both pose objects
         TODO: Test
+        I don't think we use this anywhere
     """
     rad1 = 2 * np.arctan(pose1.orientation.z / pose1.orientation.w)
     rad2 = 2 * np.arctan(pose2.orientation.z / pose2.orientation.w)
@@ -29,6 +31,7 @@ def quaternion_to_euler(x, y, z, w):
         roll is rotation around x in radians (counterclockwise)
         pitch is rotation around y in radians (counterclockwise)
         yaw is rotation around z in radians (counterclockwise)
+        This one IS used regularly
     """
     t0 = +2.0 * (w * x + y * z)
     t1 = +1.0 - 2.0 * (x * x + y * y)

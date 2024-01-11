@@ -26,7 +26,7 @@ last_loop = time.time()
 # https://robotics.stackexchange.com/questions/19290/what-is-the-definition-of-the-contents-of-pointcloud2/20401#20401
 
 
-class RobotMover:
+class Robot_Mover:
 
     def __init__(self, robot):
         """

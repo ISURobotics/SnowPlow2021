@@ -6,7 +6,10 @@ import numpy as np
 import utils
 
 class Sensors:
-
+    """
+        This class acts as a facade for the sensors on the robot, currently including the Lidar and IMU.
+        It also stores all active listeners for sensor values.
+    """
     def __init__(self):
         self.lidar = Lidar(self)
         self.imu = IMU(self)
@@ -21,7 +24,8 @@ class Sensors:
     
     def callback_sensor_data(self):
         """
-            To be run every time any sensor recieves new data
+            To be run every time any sensor recieves new data.
+            This will check some sensors that haven't been updated since the last time this was checked, but that shouldn't be a huge deal.
         """
         self.check_thresholds()
 
