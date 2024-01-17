@@ -13,7 +13,10 @@ class IMU:
 
     def callback_euler(self, data):
         print "new imu data"
-        self.euler = [data.data[0] * np.pi / 180, data.data[1] * np.pi / 180, data.data[2] * np.pi / 180]
+        x_rot = data.data[0] * np.pi / 180
+        if x_rot > np.pi:
+            x_rot -= 2 * np.pi
+        self.euler = [x_rot, data.data[1] * np.pi / 180, data.data[2] * np.pi / 180]
         self.sensors.callback_sensor_data()
 
     def get_euler(self):

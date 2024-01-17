@@ -1,5 +1,5 @@
-import Lidar
-import IMU
+from Lidar import *
+from IMU import *
 
 from Movement_Threshold import Movement_Threshold
 import numpy as np

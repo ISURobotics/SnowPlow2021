@@ -1,5 +1,5 @@
 from Robot import *
-from Robot_Mover import RobotMover
+from Robot_Mover import *
 from Path_Executor import *
 from Func_Generator import *
 import Path_Finder
@@ -17,7 +17,7 @@ def main():
 
     r = Robot()
     sensors = r.sensors # We were creating a sensors object here and in robot until recently. Now we only create one in robot and use it here
-    rm = RobotMover(r)
+    rm = Robot_Mover(r)
     fg = Func_Generator(rm)
 
     sensors.init_lidar()

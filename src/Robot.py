@@ -12,8 +12,8 @@ import rospy
 # import matplotlib.pyplot as plt
 # import utils
 # import numpy as np
-import Motor
-import Sensors
+from Motor import *
+from Sensors import *
 # import Lidar
 # from typing import List
 

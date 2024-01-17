@@ -70,32 +70,32 @@ class Robot_Mover:
             slow_delta = (meters - self.slow_thres) * np.cos(angle)
             if self.slow_thres > meters:
                 slow_delta = (meters / 2) * np.cos(angle)
-            thres = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + delta, lambda: self.finish_step(sensors), "move")
-            slow = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + slow_delta, lambda: self.slow_movement(sensors), "slow")
+            thres = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + delta, lambda: self.finish_step(), "move")
+            slow = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + slow_delta, lambda: self.slow_movement(), "slow")
             print "moving in +x"
         elif (angle >= np.pi * (1.0 / 4) and angle < np.pi * (3.0 / 4)): # Roughly positive y
             delta = meters * np.sin(angle)
             slow_delta = (meters - self.slow_thres) * np.sin(angle)
             if self.slow_thres > meters:
                 slow_delta = (meters / 2) * np.sin(angle)
-            thres = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + delta, lambda: self.finish_step(sensors), "move")
-            slow = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + slow_delta, lambda: self.slow_movement(sensors), "slow")
+            thres = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + delta, lambda: self.finish_step(), "move")
+            slow = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + slow_delta, lambda: self.slow_movement(), "slow")
             print "moving in +y"
         elif (angle >= np.pi * (3.0 / 4) or angle < np.pi * -(3.0 / 4)): # Roughly negative x
             delta = meters * np.cos(angle) # This will be negative
             slow_delta = (meters - self.slow_thres) * np.cos(angle)
             if self.slow_thres > meters:
                 slow_delta = (meters / 2) * np.cos(angle)
-            thres = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + delta, lambda: self.finish_step(sensors), "move")
-            slow = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + slow_delta, lambda: self.slow_movement(sensors), "slow")
+            thres = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + delta, lambda: self.finish_step(), "move")
+            slow = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + slow_delta, lambda: self.slow_movement(), "slow")
             print "moving in -x"
         elif (angle < np.pi * -(1.0 / 4) and angle > np.pi * -(3.0 / 4)): # Roughly negative y
             delta = meters * np.sin(angle) # Negative
             slow_delta = (meters - self.slow_thres) * np.sin(angle)
             if self.slow_thres > meters:
                 slow_delta = (meters / 2) * np.sin(angle)
-            thres = Movement_Threshold(Axes.LIDAR_Y, False, pose.position.y + delta, lambda: self.finish_step(sensors), "move")
-            slow = Movement_Threshold(Axes.LIDAR_Y, False, pose.position.y + slow_delta, lambda: self.slow_movement(sensors), "slow")
+            thres = Movement_Threshold(Axes.LIDAR_Y, False, pose.position.y + delta, lambda: self.finish_step(), "move")
+            slow = Movement_Threshold(Axes.LIDAR_Y, False, pose.position.y + slow_delta, lambda: self.slow_movement(), "slow")
             print "moving in -y"
         assert thres != None
         sensors.add_listener(thres)
@@ -107,9 +107,9 @@ class Robot_Mover:
         if (high_correct > np.pi):
             high_correct -= 2 * np.pi
         # For correction
-        thres = Movement_Threshold(Axes.IMU_ROT, False, low_correct, lambda: self.correct_left(sensors, False), "correct")
+        thres = Movement_Threshold(Axes.IMU_ROT, False, low_correct, lambda: self.correct_left(False), "correct")
         sensors.add_listener(thres)
-        thres = Movement_Threshold(Axes.IMU_ROT, True, high_correct, lambda: self.correct_right(sensors, False), "correct")
+        thres = Movement_Threshold(Axes.IMU_ROT, True, high_correct, lambda: self.correct_right(False), "correct")
         sensors.add_listener(thres)
         self.robot.set_speed(25)  # probably not right value
 
@@ -132,32 +132,32 @@ class Robot_Mover:
             slow_delta = -(meters - self.slow_thres) * np.cos(angle)
             if self.slow_thres > meters:
                 slow_delta = -(meters / 2) * np.cos(angle)
-            thres = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + delta, lambda: self.finish_step(sensors), "move")
-            slow = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + slow_delta, lambda: self.slow_movement(sensors), "slow")
+            thres = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + delta, lambda: self.finish_step(), "move")
+            slow = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + slow_delta, lambda: self.slow_movement(), "slow")
             print "positive x"
         elif (angle >= np.pi * (1.0 / 4) and angle < np.pi * (3.0 / 4)): # Roughly positive y
             delta = -meters * np.sin(angle)
             slow_delta = -(meters - self.slow_thres) * np.sin(angle)
             if self.slow_thres > meters:
                 slow_delta = -(meters / 2) * np.sin(angle)
-            thres = Movement_Threshold(Axes.LIDAR_Y, False, pose.position.y + delta, lambda: self.finish_step(sensors), "move")
-            slow = Movement_Threshold(Axes.LIDAR_Y, False, pose.position.y + slow_delta, lambda: self.slow_movement(sensors), "slow")
+            thres = Movement_Threshold(Axes.LIDAR_Y, False, pose.position.y + delta, lambda: self.finish_step(), "move")
+            slow = Movement_Threshold(Axes.LIDAR_Y, False, pose.position.y + slow_delta, lambda: self.slow_movement(), "slow")
 
         elif (angle >= np.pi * (3.0 / 4) or angle < np.pi * -(3.0 / 4)): # Roughly negative x
             delta = -meters * np.cos(angle)
             slow_delta = -(meters - self.slow_thres) * np.cos(angle)
             if self.slow_thres > meters:
                 slow_delta = -(meters / 2) * np.cos(angle)
-            thres = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + delta, lambda: self.finish_step(sensors), "move")
-            slow = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + slow_delta, lambda: self.slow_movement(sensors), "slow")
+            thres = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + delta, lambda: self.finish_step(), "move")
+            slow = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + slow_delta, lambda: self.slow_movement(), "slow")
 
         elif (angle < np.pi * -(1.0 / 4) and angle > np.pi * -(3.0 / 4)): # Roughly negative y
             delta = -meters * np.sin(angle)
             slow_delta = -(meters - self.slow_thres) * np.sin(angle)
             if self.slow_thres > meters:
                 slow_delta = -(meters / 2) * np.sin(angle)
-            thres = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + delta, lambda: self.finish_step(sensors), "move")
-            slow = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + slow_delta, lambda: self.slow_movement(sensors), "slow")
+            thres = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + delta, lambda: self.finish_step(), "move")
+            slow = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + slow_delta, lambda: self.slow_movement(), "slow")
 
         assert thres != None
         sensors.add_listener(thres)
@@ -170,9 +170,9 @@ class Robot_Mover:
         if (high_correct > np.pi):
             high_correct -= 2 * np.pi
         # For correction
-        thres = Movement_Threshold(Axes.IMU_ROT, False, low_correct, lambda: self.correct_left(sensors, True), "correct")
+        thres = Movement_Threshold(Axes.IMU_ROT, False, low_correct, lambda: self.correct_left(True), "correct")
         sensors.add_listener(thres)
-        thres = Movement_Threshold(Axes.IMU_ROT, True, high_correct, lambda: self.correct_right(sensors, True), "correct")
+        thres = Movement_Threshold(Axes.IMU_ROT, True, high_correct, lambda: self.correct_right(True), "correct")
         sensors.add_listener(thres)
         self.robot.set_speed(-25)  # probably not right value
 
@@ -197,8 +197,8 @@ class Robot_Mover:
 
         print "Current: " + str(angle)
         print "Target: " + str(targetRadians)
-        thres = Movement_Threshold(Axes.LIDAR_ROT, True, targetRadians, lambda: self.finish_step(sensors), "rotate")
-        slow = Movement_Threshold(Axes.LIDAR_ROT, True, slowRadians, lambda: self.slow_rotation(sensors), "slow")
+        thres = Movement_Threshold(Axes.LIDAR_ROT, True, targetRadians, lambda: self.finish_step(), "rotate")
+        slow = Movement_Threshold(Axes.LIDAR_ROT, True, slowRadians, lambda: self.slow_rotation(), "slow")
 
         sensors.add_listener(thres)
         sensors.add_listener(slow)
@@ -256,8 +256,8 @@ class Robot_Mover:
 
         print "Current: " + str(angle)
         print "Target: " + str(targetRadians)
-        thres = Movement_Threshold(Axes.LIDAR_ROT, False, targetRadians, lambda: self.finish_step(sensors), "rotate")
-        slow = Movement_Threshold(Axes.LIDAR_ROT, False, slowRadians, lambda: self.slow_rotation(sensors), "slow")
+        thres = Movement_Threshold(Axes.LIDAR_ROT, False, targetRadians, lambda: self.finish_step(), "rotate")
+        slow = Movement_Threshold(Axes.LIDAR_ROT, False, slowRadians, lambda: self.slow_rotation(), "slow")
 
         sensors.add_listener(thres)
         sensors.add_listener(slow)
@@ -300,7 +300,7 @@ class Robot_Mover:
         targetAngle = self.maintain_angle - self.correction_overshoot
         if targetAngle < -np.pi:
             targetAngle += 2 * np.pi
-        thres = Movement_Threshold(Axes.IMU_ROT, False, targetAngle, lambda: self.stop_correcting(sensors, True, backing_up), "stop correct")
+        thres = Movement_Threshold(Axes.IMU_ROT, False, targetAngle, lambda: self.stop_correcting(True, backing_up), "stop correct")
         if backing_up:
             self.robot.set_speeds(self.robot.get_speeds()[0] * self.correction_mult, self.robot.get_speeds()[1])
         else:
@@ -317,7 +317,7 @@ class Robot_Mover:
         targetAngle = self.maintain_angle + self.correction_overshoot
         if targetAngle > np.pi:
             targetAngle -= 2 * np.pi
-        thres = Movement_Threshold(Axes.IMU_ROT, True, targetAngle, lambda: self.stop_correcting(sensors, False, backing_up), "stop correct")
+        thres = Movement_Threshold(Axes.IMU_ROT, True, targetAngle, lambda: self.stop_correcting(False, backing_up), "stop correct")
         if backing_up:
             self.robot.set_speeds(self.robot.get_speeds()[0], self.robot.get_speeds()[1] * self.correction_mult)
         else:
