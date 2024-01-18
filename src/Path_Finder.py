@@ -413,13 +413,13 @@ def path_generator(pos_of_cones):
     # all predetermined start and endpoints
     start1 = (20, 26)
     end1 = (8, 26)
-    end2 = (8, 5.5)
-    end3 = (8.5, 5.5)
-    end4 = (8.5, 6)
+    end2 = (8, 7)
+    end3 = (9, 7)
+    end4 = (9, 6)
     end5 = (7, 6)
-    end6 = (7, 48.5)
-    end7 = (6.5, 48.5)
-    end8 = (6.5, 49)
+    end6 = (7, 48)
+    end7 = (6, 48)
+    end8 = (6, 49)
     end9 = (8, 49)
     end10 = (8, 29)
     end11 = (22, 29)
@@ -445,7 +445,7 @@ def path_generator(pos_of_cones):
     path.extend(path_finder(grid, start9, end9))
     start10 = find_pos_nearby_end(np.array(grid, copy=True), start9, end9)
     path.extend(path_finder(grid, start10, end10))
-    start11 = find_pos_nearby_end(np.array(grid, copy=True), start11, end11)
+    start11 = find_pos_nearby_end(np.array(grid, copy=True), start10, end10)
     path.extend(path_finder(grid, start11, end11))
 
     # deletes consecutive duplicates
