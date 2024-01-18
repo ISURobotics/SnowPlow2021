@@ -42,6 +42,8 @@ class Robot_Mover:
         self.slow_angle_thres = 0.05
         self.slow_angle_mult = 0.9
         self.correction_overshoot = 0.01 # To get closer to the original course, correct until we're this many radians past the correct angle
+        self.left_turn_offset = -0.01 # When turning left, increase our rotation by this value to counteract constant errors
+        self.right_turn_offset = 0.01 # When turning right, increase our rotation by this value to counteract errors
 
     def add_finish_listener(self, func):
         """
@@ -189,7 +191,7 @@ class Robot_Mover:
         pose = sensors.get_lidar_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
-        deltaRadians = degrees * (np.pi / 180)
+        deltaRadians = degrees * (np.pi / 180) + self.left_turn_offset
         targetRadians = angle + deltaRadians
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
@@ -219,7 +221,7 @@ class Robot_Mover:
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         angle = sensors.get_euler()[0]
         thres = None
-        deltaRadians = degrees * (np.pi / 180)
+        deltaRadians = degrees * (np.pi / 180) + self.left_turn_offset
         targetRadians = angle + deltaRadians
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
@@ -248,7 +250,7 @@ class Robot_Mover:
         pose = sensors.get_lidar_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
-        deltaRadians = degrees * (np.pi / 180)
+        deltaRadians = degrees * (np.pi / 180) + self.right_turn_offset
         targetRadians = angle - deltaRadians
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
@@ -276,7 +278,7 @@ class Robot_Mover:
         print "Rotating right " + str(degrees)
         angle = sensors.get_euler()[0]
         thres = None
-        deltaRadians = degrees * (np.pi / 180)
+        deltaRadians = degrees * (np.pi / 180) + self.right_turn_offset
         targetRadians = angle - deltaRadians
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
