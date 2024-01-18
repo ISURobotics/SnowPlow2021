@@ -413,16 +413,12 @@ def path_generator(pos_of_cones):
     # all predetermined start and endpoints
     start1 = (20, 26)
     end1 = (8, 26)
-    end2 = (8, 5.5)
-    end3 = (8.5, 5.5)
-    end4 = (8.5, 6)
-    end5 = (7, 6)
-    end6 = (7, 48.5)
-    end7 = (6.5, 48.5)
-    end8 = (6.5, 49)
-    end9 = (8, 49)
-    end10 = (8, 29)
-    end11 = (22, 29)
+    end2 = (8, 6)
+    end3 = (7, 6)
+    end4 = (7, 49)
+    end5 = (8, 49)
+    end6 = (8, 29)
+    end7 = (22, 29)
 
     # for all predetermined start and endpoints, finds the best path between the two and then adds it on to the end of the
     # previously found paths
@@ -439,14 +435,6 @@ def path_generator(pos_of_cones):
     path.extend(path_finder(grid, start6, end6))
     start7 = find_pos_nearby_end(np.array(grid, copy=True), start6, end6)
     path.extend(path_finder(grid, start7, end7))
-    start8 = find_pos_nearby_end(np.array(grid, copy=True), start7, end7)
-    path.extend(path_finder(grid, start8, end8))
-    start9 = find_pos_nearby_end(np.array(grid, copy=True), start8, end8)
-    path.extend(path_finder(grid, start9, end9))
-    start10 = find_pos_nearby_end(np.array(grid, copy=True), start9, end9)
-    path.extend(path_finder(grid, start10, end10))
-    start11 = find_pos_nearby_end(np.array(grid, copy=True), start11, end11)
-    path.extend(path_finder(grid, start11, end11))
 
     # deletes consecutive duplicates
     path = delete_duplicates(path)
