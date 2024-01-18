@@ -65,6 +65,7 @@ def imu_z_rotation(sensors, t):
     measured_val = eulers[0] # The IMU is oriented so that its x axis is up and down, so we need that
     # NEEDS TESTING. LOTS OF TESTING.
     print "measured: " + str(measured_val)
+    print "target: " + str(t.value)
     if t.trigger_when_above:
         if (t.value > np.pi / 2):
             above_thres = (measured_val >= t.value) or (measured_val < t.value - 3 * np.pi / 2) # target is close to 180 degrees (pi radians)

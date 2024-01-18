@@ -60,8 +60,9 @@ class Robot_Mover:
         sensors = self.robot.sensors
         print "Moving forward " + str(meters)
         pose = sensors.get_lidar_pose()
+        angle = sensors.get_euler()[0]
         print pose
-        angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
+        #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         self.maintain_angle = angle
         thres = None
         slow = None
@@ -122,7 +123,8 @@ class Robot_Mover:
         sensors = self.robot.sensors
         print "Moving backward " + str(meters)
         pose = sensors.get_lidar_pose()
-        angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
+        angle = sensors.get_euler()[0]
+        #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         self.maintain_angle = angle
         thres = None
         slow = None
