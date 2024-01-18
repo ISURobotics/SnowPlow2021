@@ -23,7 +23,12 @@ def main():
     sensors.init_lidar()
     sensors.init_imu()
 
-    points = [(0, 0), (-0.5, 0), (-0.5, -1), (-1, -1), (-1, 0), (-2, 0)]
+    # points = [(0, 0), (-0.5, 0), (-0.5, -1), (-1, -1), (-1, 0), (-2, 0)]
+    # Uncomment for left box drill
+    # points = [(0, 0), (-0.5, 0), (-0.5, -0.5), (0, -0.5)] * 5
+    
+    # Uncomment for right box drill
+    # points = [(0, 0), (-0.5, 0), (-0.5, 0.5), (0, 0.5)] * 5
 
 
     print "Preparing path..."
