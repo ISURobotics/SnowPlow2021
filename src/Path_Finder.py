@@ -46,9 +46,9 @@ import time
 
 
 # Class Variables
-grid_res = 4       # INTEGER, MUST BE MULTIPLE OF 4, grid/path resolution per 1m, i.e if 100, grid res will be 0.01m so elements in array represent 1cm x 1cm square
-cb_width = 2        # INTEGER, width for the cone buffer to stretch left and right individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
-cb_height = 2       # INTEGER, height for the cone buffer to stretch up and down individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
+grid_res = 100       # INTEGER, MUST BE MULTIPLE OF 4, grid/path resolution per 1m, i.e if 100, grid res will be 0.01m so elements in array represent 1cm x 1cm square
+cb_width = 75        # INTEGER, width for the cone buffer to stretch left and right individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
+cb_height = 75       # INTEGER, height for the cone buffer to stretch up and down individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
 
 
 
@@ -59,11 +59,11 @@ cb_height = 2       # INTEGER, height for the cone buffer to stretch up and down
 #
 # With no cones on the field, it took Ryan's computer the following times for the various grid resolutions
 #   Grid Resolution     Time (s)
-#        100             56.24
-#        80              36.02
-#        60              19.17
-#        40               8.62 
-#        20               1.88
+#        100             7.06
+#        80              3.92
+#        60              2.36
+#        40              0.92 
+#        20              0.23
 def timer():
     arr = [100, 80, 60, 40, 20]     # INTEGER ARRAY, represents the different grid resolutions that will be timed, can change if want to test less or more resolutions
     time_arr = [0.0, 0.0, 0.0, 0.0, 0.0]          # represents the time took in seconds to run the path finding algorithm for the corresponding grid resolution
@@ -87,7 +87,7 @@ def timer():
 #
 # Calculates distance between two points on the grid  
 def distance(pt1, pt2):
-    return (pt1^2 + pt2^2)^0.5
+    return int(((pt1[0] - pt2[0])**2 + (pt1[1] - pt2[1])**2)**0.5)
 
 
 
@@ -320,12 +320,14 @@ def path_finder(grid, start, end):
     pq = PriorityQueue()
 
     # set the starting point
-    pq.put((0, start))
+    pq.put((distance(start, end), start))
     dist[start] = 0
+
+    current_point = start
 
     #print(grid_copy)
     # repeat until the priority queue is empty
-    while not pq.empty():
+    while not pq.empty() and current_point != end:
         # get the cell with the smallest distance
         _, current_point = pq.get()
 
@@ -348,7 +350,7 @@ def path_finder(grid, start, end):
                     # if the distance from the starting point to the destination cell is smaller
                     # than the current distance, update the distance and the previous cell
                     if dist[current_point] + (w * grid_copy[current_point]) < dist[new_point]:
-                        dist[new_point] = dist[current_point] + (w * grid_copy[current_point])
+                        dist[new_point] = dist[current_point] - distance(current_point, end) + (w * grid_copy[current_point]) + distance(new_point, end)
                         prev[new_point] = current_point
 
                         # add the destination cell to the priority queue
@@ -525,6 +527,6 @@ if __name__ == '__main__':
     #timer()        # run if want to test the time algorithm takes
 
     # test position of cone
-    pos_of_cones = [(3, 3)]
+    pos_of_cones = [(150, 150)]
 
     path_generator(pos_of_cones)
