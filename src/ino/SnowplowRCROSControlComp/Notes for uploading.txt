@@ -1,0 +1,3 @@
+This is the code for the arduino that controls the motors. Upload it using Arduino IDE.
+
+Make sure arduino library rossserial is version 0.7.9; this does not work with newer versions!

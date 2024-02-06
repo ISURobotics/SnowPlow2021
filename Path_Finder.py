@@ -8,14 +8,13 @@
 # toward the right till the end of the path, down into the bottom half again, left until back at the middle again, and finally
 # down, back into the "garage". Essentially taking a clockwise path around the entire snow path.
 #
-# The snowfield is represented by a 2D array which has an adjustable resolution based on a variable (grid_res). Higher resolution allows for more precise
-# grid/placement but also means algorithm will take longer.
+# The snowfield is represented by a 2D array which is is 28 x 56 with each square representing 0.25m x 0.25m in real life.
 #
 #
 # For this competition, there will be two cones randomly placed within the field, one in the snow path and one outside of the snow path
 # Since the teams robot is roughly 1.2m x 1.4m will only be represented by one spot on the grid, all cones will be represented by an x by y
-# section of the snowfield moving as the snowplow moves. To account for the extra space that the snowplow takes up, there will be a buffer 
-# around the cones to ensure the snowplow doesn't crash into the cones. The x and y variables can be set down below.
+# section of the snowfield, meaning they will "take up" 0.25*x meters by 0.25*y meters on the grid. This extra space will be a buffer to
+# ensure the snowplow doesn't crash into the cones. The x and y variables can be set down below.
 #
 # To find the cones on the field, the team will be using a SICK LiDAR system which will be able to tell if there are any cones
 # within the snowfield. The LiDAR will also (in cooperation with the HECTOR SLAM algorithm) be able to tell the coordinate
@@ -40,73 +39,19 @@ import pandas as pd
 import numpy as np
 from queue import PriorityQueue
 from matplotlib import pyplot
-import time
-
-
 
 
 # Class Variables
-grid_res = 100       # INTEGER, MUST BE MULTIPLE OF 4, grid/path resolution per 1m, i.e if 100, grid res will be 0.01m so elements in array represent 1cm x 1cm square
-cb_width = 75        # INTEGER, width for the cone buffer to stretch left and right individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
-cb_height = 75       # INTEGER, height for the cone buffer to stretch up and down individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
-
-
-
-
-
-
-# Purpose is to test how long it takes the program to run for various grid resolutions to find optimal grid resolution
-#
-# With no cones on the field, it took Ryan's computer the following times for the various grid resolutions
-#   Grid Resolution     Time (s)
-#        100             7.06
-#        80              3.92
-#        60              2.36
-#        40              0.92 
-#        20              0.23
-def timer():
-    arr = [100, 80, 60, 40, 20]     # INTEGER ARRAY, represents the different grid resolutions that will be timed, can change if want to test less or more resolutions
-    time_arr = [0.0, 0.0, 0.0, 0.0, 0.0]          # represents the time took in seconds to run the path finding algorithm for the corresponding grid resolution
-    # Goes through all grid resolutions in arr and times them
-    for i in range(len(arr)):
-        global grid_res 
-        grid_res = arr[i]                       # sets grid resolution
-        start_time = time.time()                # time before algorithm runs
-        path_generator([])                      # runs through path finding algorithm
-        end_time = time.time()                  # time after algorithm runs
-        time_arr[i] = end_time - start_time     # calculates total time for algorithm
-
-    # prints out time taken for each grid resolution
-    for i in range(len(time_arr)):
-        print(time_arr[i])
-
-
-# param  pt1 - first point to calculate distance between
-# param  pt2 - second point to calculate distance between
-# returns distance between the two points on the grid
-#
-# Calculates distance between two points on the grid  
-def distance(pt1, pt2):
-    return int(((pt1[0] - pt2[0])**2 + (pt1[1] - pt2[1])**2)**0.5)
-
-
-
-
-#Throws an exception if the grid_res variable isn't a multiple of 4. Must be multiple of 4 for purposes of how code is written
-def grid_res_check():
-    if grid_res % 4 != 0 and grid_res > 0:
-        raise Exception("Grid resolution must be a multiple of 4")    
-
-
+cb_width = 3   # INTEGER, width for the cone buffer to stretch left and right individually, measured in 0.25 m increments (ie 3 = 0.75m left and 0.75m right)
+cb_height = 3  # INTEGER, height for the cone buffer to stretch up and down individually, measured in 0.25 m increments (ie 3 = 0.75m up and 0.75m down)
 
 
 # param  grid - weighted 2D array representing the snowfield
 # param  pos_of_cones - array of tuples which represent all of the positions on the field where cones are at
-# returns  array of tuples that represent points of a buffer around the position of the cone. 
-# The size of this buffer depends on the variables cb_width and cb_height at top of the file.
+# returns  array of tuples that represent points of a 2 block (0.5m) buffer around the position of the cone
 #
-# The teams snowplow will be represented by only 1 grid block throughout pathfinding despite the snowplows real
-# dimensions being larger. To account for this, and make sure the snowplow will not hit the cones, buffer
+# The teams snowplow will be represented by only 1 0.25m x 0.25m block throughout pathfinding despite the snowplows real
+# dimensions being larger. To account for this, and make sure the snowplow will not hit the cones, a 2 block (0.5m) buffer
 # will be placed in all directions around the cones. This method, takes in the current position of the cones and returns
 # all the points of the aforementioned buffer
 def find_cone_buffer(grid, pos_of_cones):
@@ -185,7 +130,7 @@ def find_pos_nearby_end(grid, start, end):
 # this competition, there is a preferred side-to-side/perpendicular movement as defined below. To accomplish this, a large weight
 # of 100 is place in the opposite of the preferred direction in order to deter movement in that direction past where the start point is
 #
-# DIRECTION     PREFERRED SIDE-TO-SIDE MOVEMENT
+# DIRECTION     PREFErRED SIDE-TO-SIDE MOVEMENT
 # Up            Right
 # Down          Left
 # Left          Down
@@ -316,18 +261,16 @@ def path_finder(grid, start, end):
             dist[i, j] = float('inf')
 
     # define a priority queue to select the next cell to visit
-    # the priority is the number of steps/moves to the cell from the starting point
+    # the priority is the distance of the cell from the starting point
     pq = PriorityQueue()
 
     # set the starting point
-    pq.put((distance(start, end), start))
+    pq.put((0, start))
     dist[start] = 0
 
-    current_point = start
-
-    #print(grid_copy)
+    print grid_copy
     # repeat until the priority queue is empty
-    while not pq.empty() and current_point != end:
+    while not pq.empty():
         # get the cell with the smallest distance
         _, current_point = pq.get()
 
@@ -350,7 +293,7 @@ def path_finder(grid, start, end):
                     # if the distance from the starting point to the destination cell is smaller
                     # than the current distance, update the distance and the previous cell
                     if dist[current_point] + (w * grid_copy[current_point]) < dist[new_point]:
-                        dist[new_point] = dist[current_point] - distance(current_point, end) + (w * grid_copy[current_point]) + distance(new_point, end)
+                        dist[new_point] = dist[current_point] + (w * grid_copy[current_point])
                         prev[new_point] = current_point
 
                         # add the destination cell to the priority queue
@@ -371,8 +314,8 @@ def path_finder(grid, start, end):
 
 
 
-# return  2D array representing the snowfield as defined for this competition. There are different weights for different parts of the field
-# 
+# return  2D array representing the snowfield as defined for this competition. There are different weights for different
+#        parts of the field
 # WEIGHT    PART OF FIELD
 # 0         cone or no go section
 # 1         primary/top section of snow
@@ -382,30 +325,28 @@ def path_finder(grid, start, end):
 # Creates 2D array representing the snowfield as defined for this competition with various weights for the various sections
 # of the snowfield as defined above
 def make_grid():
-    grid_res_check()        #checks to make sure the grid_res variable at top of file is correctly valued
-
-    grid = np.ones((7*grid_res, 14*grid_res))
-    for r in range(4*grid_res, 7*grid_res):
-        for c in range(int(4.5*grid_res)):
+    grid = np.ones((28, 56))
+    for r in range(16, 28):
+        for c in range(18):
             grid[r, c] = 0
-            grid[r, c + int(9.5 * grid_res)] = 0
+            grid[r, c + 38] = 0
 
-    for r in range(int(1.5 * grid_res)):
-        for c in range(14 * grid_res):
+    for r in range(6):
+        for c in range(56):
             grid[r, c] = 4
-            grid[r + int(2.5 * grid_res), c] = 4
+            grid[r + 10, c] = 4
 
-    for r in range(int(2.5 * grid_res), int(3.5 * grid_res)):
-        for c in range(6 * grid_res, 8 * grid_res):
+    for r in range(10, 14):
+        for c in range(24, 32):
             grid[r, c] = 2
 
-    for r in range(4 * grid_res):
-        for c in range(2 * grid_res):
+    for r in range(16):
+        for c in range(8):
             grid[r, c] = 4
-            grid[r, c + 12 * grid_res] = 4
+            grid[r, c + 48] = 4
 
-    for r in range(4 * grid_res, 7 * grid_res):
-        for c in range(int(4.5 * grid_res), int(9.5 * grid_res)):
+    for r in range(16, 28):
+        for c in range(18, 38):
             grid[r, c] = 4
 
     return grid
@@ -426,7 +367,7 @@ def place_cones_on_grid(grid, pos_of_cones_with_buffer):
 # param  path - array of tuples representing the points which the snowplow will travel along
 # return  altered path with removed consecutive repeats
 #
-# Removes all consecutive repeats in the path
+# Removes all consecutive repeats
 def delete_duplicates(path):
     limit = len(path) - 1
     i = 0
@@ -443,16 +384,14 @@ def delete_duplicates(path):
 # param  path - array of tuples representing the points which the snowplow will travel along
 #
 # Visual representation of the snowplow traveling along the given path
-#
-# DOESN'T WORK WELL FOR HIGH GRID RESOLUTIONS
 def display_path(grid, path):
     pyplot.imshow(grid, cmap='magma')
     pyplot.pause(2)
     for point in range(len(path)):
         grid[path[point]] = grid[path[point]] + 1
         pyplot.imshow(grid, cmap='magma')
-        pyplot.pause(0.05)
-    
+        # pyplot.pause(0.05)
+
     pyplot.show()
 
 
@@ -470,15 +409,19 @@ def path_generator(pos_of_cones):
     grid = place_cones_on_grid(grid, pos_of_cones_with_buffer)
 
 
-    # all predetermined start and endpoints
-    start1 = (5 * grid_res, int(6.5 * grid_res))
-    end1 = (2 * grid_res, int(6.5 * grid_res))
-    end2 = (2 * grid_res, int(1.5 * grid_res))
-    end3 = (int(1.75 * grid_res), int(1.5 * grid_res))
-    end4 = (int(1.75 * grid_res), int(12.25 * grid_res))
-    end5 = (2 * grid_res, int(12.25 * grid_res))
-    end6 = (2 * grid_res, int(7.25 * grid_res))
-    end7 = (5 * grid_res, int(7.25 * grid_res))
+# all predetermined start and endpoints
+    start1 = (20, 26)
+    end1 = (8, 26)
+    end2 = (8, 6.5)
+    end3 = (8.5,6.5)
+    end4 = (8.5,6)
+    end5 = (7, 6)
+    end6 = (7, 48.5)
+    end7 = (6.5,48.5)
+    end8 = (6.5, 49)
+    end9 = (8, 49)
+    end10 = (8, 29)
+    end11 = (20, 29)
 
     # for all predetermined start and endpoints, finds the best path between the two and then adds it on to the end of the
     # previously found paths
@@ -495,23 +438,21 @@ def path_generator(pos_of_cones):
     path.extend(path_finder(grid, start6, end6))
     start7 = find_pos_nearby_end(np.array(grid, copy=True), start6, end6)
     path.extend(path_finder(grid, start7, end7))
-
+    start8 = find_pos_nearby_end(np.array(grid, copy=True), start7, end7)
+    path.extend(path_finder(grid, start8, end8))
+    start9 = find_pos_nearby_end(np.array(grid, copy=True), start8, end8)
+    path.extend(path_finder(grid, start9, end9))
+    start10 = find_pos_nearby_end(np.array(grid, copy=True), start9, end9)
+    path.extend(path_finder(grid, start10, end10))
+    start11 = find_pos_nearby_end(np.array(grid, copy=True), start10, end10)
+    path.extend(path_finder(grid, start11, end11))
 
     # deletes consecutive duplicates
     path = delete_duplicates(path)
 
     # displays path
-    #display_path(grid, path)
-    # prints path
-    #for i in range(len(path)):
-    #    print(path[i], end=", ")
-
-
+    # display_path(grid, path)
     return path
-
-
-
-
 
 
 
@@ -524,9 +465,7 @@ if __name__ == '__main__':
     np.set_printoptions(linewidth=400)
     np.set_printoptions(threshold=np.inf)
 
-    #timer()        # run if want to test the time algorithm takes
-
     # test position of cone
-    pos_of_cones = [(150, 150)]
+    pos_of_cones = [(8, 15)]
 
     path_generator(pos_of_cones)
