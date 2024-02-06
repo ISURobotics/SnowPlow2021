@@ -10,9 +10,9 @@ class Func_Generator(object):
         """
             Returns a function to tell the mover to go forward meters meters
         """
-        print "move forward " + str(meters)
+        print("move forward " + str(meters))
         if meters < 0:
-            print "returning move_backward instead"
+            print("returning move_backward instead")
             return lambda: self.mover.move_backward(-meters)
         return lambda: self.mover.move_forward(meters)
 
@@ -21,9 +21,9 @@ class Func_Generator(object):
             Returns a function to tell the mover to go backward meters meters
             (unused)
         """
-        print "move back " + str(meters)
+        print("move back " + str(meters))
         if meters < 0:
-            print "returning move_forward instead"
+            print("returning move_forward instead")
             return lambda: self.mover.move_forward(-meters)
         return lambda: self.mover.move_backward(meters)
 
@@ -31,7 +31,7 @@ class Func_Generator(object):
         """
             Returns a function to tell the mover to turn left degrees degrees
         """
-        print "rotate left " + str(degrees)
+        print("rotate left " + str(degrees))
         #return lambda p_lidar: self.mover.rotate_left(p_lidar, degrees)
         return lambda: self.mover.rotate_left_imu(degrees)
 
@@ -39,7 +39,7 @@ class Func_Generator(object):
         """
             Returns a function to tell the mover to turn right degrees degrees
         """
-        print "rotate right " + str(degrees)
+        print("rotate right " + str(degrees))
         #return lambda p_lidar: self.mover.rotate_right(p_lidar, degrees)
         return lambda: self.mover.rotate_right_imu(degrees)
 
@@ -83,7 +83,7 @@ class Func_Generator(object):
                         dir = left
                         forward_count = current[1] - p[1]
                 else:
-                    print "Diagonals not supported"
+                    print("Diagonals not supported")
                     break
 
             elif dir == down:
@@ -100,7 +100,7 @@ class Func_Generator(object):
                         dir = right
                         forward_count = p[1] - current[1]
                 else:
-                    print "Diagonals not supported"
+                    print("Diagonals not supported")
                     break
 
             elif dir == left:
@@ -117,7 +117,7 @@ class Func_Generator(object):
                         dir = down
                         forward_count = p[0] - current[0]
                 else:
-                    print "Diagonals not supported"
+                    print("Diagonals not supported")
                     break
 
             elif dir == right:
@@ -134,7 +134,7 @@ class Func_Generator(object):
                         dir = up
                         forward_count = current[0] - p[0]
                 else:
-                    print "Diagonals not supported"
+                    print("Diagonals not supported")
                     break
             current = p
         funcs.append(self.move_forward(forward_count))
