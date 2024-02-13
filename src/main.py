@@ -13,6 +13,7 @@ def main():
     and begin motion of the robot
     """
     # for debugging - set to True for competition
+    cell_size = 0.25
     use_pathfinding = True
 
     r = Robot()
@@ -40,7 +41,7 @@ def main():
         print(object_points)
         path_points = Path_Finder.path_generator(object_points)
         print(path_points)
-        points = sensors.get_movement_points(path_points)
+        points = sensors.get_movement_points(path_points, cell_size)
     else:
         pass
         #points = [[0, 0], [-10, 0]]

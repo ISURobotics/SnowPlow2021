@@ -80,12 +80,15 @@ class Lidar:
         #Return list of points
         return final_list
 
-    def prepare_movement_points(self, points_list):
+    def prepare_movement_points(self, points_list,  cell_size=0.25):
+        '''
+            Coverts the grid indexes into positions in meters
+        '''
         #Reverse from prepare obstacle points
         final_list = []
         for pt in points_list:
             final_pt = []
-            final_pt.append((pt[0] - 20) / 4.0)  # robot starts by looking in the negative x direction
-            final_pt.append((pt[1] - 26) / 4.0)  # left of robot is negative y direction
+            final_pt.append((pt[0] - (5.0 / cell_size)) * cell_size)  # robot starts by looking in the negative x direction
+            final_pt.append((pt[1] - (6.5 / cell_size)) * cell_size)  # left of robot is negative y direction
             final_list.append(final_pt)
         return final_list
