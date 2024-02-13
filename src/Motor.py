@@ -1,9 +1,9 @@
-import rospy
+import rclpy
 from std_msgs.msg import Int8
 
 class Motor:
     def __init__(self, path):
-        self._speed_pub = rospy.Publisher("{}/speed".format(path), Int8, queue_size=1)
+        self._speed_pub = rclpy.Publisher("{}/speed".format(path), Int8, queue_size=1)
         self.speed = 0
 
     def set_speed(self, speed):

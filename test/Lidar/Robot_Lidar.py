@@ -1,5 +1,5 @@
 import time
-import rospy
+import rclpy
 import sys, os
 
 from sensor_msgs.msg import Image, PointCloud2, LaserScan
@@ -64,16 +64,16 @@ def laser_input(data):
     print(i[190])
 
 
-rospy.init_node('Testing', anonymous=False)
+rclpy.init_node('Testing', anonymous=False)
 # bridge = CvBridge()
 
-# sub_image = rospy.Subscriber("/camera/color/image_raw", Image, image_callback)
+# sub_image = rclpy.Subscriber("/camera/color/image_raw", Image, image_callback)
 
-curr_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
-# laser_points = rospy.Subscriber("/scan", LaserScan, laser_input)
+curr_pose = rclpy.Subscriber("/slam_out_pose", PoseStamped, callback_slam_pose)
+# laser_points = rclpy.Subscriber("/scan", LaserScan, laser_input)
 
-rospy.spin()
-while not rospy.is_shutdown():
+rclpy.spin()
+while not rclpy.is_shutdown():
     # print(point_cloud)
     # time.sleep()
     # print('loop')

@@ -1,4 +1,4 @@
-import rospy
+import rclpy
 from std_msgs.msg import Int8
 
 # Note: Before running this file, be sure to start roscore and rosrun the rosserial_python
@@ -8,7 +8,7 @@ from typing import List
 
 class Light:
     def __init__(self, path):
-        self._light_pub = rospy.Publisher(f"{path}/light", Int8, queue_size=1)
+        self._light_pub = rclpy.Publisher(f"{path}/light", Int8, queue_size=1)
         self.light = 0
 
     def set_light(self, light):

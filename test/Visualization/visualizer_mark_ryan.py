@@ -5,7 +5,7 @@
 
     Doesn't work with the new sensors setup
 """
-import rospy
+import rclpy
 import Robot
 import time
 import keyboard
@@ -87,8 +87,8 @@ def run():
     print "1"
     window, graph = initializeGraphics(field)
     print "2"
-    # rospy.spin()
-    while not rospy.is_shutdown():
+    # rclpy.spin()
+    while not rclpy.is_shutdown():
         print "3"
         try:
             if keyboard.is_pressed('q'):

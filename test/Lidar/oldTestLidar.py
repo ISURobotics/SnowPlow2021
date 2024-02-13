@@ -1,5 +1,5 @@
 import time
-import rospy
+import rclpy
 import sys, os
 
 from sensor_msgs.msg import Image, PointCloud2
@@ -56,14 +56,14 @@ def callback_pointcloud(data):
     #     print(" x : %.3f  y: %.3f  z: %.3f" % (p[0], p[1], p[2]))
 
 
-rospy.init_node('Testing', anonymous=False)
+rclpy.init_node('Testing', anonymous=False)
 # bridge = CvBridge()
 
-# sub_image = rospy.Subscriber("/camera/color/image_raw", Image, image_callback)
-sub_points = rospy.Subscriber("/cloud", PointCloud2, callback_pointcloud)
+# sub_image = rclpy.Subscriber("/camera/color/image_raw", Image, image_callback)
+sub_points = rclpy.Subscriber("/cloud", PointCloud2, callback_pointcloud)
 
-rospy.spin()
-while not rospy.is_shutdown():
+rclpy.spin()
+while not rclpy.is_shutdown():
     #print(point_cloud)
     # time.sleep()
     # print('loop')

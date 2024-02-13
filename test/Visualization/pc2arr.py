@@ -20,8 +20,8 @@ def main():
         if x == 'q':
             exit(0)
     # exit(0)
-    rospy.spin()
-    while not rospy.is_shutdown():
+    rclpy.spin()
+    while not rclpy.is_shutdown():
         pass
 
 

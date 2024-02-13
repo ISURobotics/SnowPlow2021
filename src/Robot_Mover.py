@@ -1,7 +1,7 @@
 # from multiprocessing.resource_sharer import stop
 import time
 # from matplotlib.hatch import SouthEastHatch
-# import rospy
+# import rclpy
 # import sys, os
 from Movement_Threshold import Movement_Threshold
 # import Robot

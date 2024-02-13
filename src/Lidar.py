@@ -1,4 +1,4 @@
-import rospy
+import rclpy
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
 import time
@@ -10,8 +10,8 @@ class Lidar:
         self.sensors = sensors
         self.points = []
         self.pose = None
-        self._sub_points = rospy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
-        self._sub_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
+        self._sub_points = rclpy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
+        self._sub_pose = rclpy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
         self.pose_set = False
 
     def callback_pointcloud(self, data):
