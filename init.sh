@@ -1,7 +1,7 @@
 #!/bin/bash
 # initializes ROS, lidar launch, and arduino serial
-source /home/karterk/catkin_ws/install/setup.bash
-
+# source /home/snowclone/catkin_ws/install/setup.bash
+source /opt/ros/humble/setup.bash
 # run core ros service
 # roscore &
 
@@ -16,9 +16,12 @@ source /home/karterk/catkin_ws/install/setup.bash
 echo "Starting Lidar"
 
 # boot up the lidar listener
-ros2 launch /home/karterk/catkin_ws/slam_lidar.launch hostname:=192.168.1.2 &
+#ros2 run sick_scan_xd sick_generic_caller /home/snowclone/colcon_ws/src/sick_scan_xd/launch/sick_lms_5xx.launch hostname:=192.168.1.2 &
+
+ros2 run sick_scan_xd sick_generic_caller slam_lidar.launch &
+ros2 run slam_toolbox async_slam_toolbox_node slam_lidar.launch &
 sleep 3
-while ! ros2 topic list | grep "^/slam_out_pose$" >/dev/null; do
+while ! ros2 topic list | grep "^/pose$" >/dev/null; do
         echo -n "."     
         sleep 3
 done
