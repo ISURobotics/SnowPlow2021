@@ -4,34 +4,36 @@ import time
 from rclpy.node import Node
 
 from std_msgs.msg import Int8
+from std_msgs.msg import Float64MultiArray
 
 #Subscribers to both /left_motor/speed and /right_motor/speed
 
 
 #Callbacks to each motor speed to send a specific command over serial to the arduino
 #Command format 0080, then arduino reads it as 0% left motor, 80% right motor.
-
-arduino1Out = serial.__init__(port='COM4', baudrate=115200, timeout= 0.1)
-arduino2In = serial.__init__(port='COM5', baudrate=115200, timeout= 0.1)
+arduino1Out = serial.Serial(port='/dev/ttyACM0', baudrate=115200)
+#arduino2In = serial.Serial(port='COM5', baudrate=115200)
 
 class SerialComms(Node):
 
     def __init__(self):
         
         super().__init__('serial_comms')
-        LeftMotorSub = Node.create_subscription(Int8, '/left_motor/speed', self.readInLeft_callback, 10) #What does the '10' parameter do?
-        RightMotorSub = Node.create_subscription(Int8, '/right_motor/speed', self.readInRight_callback, 10) #What does the '10' parameter do?
+        LeftMotorSub = self.create_subscription(Int8, '/left_motor/speed', self.readInLeft_callback, 10) #What does the '10' parameter do?
+        RightMotorSub = self.create_subscription(Int8, '/right_motor/speed', self.readInRight_callback, 10,) #What does the '10' parameter do?
         LeftMotorSub
         RightMotorSub
-        IMUPub = Node.create_publisher(Float64MultiArray, "/imu_euler", 10)
-        IMUPub.timer = IMUPub.create_timer(0.05, IMUPub.timer_callback)
+        self.IMUPub = self.create_publisher(Float64MultiArray, "/imu_euler", 10)
+        # self.IMUPub.timer = self.IMUPub.create_timer(0.05, self.IMUPub.timer_callback)
         
 
-    def timer_callback():
-
+    # def timer_callback():
 
 
     def readInLeft_callback(self, msg):
+        """
+            Reads in data from the main node to be sent to the motors
+        """
         leftMotorInputROS = msg.data
         if(leftMotorInputROS > 100):
             leftMotorInputROS = 100
@@ -49,11 +51,14 @@ class SerialComms(Node):
             rightMotorInputROS = -100
         arduino1Out.write(rightMotorInputROS)
 
-
+rclpy.init()
+testsc = SerialComms()
 while True:
-    IMUData = arduino2In.readline()
+    # IMUData = arduino2In.readline()
     time.sleep(0.05)
-    IMUPub.publish()
+    data = Float64MultiArray()
+    data.data = [1.0, 2.0, 3.0]
+    testsc.IMUPub.publish(data)
     #Read in the data to a variable that can be used / formatted in the timer_callback
 
 
