@@ -11,8 +11,8 @@ from std_msgs.msg import Float64MultiArray
 
 #Callbacks to each motor speed to send a specific command over serial to the arduino
 #Command format 0080, then arduino reads it as 0% left motor, 80% right motor.
-arduino1Out = serial.Serial(port='/dev/ttyACM0', baudrate=115200)
-#arduino2In = serial.Serial(port='COM5', baudrate=115200)
+#arduino1Out = serial.Serial(port='/dev/ttyACM0', baudrate=115200)
+arduino2In = serial.Serial(port='COM5', baudrate=115200)
 
 class SerialComms(Node):
 
@@ -39,7 +39,7 @@ class SerialComms(Node):
             leftMotorInputROS = 100
         elif(leftMotorInputROS < -100):
             leftMotorInputROS = -100
-        arduino1Out.write(leftMotorInputROS)
+       # arduino1Out.write(leftMotorInputROS)
 
 
 
@@ -49,16 +49,23 @@ class SerialComms(Node):
             rightMotorInputROS = 100
         elif(rightMotorInputROS < -100):
             rightMotorInputROS = -100
-        arduino1Out.write(rightMotorInputROS)
+       # arduino1Out.write(rightMotorInputROS)
 
 rclpy.init()
-testsc = SerialComms()
 while True:
-    # IMUData = arduino2In.readline()
+    IMUDataString = arduino2In.readline()
+    #TODO: Parse values from IMUData
+    spl_word = '\t'
+    IMUData = IMUDataString.split(spl_word)
+
+    #TODO: Create a Float64MultiArray with the parsed values
+    MultiArray = Float64MultiArray()
+    MultiArray.data = IMUData
+    
+
+    IMUPub.publish(MultiArray)
     time.sleep(0.05)
-    data = Float64MultiArray()
-    data.data = [1.0, 2.0, 3.0]
-    testsc.IMUPub.publish(data)
+
     #Read in the data to a variable that can be used / formatted in the timer_callback
 
 
