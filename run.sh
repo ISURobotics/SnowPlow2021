@@ -1,7 +1,7 @@
 #!/bin/bash
 # initializes ROS, lidar launch, and arduino serial
 # then runs the main python script
-source /home/karterk/catkin_ws/install/setup.bash
+source /home/snowclone/colcon_ws/install/setup.bash
 
 # run core ros service
 roscore &
