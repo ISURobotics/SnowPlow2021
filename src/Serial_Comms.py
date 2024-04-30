@@ -12,7 +12,7 @@ from std_msgs.msg import Float64MultiArray
 #Callbacks to each motor speed to send a specific command over serial to the arduino
 #Command format 0080, then arduino reads it as 0% left motor, 80% right motor.
 #arduino1Out = serial.Serial(port='/dev/ttyACM0', baudrate=115200)
-arduino2In = serial.Serial(port='COM5', baudrate=115200)
+arduino2In = serial.Serial(port='/dev/ttyACM0', baudrate=115200)
 
 class SerialComms(Node):
 
@@ -21,13 +21,26 @@ class SerialComms(Node):
         super().__init__('serial_comms')
         LeftMotorSub = self.create_subscription(Int8, '/left_motor/speed', self.readInLeft_callback, 10) #What does the '10' parameter do?
         RightMotorSub = self.create_subscription(Int8, '/right_motor/speed', self.readInRight_callback, 10,) #What does the '10' parameter do?
-        LeftMotorSub
-        RightMotorSub
+        print("Init test")
         self.IMUPub = self.create_publisher(Float64MultiArray, "/imu_euler", 10)
-        # self.IMUPub.timer = self.IMUPub.create_timer(0.05, self.IMUPub.timer_callback)
+        self.timer = self.create_timer(0.07, self.timer_callback) #The timer period can be increased if errors are thrown. 0.07 is the lowest run with nothing else.
         
 
-    # def timer_callback():
+    def timer_callback(self):
+        IMUDataString = arduino2In.readline()
+        print("Running timer callback")
+        #TODO: Parse values from IMUData
+        spl_word = b'\t'
+        IMUData = IMUDataString.split(spl_word)
+        IMUDataFloat = []
+
+        for i in IMUData:
+            IMUDataFloat.append(float(i))
+
+        #TODO: Create a Float64MultiArray with the parsed values
+        MultiArray = Float64MultiArray()
+        MultiArray.data = IMUDataFloat
+        self.IMUPub.publish(MultiArray)
 
 
     def readInLeft_callback(self, msg):
@@ -50,21 +63,9 @@ class SerialComms(Node):
         elif(rightMotorInputROS < -100):
             rightMotorInputROS = -100
        # arduino1Out.write(rightMotorInputROS)
-
 rclpy.init()
-while True:
-    IMUDataString = arduino2In.readline()
-    #TODO: Parse values from IMUData
-    spl_word = '\t'
-    IMUData = IMUDataString.split(spl_word)
-
-    #TODO: Create a Float64MultiArray with the parsed values
-    MultiArray = Float64MultiArray()
-    MultiArray.data = IMUData
-    
-
-    IMUPub.publish(MultiArray)
-    time.sleep(0.05)
+sc = SerialComms()
+rclpy.spin(sc)
 
     #Read in the data to a variable that can be used / formatted in the timer_callback
 
