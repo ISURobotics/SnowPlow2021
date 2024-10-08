@@ -21,7 +21,7 @@ class SerialComms(Node):
         super().__init__('serial_comms')
         LeftMotorSub = self.create_subscription(Int8, '/left_motor/speed', self.readInLeft_callback, 10) #What does the '10' parameter do?
         RightMotorSub = self.create_subscription(Int8, '/right_motor/speed', self.readInRight_callback, 10,) #What does the '10' parameter do?
-        print("Init test")
+        print("Init test") #git is stupid
         self.IMUPub = self.create_publisher(Float64MultiArray, "/imu_euler", 10)
         self.timer = self.create_timer(0.07, self.timer_callback) #The timer period can be increased if errors are thrown. 0.07 is the lowest run with nothing else.
         
