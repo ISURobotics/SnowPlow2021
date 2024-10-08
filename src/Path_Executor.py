@@ -36,5 +36,5 @@ class Path_Executor:
             (Extra pausing or debugging stuff can be done here)
         """
         if not self.apply_next_action():
-            print "path ended"
+            print ("path ended")
             exit()
