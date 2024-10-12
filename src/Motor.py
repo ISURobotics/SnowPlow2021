@@ -12,4 +12,4 @@ class Motor:
         value.data = speed
         self.speed = speed
         self._speed_pub.publish(value)
-        print "speed published " + str(value)
+        print ("speed published " + str(value))
