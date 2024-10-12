@@ -19,7 +19,7 @@ import Axes
 # import math
 # from matplotlib import pyplot as plt
 import utils
-
+import math
 last_loop = time.time()
 
 
@@ -52,7 +52,26 @@ class Robot_Mover:
             movement functions.
         """
         self.finish_listeners.append(func)
-
+    def move_to_point(self,point):
+        sensors = self.robot.sensors
+        pose = sensors.get_lidar_pose()
+        angle = sensors.get_euler()[0]
+        #get the angle difference between where the plow is facing and where it would ideally be facing
+        theta=math.atan2(pose[1],pose[0])-angle
+        #This maximizes theta so turning is not too fast
+        if(math.abs(theta)>math.pi/2):
+            theta=math.copysign(math.pi/2,theta)
+        #need to change
+        velocity=25
+        #Facing away from target->High theta->low cos(theta)->not much linear velocity->focus on rotation
+        linear_velocity=math.cos(theta)*velocity
+        #Facing target->low theta->low sin(theta)->not much rotational velocity->focus on linear movement
+        #Off by a factor of 2/trackwidth, but that cancels out later
+        angular_velocity=math.sin(theta)*velocity
+        #convert linear and angular to right and left
+        right_velocity=linear_velocity+angular_velocity
+        left_velocity=linear_velocity-angular_velocity
+        self.robot.setSpeeds(left_velocity,right_velocity)
     def move_forward(self, meters):
         """
             Starts moving forward and creates a listener to stop at a certain distance

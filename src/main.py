@@ -45,6 +45,7 @@ def main():
         pass
         #points = [[0, 0], [-10, 0]]
     print (points)
+    #funcs=fg.get_funcs_to_point(points)
     funcs = fg.get_funcs(points)
 
     r.wait_for_pub()

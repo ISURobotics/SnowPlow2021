@@ -5,7 +5,8 @@ class Func_Generator(object):
     """
     def __init__(self, mover):
         self.mover = mover
-
+    def move_to_point(self,point):
+        return lambda:self.mover.move_to_point(point)
     def move_forward(self, meters):
         """
             Returns a function to tell the mover to go forward meters meters
@@ -42,7 +43,10 @@ class Func_Generator(object):
         print ("rotate right " + str(degrees))
         #return lambda p_lidar: self.mover.rotate_right(p_lidar, degrees)
         return lambda: self.mover.rotate_right_imu(degrees)
-
+    def get_funcs_to_point(self,points):
+        funcs = []
+        for point in points:
+            funcs.append(self.move_to_point(points))
     def get_funcs(self, points):
         """
             Given a list of points from a pathfinding algorithm, 
