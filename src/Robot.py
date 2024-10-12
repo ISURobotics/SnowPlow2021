@@ -40,12 +40,12 @@ class Robot:
     def set_speed(self, speed):
         self.left.set_speed(speed)
         self.right.set_speed(speed)
-        print "speed set"
+        print ("speed set")
 
     def set_speeds(self, leftSpeed, rightSpeed):
         self.left.set_speed(leftSpeed)
         self.right.set_speed(rightSpeed)
-        print "speeds set"
+        print ("speeds set")
 
     def get_speeds(self):
         """
@@ -54,14 +54,14 @@ class Robot:
         return (self.left.speed, self.right.speed)
 
     def wait_for_pub(self):
-        print "Waiting for publishers.."
+        print ("Waiting for publishers..")
         topics = rospy.get_published_topics()
-        print topics
+        print (topics)
         while not (['/left_motor/speed', 'std_msgs/Int8'] in topics) or not(['/right_motor/speed', 'std_msgs/Int8'] in topics):
             topics = rospy.get_published_topics()
             time.sleep(1)
         time.sleep(20)
-        print "Publishers active."
+        print ("Publishers active.")
         return
 
 

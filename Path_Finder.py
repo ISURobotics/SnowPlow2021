@@ -268,7 +268,7 @@ def path_finder(grid, start, end):
     pq.put((0, start))
     dist[start] = 0
 
-    print grid_copy
+    print (grid_copy)
     # repeat until the priority queue is empty
     while not pq.empty():
         # get the cell with the smallest distance

@@ -20,7 +20,7 @@ class Lidar:
 
     def callback_slam_pose(self, data):
         if not self.pose_set:
-            print "Ready"
+            print ("Ready")
             self.pose_set = True
         self.pose = data.pose
         self.sensors.callback_sensor_data()
@@ -32,10 +32,10 @@ class Lidar:
         return self.pose
 
     def wait_for_pose_set(self):
-        print "Waiting for lidar data..."
+        print ("Waiting for lidar data...")
         while not self.pose_set:
             time.sleep(1)
-        print "Lidar data received."
+        print ("Lidar data received.")
         return
 
     def plot_points(self):
@@ -69,7 +69,7 @@ class Lidar:
             if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
             # if 4.9 > pt[0] > .9 and 7.25 > pt[1] > 0:
                 new_list.append(pt)
-        print pt
+        print (pt)
         #Convert points to correspond with the pathfinding grid
         final_list = []
         for pt in new_list:
