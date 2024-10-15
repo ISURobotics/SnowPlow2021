@@ -22,6 +22,13 @@ class SerialComms(Node):
         
         super().__init__('serial_comms')
         LeftMotorSub = self.create_subscription(Int8, '/left_motor/speed', self.readInLeft_callback, 10) #What does the '10' parameter do?
+<<<<<<< HEAD
+        RightMotorSub = self.create_subscription(Int8, '/right_motor/speed', self.readInRight_callback, 10) #What does the '10' parameter do?
+        print("Init test")
+=======
+        RightMotorSub = self.create_subscription(Int8, '/right_motor/speed', self.readInRight_callback, 10,) #What does the '10' parameter do?
+        print("Init test") #git is stupid
+>>>>>>> 22c760b344a97aeb01ac14c8a4f40e9489bd63f9
         RightMotorSub = self.create_subscription(Int8, '/right_motor/speed', self.readInRight_callback, 10) #What does the '10' parameter do?
         print("Init test")
         self.IMUPub = self.create_publisher(Float64MultiArray, "/imu_euler", 10)

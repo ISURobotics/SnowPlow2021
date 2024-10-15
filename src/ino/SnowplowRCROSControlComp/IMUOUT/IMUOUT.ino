@@ -5,6 +5,7 @@
 #include <utility/imumaths.h>
 #include <Servo.h>
 #include <string.h>
+#include <HardwareSerial.h>
 
 /* This driver reads raw data from the BNO055
 
@@ -186,9 +187,8 @@ void setup(void)
   attachInterrupt(digitalPinToInterrupt(aileronPin), calcSignalA, CHANGE);
 
 
-
   Serial.begin(115200);
-  arduino.initNode();
+ 
 
   while (!Serial) delay(10);  // wait for serial port to open!
 
@@ -215,11 +215,11 @@ void loop(void)
     imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
     //Write to Serial Terminal Format so python can parse values back
-    Serial.print(euler.x);
+    Serial.print(euler.x());
     Serial.print("\t");
-    Serial.print(euler.y);
+    Serial.print(euler.y());
     Serial.print("\t");
-    Serial.print(euler.z);
+    Serial.print(euler.z());
     Serial.print("\n");
    /* Send the data to ROS */
 
@@ -274,11 +274,12 @@ void loop(void)
 
 if(Serial.available()) {
 
-char* motorInputROS[7] = Serial.readString();
+
+String motorInputROS = Serial.readString();
 
 
 
-leftMotorInputROS = strtok(motorInputROS, '|');
+leftMotorInputROS = strtok(motorInputROS.c_str(), '|');
 rightMotorInputROS = Serial.readString().toInt();
 
 
