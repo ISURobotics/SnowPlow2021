@@ -279,8 +279,9 @@ String motorInputROS = Serial.readString();
 
 
 
-leftMotorInputROS = strtok(motorInputROS.c_str(), '|');
-rightMotorInputROS = Serial.readString().toInt();
+leftMotorInputROS = stoi(strtok(motorInputROS.c_str(), '|'));
+
+rightMotorInputROS = stoi(strtok(NULL, '|'));
 
 
 }
