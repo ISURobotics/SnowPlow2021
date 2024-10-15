@@ -33,7 +33,7 @@
 #define elevatorPin 19
 #define aileronPin 20
 
-
+#define pistonPin 12
 //Motors
 Servo leftMotor;
 Servo rightMotor;
@@ -49,7 +49,7 @@ Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28, &Wire);
 //Motor control values to be read from SerialComms.py.
 int leftMotorInputROS = 0;
 int rightMotorInputROS = 0;
-
+bool pistonInputROS=false;
 
 
 
@@ -279,10 +279,11 @@ String motorInputROS = Serial.readString();
 
 
 
-leftMotorInputROS = strtok(motorInputROS.c_str(), '|');
-rightMotorInputROS = Serial.readString().toInt();
+leftMotorInputROS = stoi(strtok(motorInputROS.c_str(), '|'));
 
+rightMotorInputROS = stoi(strtok(NULL, '|'));
 
+pistonInputROS=stoi(strtok(NULL,'|'))==1;
 }
 
 // //read input from serial terminal 2 integers back to back for each motor
@@ -319,7 +320,11 @@ rightMotorInputROS = Serial.readString().toInt();
     leftMotor.writeMicroseconds(1500);
     rightMotor.writeMicroseconds(1500);
   }
-
+if(pistonInputROS){
+  digitalWrite(pistonPin,HIGH);
+}else{
+  digitalWrite(pistonPin,LOW);
+}
 
 
 
