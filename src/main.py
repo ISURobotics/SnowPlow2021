@@ -13,14 +13,14 @@ def main():
     and begin motion of the robot
     """
     # for debugging - set to True for competition
-    use_pathfinding = True
+    use_pathfinding = False
 
     r = Robot()
     sensors = r.sensors # We were creating a sensors object here and in robot until recently. Now we only create one in robot and use it here
     rm = Robot_Mover(r)
     fg = Func_Generator(rm)
 
-    sensors.init_lidar()
+    sensors.init_lidar(r)
     sensors.init_imu()
 
     # points = [(0, 0), (-0.5, 0), (-0.5, -1), (-1, -1), (-1, 0), (-2, 0)]
@@ -41,9 +41,8 @@ def main():
         path_points = Path_Finder.path_generator(object_points)
         print(path_points)
         points = sensors.get_movement_points(path_points)
-    else:
-        pass
-        #points = [[0, 0], [-10, 0]]
+    else:        
+        points = [[0, 0], [-10, 0]]
     print(points)
     funcs = fg.get_funcs(points)
 
@@ -54,7 +53,7 @@ def main():
     # x = raw_input()
     pe.apply_next_action()
     # exit(0)
-    rclpy.spin()
+    rclpy.spin(r)
     while not rclpy.is_shutdown():
         pass
 

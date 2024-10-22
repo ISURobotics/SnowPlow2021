@@ -1,28 +1,41 @@
 import rclpy
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Odometry
 import time
+import utils
 # from Movement_Threshold import Movement_Threshold
-import ros_numpy
+import ros2_numpy
 
 class Lidar:
-    def __init__(self, sensors):
+    def __init__(self, sensors, node):
         self.sensors = sensors
         self.points = []
         self.pose = None
-        self._sub_points = rclpy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
-        self._sub_pose = rclpy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
+        self._sub_points = node.create_subscription(PointCloud2, "/cloud", self.callback_pointcloud, 10)
+        self._sub_pose = node.create_subscription(Odometry, "/odom_rf2o", self.callback_slam_pose, 10)
+        # self._sub_pose = rclpy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
         self.pose_set = False
 
+    def extract_pose(self, msg_object: Odometry):
+        '''
+            If we just use laser odometry without SLAM (unlikely),
+            we need to convert the PoseWithCovariance message to just a pose
+        '''
+        # ret = PoseStamped()
+        # ret.pose.position = msg_object.pose.position
+        # ret.pose.orientation = msg_object.pose.pose.orientation
+        return msg_object.pose
+
     def callback_pointcloud(self, data):
-        self.points = ros_numpy.point_cloud2.pointcloud2_to_array(data)  # type: List[tuple]
+        self.points = ros2_numpy.point_cloud2.point_cloud2_to_array(data)  # type: List[tuple]
         # points data is returned as (x, y, color)
 
     def callback_slam_pose(self, data):
         if not self.pose_set:
             print("Ready")
             self.pose_set = True
-        self.pose = data.pose
+        self.pose = self.extract_pose(data.pose)
         self.sensors.callback_sensor_data()
 
     def get_points(self):
@@ -31,10 +44,10 @@ class Lidar:
     def get_pose(self):
         return self.pose
 
-    def wait_for_pose_set(self):
+    def wait_for_pose_set(self, node):
         print("Waiting for lidar data...")
         while not self.pose_set:
-            time.sleep(1)
+            rclpy.spin_once(node)
         print("Lidar data received.")
         return
 
@@ -69,7 +82,7 @@ class Lidar:
             if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
             # if 4.9 > pt[0] > .9 and 7.25 > pt[1] > 0:
                 new_list.append(pt)
-        print(pt)
+            print(pt)
         #Convert points to correspond with the pathfinding grid
         final_list = []
         for pt in new_list:

@@ -3,6 +3,7 @@
 import time
 
 import rclpy
+from rclpy.node import Node
 # from std_msgs.msg import Int8
 # from std_msgs.msg import Float64MultiArray
 # from sensor_msgs.msg import PointCloud2
@@ -14,23 +15,21 @@ import rclpy
 # import numpy as np
 from Motor import *
 from Sensors import *
+import rclpy.topic_endpoint_info
 # import Lidar
 # from typing import List
 
-# Note: Before running this file, be sure to start roscore and rosrun the rosserial_python
-# >> rosrun rosserial_python serial_node.py
-
-class Robot:
+class Robot(Node):
     """
         This class controls the motors and keeps track of the sensors module. 
         Passing a robot into a function allows the function to get sensor data and run the speed functions
     """
     def __init__(self, rclpy_init=True):
-        if rclpy_init:
-            rclpy.init_node('Robot', anonymous=False)
-        self.left = Motor('left_motor')
-        self.right = Motor('right_motor')
-        self.sensors = Sensors()
+        rclpy.init()
+        super().__init__("Robot")
+        self.left = Motor(self, 'left_motor')
+        self.right = Motor(self, 'right_motor')
+        self.sensors = Sensors(self)
         # self.lidar = Lidar()
 
     def stop(self):
@@ -55,12 +54,13 @@ class Robot:
 
     def wait_for_pub(self):
         print("Waiting for publishers..")
-        topics = rclpy.get_published_topics()
-        print(topics)
-        while not (['/left_motor/speed', 'std_msgs/Int8'] in topics) or not(['/right_motor/speed', 'std_msgs/Int8'] in topics):
-            topics = rclpy.get_published_topics()
+        topics = self.get_topic_names_and_types()
+        while not (('/left_motor/speed', ['std_msgs/msg/Int8']) in topics) or not(('/right_motor/speed', ['std_msgs/msg/Int8']) in topics):
+            topics = self.get_topic_names_and_types()
+            print(topics)
             time.sleep(1)
-        time.sleep(20)
+        print("waiting...")
+        time.sleep(2)
         print("Publishers active.")
         return
 

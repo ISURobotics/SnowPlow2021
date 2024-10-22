@@ -3,10 +3,11 @@ from std_msgs.msg import Float64MultiArray
 import numpy as np
 
 class IMU:
-    def __init__(self, sensors):
+    def __init__(self, sensors, node):
         self.sensors = sensors
         print("IMU sub activating...")
-        self._sub_euler = rclpy.Subscriber("/imu_euler", Float64MultiArray, self.callback_euler)
+        self._sub_euler = node.create_subscription(Float64MultiArray, "/imu_euler", self.callback_euler, 10)
+        # self._sub_euler = rclpy.Subscriber("/imu_euler", Float64MultiArray, self.callback_euler)
         self.euler = [0, 0, 0]
         
         print("IMU sub active")

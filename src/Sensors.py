@@ -10,14 +10,14 @@ class Sensors:
         This class acts as a facade for the sensors on the robot, currently including the Lidar and IMU.
         It also stores all active listeners for sensor values.
     """
-    def __init__(self):
-        self.lidar = Lidar(self)
-        self.imu = IMU(self)
+    def __init__(self, node):
+        self.lidar = Lidar(self, node)
+        self.imu = IMU(self, node)
         self.lidar_pose = None
         self.thresholds = []
 
-    def init_lidar(self):
-        self.lidar.wait_for_pose_set()
+    def init_lidar(self, node):
+        self.lidar.wait_for_pose_set(node)
 
     def init_imu(self):
         pass

@@ -1,0 +1,6 @@
+source;share/SnowPlow2021/hook/pythonpath.ps1
+source;share/SnowPlow2021/hook/pythonpath.dsv
+source;share/SnowPlow2021/hook/pythonpath.sh
+source;share/SnowPlow2021/hook/ament_prefix_path.ps1
+source;share/SnowPlow2021/hook/ament_prefix_path.dsv
+source;share/SnowPlow2021/hook/ament_prefix_path.sh
