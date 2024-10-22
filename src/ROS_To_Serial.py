@@ -16,10 +16,10 @@ class DataListener(Node):
         self.ser = serial.Serial('/dev/ttyACM0', 115200)
 
     def left_callback(self, val):
-        left_speed=val
+        self.left_speed=val
         self.update_serial()
     def right_callback(self, val):
-        right_speed=val
+        self.right_speed=val
         self.update_serial()
     def update_serial(self):
         self.ser.write((str(self.left_speed)+"|"+str(self.right_speed)).encode('utf-8'))
