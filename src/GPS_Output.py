@@ -2,7 +2,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray
-class DataListener(Node):
+class GPSListener(Node):
     def __init__(self):
         super().__init__("gps_node")
         self.counter_ = 0
@@ -47,7 +47,7 @@ class DataListener(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = DataListener()
+    node = GPSListener()
     rclpy.spin(node)
     rclpy.shutdown()
 
