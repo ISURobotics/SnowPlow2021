@@ -164,8 +164,6 @@ int flipPolarity(int motorSpeed) {
 
 
 //*********************************************************************************************** */
-
-
 void setup(void)
 {
   //sets pinmodes for motor pins
@@ -191,18 +189,18 @@ void setup(void)
  
 
   while (!Serial) delay(10);  // wait for serial port to open!
-
   /* Initialise the sensor */
   if(!bno.begin())
   {
     /* There was a problem detecting the BNO055 ... check your connections */
-    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    while(1);
+    Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    //while(1);
   }
 }
 
 void loop(void)
 {
+  //Serial.println("Here");
   // Possible vector values can be:
   // - VECTOR_ACCELEROMETER - m/s^2
   // - VECTOR_MAGNETOMETER  - uT
@@ -276,16 +274,30 @@ if(Serial.available()) {
 
 
 String motorInputROS = Serial.readString();
-
-
-
-leftMotorInputROS = stoi(strtok(motorInputROS.c_str(), '|'));
-
-rightMotorInputROS = stoi(strtok(NULL, '|'));
+int j=0;
+  int val=0;
+  for(int i=0;i<=motorInputROS.length();i++){
+    if(i==motorInputROS.length()||motorInputROS[i]=='|'){
+      if(j==0){
+        leftMotorInputROS=val;
+      }else if(j==1){
+        rightMotorInputROS=val;
+      }
+      j++;
+      val=0;
+    }else{
+      if(((int)(motorInputROS[i]-'0'))>=0){
+        val*=10;
+        val+=motorInputROS[i]-'0';
+      }
+    }
+  }
 
 
 }
-
+Serial.println(leftMotorInputROS);
+Serial.println(rightMotorInputROS);
+Serial.println("-------------");
 // //read input from serial terminal 2 integers back to back for each motor
 // int motor1;
 // int motor2;
@@ -320,7 +332,6 @@ rightMotorInputROS = stoi(strtok(NULL, '|'));
     leftMotor.writeMicroseconds(1500);
     rightMotor.writeMicroseconds(1500);
   }
-
 
 
 
