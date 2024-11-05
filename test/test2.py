@@ -4,6 +4,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Float32MultiArray
 from ublox_gps import UbloxGps
 import serial
 import time
@@ -19,9 +20,10 @@ class GPS(Node):
         self.gps = UbloxGps(self.port)
         self.set_output_rate(10)
         self.origin = [0, 0]
-        self.x = 0
-        self.y = 0
-        #self.imu_sub = self.create_subscription(MESSAGETYPE, TOPICNAME, 10)
+        self.x = 0.0
+        self.y = 0.0
+        self.orientation = 0.0
+        self.imu_sub = self.create_subscription(Float32MultiArray, '/imu/magnetometer', self.imu_callback, 10)
         self.gps_pose_pub = self.create_publisher(PoseStamped, '/gps_pose', 10)
         pub_rate = 20
         self.timer = self.create_timer(1/pub_rate, self.publish_pose)
@@ -104,8 +106,8 @@ class GPS(Node):
 
 
 
-    def get_orientation(self):
-        return
+    def imu_callback(self, msg):
+        self.orientation = msg.data[0]
 
 
 
@@ -122,7 +124,7 @@ class GPS(Node):
 
         msg.pose.orientation.x = 0.0
         msg.pose.orientation.y = 0.0
-        msg.pose.orientation.z = 0.0
+        msg.pose.orientation.z = self.orientation
         msg.pose.orientation.w = 0.0
         
         return msg
