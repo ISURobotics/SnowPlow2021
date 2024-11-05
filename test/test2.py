@@ -16,7 +16,7 @@ class GPS(Node):
 
     def __init__(self):
         super().__init__("gps_node")
-        self.port = serial.Serial('/dev/ttyACM0', baudrate=9600, timeout=1)
+        self.port = serial.Serial('/dev/ttyACM1', baudrate=9600, timeout=1)
         self.gps = UbloxGps(self.port)
         self.set_output_rate(10)
         self.origin = [0, 0]
@@ -46,6 +46,8 @@ class GPS(Node):
 
     def get_lat_lon(self):
         coords = self.gps.geo_coords()
+        if (coords is None):
+            return 0.0, 0.0
         return coords.lat, coords.lon
 
 
