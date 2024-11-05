@@ -11,4 +11,4 @@ class IMUNode(Node):
 
     def serial_loop():
         while True:
-            data = self.ser.read()
+             = self.ser.read()
