@@ -1,0 +1,1 @@
+python IMU_Node.py & python main.py 
