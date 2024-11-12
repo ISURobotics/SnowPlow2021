@@ -1,6 +1,3 @@
-# Ryan Madigan
-#
-
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
@@ -12,12 +9,12 @@ import math
 
 
 
-class GPS(Node):
+class Mock_GPS(Node):
 
     def __init__(self):
         super().__init__("gps_node")
-        self.port = serial.Serial('/dev/ttyACM1', baudrate=9600, timeout=1)
-        self.gps = UbloxGps(self.port)
+        # self.port = serial.Serial('/dev/ttyACM1', baudrate=9600, timeout=1)
+        # self.gps = UbloxGps(self.port)
         self.set_output_rate(10)
         self.origin = [0, 0]
         self.x = 0.0
@@ -48,30 +45,27 @@ class GPS(Node):
 
 
     def get_lat_lon(self):
-        coords = self.gps.geo_coords()
-        if (coords is None):
-            return 0.0, 0.0
-        return coords.lat, coords.lon
+        return 0.0, 0.0
 
 
 
 
 
     def set_output_rate(self, rate: int):
+        pass
+        # assert rate >= 1 and rate <= 20
+        # rate_ms = int(1000 / rate)
 
-        assert rate >= 1 and rate <= 20
-        rate_ms = int(1000 / rate)
+        # msg = bytearray([0xB5, 0x62, 0x06, 0x08, 0x06, 0x00, (rate_ms & 0xFF),
+        #                 (rate_ms >> 8), 0x01, 0x00, 0x00, 0x00])
+        # ck_a = 0
+        # ck_b = 0
+        # for byte in msg[2:]:
+        #     ck_a = (ck_a + byte) & 0xFF
+        #     ck_b = (ck_b + ck_a) & 0xFF
 
-        msg = bytearray([0xB5, 0x62, 0x06, 0x08, 0x06, 0x00, (rate_ms & 0xFF),
-                        (rate_ms >> 8), 0x01, 0x00, 0x00, 0x00])
-        ck_a = 0
-        ck_b = 0
-        for byte in msg[2:]:
-            ck_a = (ck_a + byte) & 0xFF
-            ck_b = (ck_b + ck_a) & 0xFF
-
-        msg.extend([ck_a, ck_b])
-        self.port.write(msg)
+        # msg.extend([ck_a, ck_b])
+        # self.port.write(msg)
 
 
 
@@ -213,7 +207,7 @@ class GPS(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    gps = GPS()
+    gps = Mock_GPS()
     while(not gps.calibrate_orientation()):
         rclpy.spin_once(gps)
     gps.set_output_rate(10)
