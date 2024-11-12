@@ -274,19 +274,24 @@ if(Serial.available()) {
 
 
 String motorInputROS = Serial.readString();
+Serial.println("Found "+motorInputROS);
 int j=0;
   int val=0;
+  int neg=1;
   for(int i=0;i<=motorInputROS.length();i++){
     if(i==motorInputROS.length()||motorInputROS[i]=='|'){
       if(j==0){
-        leftMotorInputROS=val;
+        leftMotorInputROS=val*neg;
       }else if(j==1){
-        rightMotorInputROS=val;
+        rightMotorInputROS=val*neg;
       }
       j++;
       val=0;
+      neg=1;
     }else{
-      if(((int)(motorInputROS[i]-'0'))>=0){
+      if(motorInputROS[i]=='-'){
+        neg=-1;
+      }else if(((int)(motorInputROS[i]-'0'))>=0){
         val*=10;
         val+=motorInputROS[i]-'0';
       }
@@ -305,7 +310,6 @@ Serial.println("-------------");
 // motor1 = Serial.readString().toInt();
 // motor2 = Serial.readString().toInt();
 // }
-
 
 
 //if the throttle is all the way up and the controller is connected, the arduino should be in ROS mode, listening to topics listed above over rosserial
