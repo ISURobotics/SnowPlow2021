@@ -33,7 +33,7 @@
 #define elevatorPin 19
 #define aileronPin 20
 
-
+#define LEDPin 13
 //Motors
 Servo leftMotor;
 Servo rightMotor;
@@ -169,7 +169,7 @@ void setup(void)
   //sets pinmodes for motor pins
   pinMode(leftMotorPin, OUTPUT);
   pinMode(rightMotorPin, OUTPUT);
-
+  pinMode(LEDPin, OUTPUT);
   //attaches the motors to defined pins
   leftMotor.attach(leftMotorPin);
   rightMotor.attach(rightMotorPin);
@@ -303,6 +303,11 @@ int j=0;
 Serial.println(leftMotorInputROS);
 Serial.println(rightMotorInputROS);
 Serial.println("-------------");
+if(leftMotorInputROS<-50){
+  digitalWrite(LEDPin,HIGH);
+}else{
+  digitalWrite(LEDPin,LOW);
+}
 // //read input from serial terminal 2 integers back to back for each motor
 // int motor1;
 // int motor2;
