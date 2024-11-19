@@ -41,7 +41,27 @@ Servo rightMotor;
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
-Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28, &Wire);
+Adafruit_BNO055 bno = Adafruit_BNO055(55);
+
+int compass_calibration = 0;
+
+
+int getCalibrationStatus(void)
+{
+  uint8_t system, gyro, accel, mag;
+  system = gyro = accel = mag = 0;
+  bno.getCalibration(&system, &gyro, &accel, &mag);
+
+  return mag;
+}
+
+
+
+
+
+
+
+
 
 
 //NEW AS OF 9/23/2024***************************************************************
@@ -196,6 +216,9 @@ void setup(void)
     Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     //while(1);
   }
+
+  bno.setExtCrystalUse(true);
+
 }
 
 void loop(void)
@@ -210,16 +233,47 @@ void loop(void)
   // - VECTOR_GRAVITY       - m/s^2
 
   //Euler angle of Rotation 
+    imu::Vector<3> mag = bno.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
     imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+    compass_calibration = getCalibrationStatus();
+
 
     //Write to Serial Terminal Format so python can parse values back
-    Serial.print(euler.x());
-    Serial.print("\t");
-    Serial.print(euler.y());
-    Serial.print("\t");
-    Serial.print(euler.z());
-    Serial.print("\n");
-   /* Send the data to ROS */
+    double magX = mag.x();
+  double magY = mag.y();
+  double magZ = mag.z();
+  double yaw = atan2(magY, -magZ) * 180/3.14159;
+
+
+  double eulx = euler.x();
+  double euly = euler.y();
+  double eulz = euler.z();
+
+  Serial.print(eulx);
+  Serial.print(',');
+  Serial.print(euly);
+  Serial.print(',');
+  Serial.print(eulz);
+  Serial.print(';');
+
+  if (compass_calibration == 3) {
+    Serial.print(0.0);
+    Serial.print(',');
+    Serial.print(0.0);
+    Serial.print(',');
+    Serial.println(yaw);
+  }
+  else {
+    Serial.print(1.0);
+    Serial.print(',');
+    Serial.print(1.0);
+    Serial.print(',');
+    Serial.println(0.0);
+  }
+
+  if (eulx == 0.0 && euly == 0.0 && eulz == 0.0){
+    bno.setExtCrystalUse(true);
+  }
 
   
 
@@ -300,9 +354,9 @@ int j=0;
 
 
 }
-Serial.println(leftMotorInputROS);
-Serial.println(rightMotorInputROS);
-Serial.println("-------------");
+//Serial.println(leftMotorInputROS);
+//Serial.println(rightMotorInputROS);
+//Serial.println("-------------");
 // //read input from serial terminal 2 integers back to back for each motor
 // int motor1;
 // int motor2;
