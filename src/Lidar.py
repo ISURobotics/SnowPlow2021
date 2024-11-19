@@ -13,9 +13,9 @@ class Lidar:
         self.points = []
         self.pose = None
         self._sub_points = node.create_subscription(PointCloud2, "/cloud", self.callback_pointcloud, 10)
-        self._sub_pose = node.create_subscription(Odometry, "/odom_rf2o", self.callback_slam_pose, 10)
+        # self._sub_pose = node.create_subscription(Odometry, "/odom_rf2o", self.callback_slam_pose, 10)
         # self._sub_pose = rclpy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
-        self.pose_set = False
+        self.points_set = False
 
     def extract_pose(self, msg_object: Odometry):
         '''
@@ -30,13 +30,14 @@ class Lidar:
     def callback_pointcloud(self, data):
         self.points = ros2_numpy.point_cloud2.point_cloud2_to_array(data)  # type: List[tuple]
         # points data is returned as (x, y, color)
+        self.points_set = True
 
-    def callback_slam_pose(self, data):
-        if not self.pose_set:
-            print("Ready")
-            self.pose_set = True
-        self.pose = self.extract_pose(data.pose)
-        self.sensors.callback_sensor_data()
+    # def callback_slam_pose(self, data):
+    #     if not self.points_set:
+    #         print("Ready")
+    #         self.points_set = True
+    #     self.pose = self.extract_pose(data.pose)
+    #     self.sensors.callback_sensor_data()
 
     def get_points(self):
         return self.points  # points data is returned as (x, y, color)
@@ -45,8 +46,8 @@ class Lidar:
         return self.pose
 
     def wait_for_pose_set(self, node):
-        print("Waiting for lidar data...")
-        while not self.pose_set:
+        print("Waiting for Lidar data...")
+        while not self.points_set:
             rclpy.spin_once(node)
         print("Lidar data received.")
         return

@@ -15,7 +15,7 @@ class IMUNode(Node):
         self.imu_magnetometer = [0, 0, 0]
         self.magnetometer_pub = self.create_publisher(Float32MultiArray, "/imu/magnetometer", 10)
         self.orientation_pub = self.create_publisher(Float32MultiArray, "/imu/euler_rotation", 10)
-        self.ser = serial.Serial('/dev/ttyACM0', 115200) # May need to update
+        self.ser = serial.Serial('/dev/ttyACM1', 115200) # May need to update
         self.working_data = ""
         self.data_started = False
 

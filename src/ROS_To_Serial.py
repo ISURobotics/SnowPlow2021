@@ -21,11 +21,11 @@ class SerialToROSCommunication(Node):
             self.ser=serial.Serial('/dev/ttyACM1',baudrate=115200)
     #called when ROS updates the topic for the left motor
     def left_callback(self, val):
-        self.left_speed=val
+        self.left_speed=val.data
         self.update_serial()
     #called when ROS updates the topic for the right motor
     def right_callback(self, val):
-        self.right_speed=val
+        self.right_speed=val.data
         self.update_serial()
     def timer_callback(self):
         in_=self.ser.readLine().decode('utf-8').strip().split()
@@ -35,7 +35,7 @@ class SerialToROSCommunication(Node):
         self.imu_publisher.publish(data)
     #takes the stored values for the right and left motor speeds and outputs that to the Serial
     def update_serial(self):
-        self.ser.write((str(self.left_speed)+"|"+str(self.right_speed)).encode('utf-8'))
+        self.ser.write((str(self.left_speed)+"|"+str(self.right_speed)+"\n").encode('utf-8'))
         print(str(self.left_speed)+"|"+str(self.right_speed))
 def main(args=None):
     rclpy.init(args=args)
