@@ -57,6 +57,10 @@ class Sensors:
                 self.thresholds.pop(i)
 
     def get_pose(self):
+        """
+            Uses our current method to get the robot's position.
+            Currently, we use the GPS
+        """
         return self.gps.get_pose()
     
     def get_obstacle_points(self):

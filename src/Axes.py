@@ -19,14 +19,14 @@ IMU_ROT = lambda p_pose, p_threshold: imu_z_rotation(p_pose, p_threshold)
 """
 
 def x_axis(sensors, t):
-    lidar_pose = sensors.get_pose()
-    measured_val = lidar_pose.position.x
+    pose = sensors.get_pose()
+    measured_val = pose.position.x
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
 def y_axis(sensors, t):
-    lidar_pose = sensors.get_pose()
-    measured_val = lidar_pose.position.y
+    pose = sensors.get_pose()
+    measured_val = pose.position.y
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
