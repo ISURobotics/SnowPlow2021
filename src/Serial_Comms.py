@@ -12,7 +12,7 @@ from std_msgs.msg import Float64MultiArray
 #Callbacks to each motor speed to send a specific command over serial to the arduino
 #Command format 0080, then arduino reads it as 0% left motor, 80% right motor.
 #arduino1Out = serial.Serial(port='/dev/ttyACM0', baudrate=115200)
-arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200)
+arduino = serial.Serial(port='/dev/ttyACM1', baudrate=115200)
 leftMotorInputROS = 0
 rightMotorInputROS = 0
 

@@ -61,7 +61,7 @@ class Robot_Mover:
         """
         sensors = self.robot.sensors
         print("Moving forward " + str(meters))
-        pose = sensors.get_lidar_pose()
+        pose = sensors.get_pose()
         angle = sensors.get_euler()[0]
         print(pose)
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
@@ -124,7 +124,7 @@ class Robot_Mover:
         """
         sensors = self.robot.sensors
         print("Moving backward " + str(meters))
-        pose = sensors.get_lidar_pose()
+        pose = sensors.get_pose()
         angle = sensors.get_euler()[0]
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         self.maintain_angle = angle
@@ -188,7 +188,7 @@ class Robot_Mover:
         """
         sensors = self.robot.sensors
         print("Rotating left " + str(degrees))
-        pose = sensors.get_lidar_pose()
+        pose = sensors.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
         deltaRadians = degrees * (np.pi / 180) + self.left_turn_offset
@@ -247,7 +247,7 @@ class Robot_Mover:
         """
         sensors = self.robot.sensors
         print("Rotating right " + str(degrees))
-        pose = sensors.get_lidar_pose()
+        pose = sensors.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
         deltaRadians = degrees * (np.pi / 180) + self.right_turn_offset

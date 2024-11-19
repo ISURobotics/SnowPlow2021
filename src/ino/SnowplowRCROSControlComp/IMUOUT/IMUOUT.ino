@@ -220,7 +220,7 @@ void setup(void)
   bno.setExtCrystalUse(true);
 
 }
-
+String lastInput="";
 void loop(void)
 {
   //Serial.println("Here");
@@ -328,7 +328,8 @@ if(Serial.available()) {
 
 
 String motorInputROS = Serial.readString();
-Serial.println("Found "+motorInputROS);
+lastInput=motorInputROS;
+//Serial.println("Found "+motorInputROS);
 int j=0;
   int val=0;
   int neg=1;
@@ -353,6 +354,12 @@ int j=0;
   }
 
 
+}
+Serial.print(lastInput);
+if(leftMotorInputROS<=-50){
+  digitalWrite(LEDPin,HIGH);
+}else{
+  digitalWrite(LEDPin,LOW);
 }
 //Serial.println(leftMotorInputROS);
 //Serial.println(rightMotorInputROS);

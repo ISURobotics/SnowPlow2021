@@ -1,5 +1,6 @@
 from Lidar import *
 from IMU import *
+from RobotGPS import *
 
 from Movement_Threshold import Movement_Threshold
 import numpy as np
@@ -13,13 +14,16 @@ class Sensors:
     def __init__(self, node):
         self.lidar = Lidar(self, node)
         self.imu = IMU(self, node)
-        self.lidar_pose = None
+        self.gps = RobotGPS(self, node)
         self.thresholds = []
 
     def init_lidar(self, node):
         self.lidar.wait_for_pose_set(node)
 
     def init_imu(self):
+        pass
+
+    def init_gps(self):
         pass
     
     def callback_sensor_data(self):
@@ -52,8 +56,8 @@ class Sensors:
             if self.thresholds[i].tag == tag:
                 self.thresholds.pop(i)
 
-    def get_lidar_pose(self):
-        return self.lidar.get_pose()
+    def get_pose(self):
+        return self.gps.get_pose()
     
     def get_obstacle_points(self):
         return self.lidar.prepare_obstacle_points()
