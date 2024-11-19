@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Int8
 from std_msgs.msg import Float64MultiArray
+from serial import SerialException
 class SerialToROSCommunication(Node):
 
     def __init__(self):
@@ -14,7 +15,10 @@ class SerialToROSCommunication(Node):
         self.right_subscriber = self.create_subscription(Int8, "/right_motor/speed", self.right_callback, 10)
         self.imu_publisher=self.create_publisher(Float64MultiArray,"/imu_euler",10)
         self.timer = self.create_timer(1/10, self.timer_callback)
-        self.ser = serial.Serial('/dev/ttyACM0', 115200)
+        try:
+            self.ser = serial.Serial('/dev/ttyACM0', baudrate=115200)
+        except SerialException:
+            self.ser=serial.Serial('/dev/ttyACM1',baudrate=115200)
     #called when ROS updates the topic for the left motor
     def left_callback(self, val):
         self.left_speed=val
