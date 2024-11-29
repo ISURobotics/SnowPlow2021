@@ -8,6 +8,8 @@ class IMUNode(Node):
         This class is a ROS node that handles communications with the IMU Arduino.
         After initializing it, run the serial_loop function to make it read data from the Arduino
         and publish it to the ROS topics /imu/magnetometer and /imu/euler_rotation.
+
+        This will need to be combined with the node in ROS_To_Serial.py, as only one node can access the serial port at a time.
     """
     def __init__(self):
         super().__init__("imu_node")

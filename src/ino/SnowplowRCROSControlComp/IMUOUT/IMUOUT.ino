@@ -220,7 +220,7 @@ void setup(void)
   bno.setExtCrystalUse(true);
 
 }
-String lastInput="";
+String inputBuffer = ""; // Motor data in progress
 void loop(void)
 {
   //Serial.println("Here");
@@ -233,13 +233,13 @@ void loop(void)
   // - VECTOR_GRAVITY       - m/s^2
 
   //Euler angle of Rotation 
-    imu::Vector<3> mag = bno.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
-    imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-    compass_calibration = getCalibrationStatus();
+  imu::Vector<3> mag = bno.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
+  imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+  compass_calibration = getCalibrationStatus();
 
 
-    //Write to Serial Terminal Format so python can parse values back
-    double magX = mag.x();
+  //Write to Serial Terminal Format so python can parse values back
+  double magX = mag.x();
   double magY = mag.y();
   double magZ = mag.z();
   double yaw = atan2(magY, -magZ) * 180/3.14159;
@@ -320,58 +320,49 @@ void loop(void)
 
 
 
-//****leftMotorInputROS and rightMotorInputROS should be read from serial. Sent over SerialComms.py
+ //****leftMotorInputROS and rightMotorInputROS should be read from serial. Sent over SerialComms.py
 
 
 
-if(Serial.available()) {
-
-
-String motorInputROS = Serial.readString();
-lastInput=motorInputROS;
-//Serial.println("Found "+motorInputROS);
-int j=0;
-  int val=0;
-  int neg=1;
-  for(int i=0;i<=motorInputROS.length();i++){
-    if(i==motorInputROS.length()||motorInputROS[i]=='|'){
-      if(j==0){
-        leftMotorInputROS=val*neg;
-      }else if(j==1){
-        rightMotorInputROS=val*neg;
-      }
-      j++;
-      val=0;
-      neg=1;
-    }else{
-      if(motorInputROS[i]=='-'){
-        neg=-1;
-      }else if(((int)(motorInputROS[i]-'0'))>=0){
-        val*=10;
-        val+=motorInputROS[i]-'0';
+  while(Serial.available()) {
+    char ch = Serial.read();
+    if (ch == ';') {
+      lastInput = inputBuffer;
+      int j=0;
+      int val=0;
+      int neg=1;
+      for(int i=0;i<=inputBuffer.length();i++){
+        if(i==inputBuffer.length()||inputBuffer[i]=='|'){
+          if(j==0) {
+            leftMotorInputROS=val*neg;
+          } else if(j==1) {
+            rightMotorInputROS=val*neg;
+          }
+          j++;
+          val=0;
+          neg=1;
+        } else {
+          if(inputBuffer[i]=='-'){
+            neg=-1;
+          } else if (((int)(inputBuffer[i]-'0'))>=0) {
+            val*=10;
+            val+=inputBuffer[i]-'0';
+          }
+        }
       }
     }
+    Serial.print(lastInput);
+    if(leftMotorInputROS<=-50) {
+      digitalWrite(LEDPin,HIGH);
+    } else {
+      digitalWrite(LEDPin,LOW);
+    }
+    inputBuffer = "";
+  } else {
+    inputBuffer += ch;
   }
 
-
-}
-Serial.print(lastInput);
-if(leftMotorInputROS<=-50){
-  digitalWrite(LEDPin,HIGH);
-}else{
-  digitalWrite(LEDPin,LOW);
-}
-//Serial.println(leftMotorInputROS);
-//Serial.println(rightMotorInputROS);
-//Serial.println("-------------");
-// //read input from serial terminal 2 integers back to back for each motor
-// int motor1;
-// int motor2;
-// while(!Serial.available()){
-// motor1 = Serial.readString().toInt();
-// motor2 = Serial.readString().toInt();
-// }
-
+// Now to handle the motor controllers
 
 //if the throttle is all the way up and the controller is connected, the arduino should be in ROS mode, listening to topics listed above over rosserial
   if(pulseTimeT >= 1575 && controllerConnect) {
@@ -397,7 +388,4 @@ if(leftMotorInputROS<=-50){
     leftMotor.writeMicroseconds(1500);
     rightMotor.writeMicroseconds(1500);
   }
-
-
-
 }
