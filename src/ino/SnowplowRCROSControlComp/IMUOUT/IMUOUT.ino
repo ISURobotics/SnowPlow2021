@@ -221,6 +221,7 @@ void setup(void)
 
 }
 String inputBuffer = ""; // Motor data in progress
+String lastInput = "";
 void loop(void)
 {
   //Serial.println("Here");
@@ -322,8 +323,6 @@ void loop(void)
 
  //****leftMotorInputROS and rightMotorInputROS should be read from serial. Sent over SerialComms.py
 
-
-
   while(Serial.available()) {
     char ch = Serial.read();
     if (ch == ';') {
@@ -350,16 +349,16 @@ void loop(void)
           }
         }
       }
-    }
-    Serial.print(lastInput);
-    if(leftMotorInputROS<=-50) {
-      digitalWrite(LEDPin,HIGH);
+      Serial.print(lastInput);
+      if(leftMotorInputROS<=-50) {
+        digitalWrite(LEDPin,HIGH);
+      } else {
+        digitalWrite(LEDPin,LOW);
+      }
+      inputBuffer = "";
     } else {
-      digitalWrite(LEDPin,LOW);
+      inputBuffer += ch;
     }
-    inputBuffer = "";
-  } else {
-    inputBuffer += ch;
   }
 
 // Now to handle the motor controllers
