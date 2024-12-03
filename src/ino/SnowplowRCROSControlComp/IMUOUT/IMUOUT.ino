@@ -206,6 +206,7 @@ void setup(void)
 
 
   Serial.begin(115200);
+  Serial.setTimeout(50);
  
 
   while (!Serial) delay(10);  // wait for serial port to open!
@@ -213,7 +214,7 @@ void setup(void)
   if(!bno.begin())
   {
     /* There was a problem detecting the BNO055 ... check your connections */
-    Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    //Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     //while(1);
   }
 
@@ -355,7 +356,7 @@ int j=0;
 
 
 }
-Serial.print(lastInput);
+//Serial.print(lastInput);
 if(leftMotorInputROS<=-50){
   digitalWrite(LEDPin,HIGH);
 }else{
