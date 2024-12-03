@@ -13,7 +13,7 @@ def main():
     and begin motion of the robot
     """
     # for debugging - set to True for competition
-    use_pathfinding = False
+    use_pathfinding = True
 
     r = Robot()
     sensors = r.sensors # We were creating a sensors object here and in robot until recently. Now we only create one in robot and use it here

@@ -13,6 +13,8 @@ class Lidar:
         self.points = []
         self.pose = None
         self._sub_points = node.create_subscription(PointCloud2, "/cloud", self.callback_pointcloud, 10)
+        self.grid_res = 100     # Must be a multiple of 4
+        assert (self.grid_res % 4 == 0)
         # self._sub_pose = node.create_subscription(Odometry, "/odom_rf2o", self.callback_slam_pose, 10)
         # self._sub_pose = rclpy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
         self.points_set = False
@@ -28,6 +30,7 @@ class Lidar:
         return msg_object.pose
 
     def callback_pointcloud(self, data):
+        # print(ros2_numpy.point_cloud2.point_cloud2_to_array(data))
         self.points = ros2_numpy.point_cloud2.point_cloud2_to_array(data)  # type: List[tuple]
         # points data is returned as (x, y, color)
         self.points_set = True
@@ -76,10 +79,11 @@ class Lidar:
         #Add 26 to x value
 
         #Get points to prepare
-        point_list = self.points
+        point_list = self.points['xyz']
         #FIlter points to only use those in the range of the field
         new_list = []
         for pt in point_list:
+            # print(pt)
             if 4.9 > pt[0] > .9 and 7.25 > pt[1] > -7.75:
             # if 4.9 > pt[0] > .9 and 7.25 > pt[1] > 0:
                 new_list.append(pt)
@@ -88,8 +92,8 @@ class Lidar:
         final_list = []
         for pt in new_list:
             final_pt = []
-            final_pt.append(int(round(20 - (pt[0] * 4)))) # 20 because the robot lidar starts 2 meters from the bottom of the possible area
-            final_pt.append(int(round(26 + (pt[1] * (-4)))))
+            final_pt.append(int(round((5*self.grid_res) - (pt[0] * self.grid_res)))) # 20 because the robot lidar starts 2 meters from the bottom of the possible area
+            final_pt.append(int(round((6.5*self.grid_res) + (pt[1] * (-(self.grid_res))))))
             final_list.append(final_pt)
         #Return list of points
         return final_list
@@ -99,7 +103,7 @@ class Lidar:
         final_list = []
         for pt in points_list:
             final_pt = []
-            final_pt.append((pt[0] - 20) / 4.0)  # robot starts by looking in the negative x direction
-            final_pt.append((pt[1] - 26) / 4.0)  # left of robot is negative y direction
+            final_pt.append((pt[0] - (5*self.grid_res)) / self.grid_res)  # robot starts by looking in the negative x direction
+            final_pt.append((pt[1] - (6.5*self.grid_res)) / self.grid_res)  # left of robot is negative y direction
             final_list.append(final_pt)
         return final_list

@@ -10,7 +10,7 @@ class RobotGPS:
 
     def __init__(self, sensors, node):
         self.sensors = sensors
-        self._sub_position = node.create_subscription(PoseStamped, "/gps_pose", 10)
+        self._sub_position = node.create_subscription(PoseStamped, "/gps_pose", self.gps_callback, 10)
         self.gps_pose: Pose = None
 
     def gps_callback(self, msg: PoseStamped):

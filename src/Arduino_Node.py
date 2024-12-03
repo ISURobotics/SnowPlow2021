@@ -58,7 +58,7 @@ class SerialToROSCommunication(Node):
                 self.working_data += newest_byte.decode("utf-8")
     #takes the stored values for the right and left motor speeds and outputs that to the Serial
     def update_serial(self):
-        self.ser.write((str(self.left_speed)+"|"+str(self.right_speed)+"\n").encode('utf-8'))
+        self.ser.write((str(self.left_speed)+"|"+str(self.right_speed)+"'\n").encode('utf-8'))
         print(str(self.left_speed)+"|"+str(self.right_speed))
 def main(args=None):
     rclpy.init(args=args)

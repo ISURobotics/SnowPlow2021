@@ -47,8 +47,8 @@ import time
 
 # Class Variables
 grid_res = 100       # INTEGER, MUST BE MULTIPLE OF 4, grid/path resolution per 1m, i.e if 100, grid res will be 0.01m so elements in array represent 1cm x 1cm square
-cb_width = 75        # INTEGER, width for the cone buffer to stretch left and right individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
-cb_height = 75       # INTEGER, height for the cone buffer to stretch up and down individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
+cb_width = 6        # INTEGER, width for the cone buffer to stretch left and right individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
+cb_height = 2       # INTEGER, height for the cone buffer to stretch up and down individually, measured in increments based on grid resolution (i.e. if grid res is 100, then 1 is equal to a 1cm buffer)
 
 
 
@@ -503,10 +503,10 @@ def path_generator(pos_of_cones):
     # displays path
     #display_path(grid, path)
     # prints path
-    #for i in range(len(path)):
-    #    print(path[i], end=", ")
-
-
+    for i in range(len(path)):
+        print(path[i], end=", ")
+    print(len(path))
+    print('hi\n\n\n\n\n\n\n\n')
     return path
 
 
