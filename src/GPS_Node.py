@@ -26,6 +26,8 @@ class GPS(Node):
         self.imu_orientation = 0.0
         self.cal_orientations = []
         self.starting_orientation = 0.0
+        self.lat_factor = 0.0
+        self.lon_factor = 0.0
         self.imu_sub = self.create_subscription(Float32MultiArray, '/imu/magnetometer', self.imu_callback, 10)
         self.gps_pose_pub = self.create_publisher(PoseStamped, '/gps_pose', 10)
         pub_rate = 20
@@ -40,15 +42,18 @@ class GPS(Node):
     
 
     def set_origin(self):
-        global_x, global_y = self.get_global_x_y()
+        global_x, global_y = self.get_global_x_y(True)
         self.origin = [global_x, global_y]
 
 
 
 
 
-    def get_lat_lon(self):
+    def get_lat_lon(self, setting_origin = False):
         coords = self.gps.geo_coords()
+        if (setting_origin):
+            self.lat_factor = 111132.92 - 559.82*math.cos(2*math.radians(coords.lat)) + 1.175*math.cos(4*math.radians(coords.lat)) - 0.0023*math.cos(6*math.radians(coords.lat))
+            self.lon_factor = 111412*math.cos(math.radians(coords.lat)) - 93.5*math.cos(3*math.radians(coords.lat)) + 0.118*math.cos(5*math.radians(coords.lat))
         if (coords is None):
             return 0.0, 0.0
         return coords.lat, coords.lon
@@ -78,14 +83,13 @@ class GPS(Node):
 
 
 
-    def get_global_x_y(self):
-        lat, lon = self.get_lat_lon()
+    def get_global_x_y(self, setting_origin = False):
+        lat, lon = self.get_lat_lon(setting_origin)
 
-        lat_factor = 111132.92 - 559.82*math.cos(2*math.radians(lat)) + 1.175*math.cos(4*math.radians(lat)) - 0.0023*math.cos(6*math.radians(lat))
-        lon_factor = 111412*math.cos(math.radians(lat)) - 93.5*math.cos(3*math.radians(lat)) + 0.118*math.cos(5*math.radians(lat))
+        
 
-        global_y = lat_factor * lat
-        global_x = lon_factor * lon
+        global_y = self.lat_factor * lat
+        global_x = self.lon_factor * lon
 
         return global_x, global_y
 
@@ -100,9 +104,9 @@ class GPS(Node):
         global_x, global_y = self.get_global_x_y()
         local_x = global_x - self.origin[0]
         local_y = global_y - self.origin[1]
-        local_x, local_y = self.rotate_axis(local_x, local_y, self.starting_orientation)
+        local_x, local_y = self.rotate_axis(local_x, local_y, math.radians(self.starting_orientation))
 
-        return global_x - self.origin[0], global_y - self.origin[1]
+        return local_x, local_y
 
 
 
@@ -217,7 +221,7 @@ def main(args=None):
     while(not gps.calibrate_orientation()):
         rclpy.spin_once(gps)
     gps.set_output_rate(10)
-    input("Press enter to set origin")
+    print("Done Calibrating IMU")
     gps.set_origin()
     rclpy.spin(gps)
     gps.destroy_node()
