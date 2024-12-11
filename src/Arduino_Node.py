@@ -39,7 +39,7 @@ class Arduino_Node(Node):
     def timer_callback(self):
         # This should clear up the serial buffer, then let the callback finish
         while self.imu_ser.in_waiting:
-            newest_byte = self.ser.read(1)
+            newest_byte = self.imu_ser.read(1)
             if (newest_byte is None or newest_byte == b"\r"):
                 break
             if (newest_byte == b"\n"):
