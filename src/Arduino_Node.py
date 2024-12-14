@@ -20,10 +20,9 @@ class SerialToROSCommunication(Node):
         self.timer = self.create_timer(1/10, self.timer_callback)
         self.working_data = ""
         self.data_started = False
-        try:
-            self.ser = serial.Serial('/dev/ttyACM0', baudrate=115200)
-        except SerialException:
-            self.ser=serial.Serial('/dev/ttyACM1',baudrate=115200)
+        
+        #self.ser = serial.Serial('/dev/ttyACM0', baudrate=115200)
+        self.ser=serial.Serial('/dev/ttyACM1',baudrate=115200)
     #called when ROS updates the topic for the left motor
     def left_callback(self, val):
         self.left_speed=val.data
