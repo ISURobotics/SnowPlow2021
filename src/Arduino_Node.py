@@ -4,11 +4,12 @@ from rclpy.node import Node
 from std_msgs.msg import Int8
 from std_msgs.msg import Float32MultiArray
 from serial import SerialException
-class SerialToROSCommunication(Node):
+
+class Arduino_Node(Node):
 
     def __init__(self):
         super().__init__("imu_node")
-        self.counter_ = 0
+        # self.counter_ = 0
         self.left_speed=0
         self.right_speed=0
         self.left_subscriber = self.create_subscription(Int8, "/left_motor/speed", self.left_callback, 10)
@@ -17,23 +18,27 @@ class SerialToROSCommunication(Node):
         self.imu_magnetometer = [0, 0, 0]
         self.magnetometer_pub = self.create_publisher(Float32MultiArray, "/imu/magnetometer", 10)
         self.orientation_pub = self.create_publisher(Float32MultiArray, "/imu/euler_rotation", 10)
-        self.timer = self.create_timer(1/10, self.timer_callback)
+        self.timer = self.create_timer(1/50, self.timer_callback)
         self.working_data = ""
         self.data_started = False
-        
-        #self.ser = serial.Serial('/dev/ttyACM0', baudrate=115200)
-        self.ser=serial.Serial('/dev/ttyACM1',baudrate=115200)
+        # Setting serial ports. These may need to be changed based on what the arduinos and GPS get assigned to
+        self.motor_ser = serial.Serial('/dev/ttyACM0', baudrate=115200) 
+        self.imu_ser = serial.Serial('/dev/ttyACM1',baudrate=115200)
+
     #called when ROS updates the topic for the left motor
     def left_callback(self, val):
         self.left_speed=val.data
-        self.update_serial()
+        self.update_motor_serial()
+
     #called when ROS updates the topic for the right motor
     def right_callback(self, val):
         self.right_speed=val.data
-        self.update_serial()
+        self.update_motor_serial()
+
     def timer_callback(self):
-        while True:
-            newest_byte = self.ser.read(1)
+        # This should clear up the serial buffer, then let the callback finish
+        while self.imu_ser.in_waiting:
+            newest_byte = self.imu_ser.read(1)
             if (newest_byte is None or newest_byte == b"\r"):
                 break
             if (newest_byte == b"\n"):
@@ -56,12 +61,15 @@ class SerialToROSCommunication(Node):
             elif self.data_started:
                 self.working_data += newest_byte.decode("utf-8")
     #takes the stored values for the right and left motor speeds and outputs that to the Serial
-    def update_serial(self):
-        self.ser.write((str(self.left_speed)+"|"+str(self.right_speed)+"'\n").encode('utf-8'))
+
+
+    def update_motor_serial(self):
+        self.motor_ser.write((str(self.left_speed)+"|"+str(self.right_speed)+"'\n").encode('utf-8'))
         print(str(self.left_speed)+"|"+str(self.right_speed))
+
 def main(args=None):
     rclpy.init(args=args)
-    node = SerialToROSCommunication()
+    node = Arduino_Node()
     rclpy.spin(node)
     rclpy.shutdown()
 
