@@ -66,7 +66,9 @@ class Func_Generator(object):
         down = 2
         right = 3
         dir = up
+        print("Points: ", points)
         for p in points:
+            print("Current forward count:", forward_count)
             if p == current:
                 continue
             if dir == up:
