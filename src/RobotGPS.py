@@ -14,6 +14,7 @@ class RobotGPS:
         self.gps_pose: Pose = None
 
     def gps_callback(self, msg: PoseStamped):
+        self.sensors.callback_sensor_data()
         self.gps_pose = msg.pose
 
     def get_pose(self) -> Pose:

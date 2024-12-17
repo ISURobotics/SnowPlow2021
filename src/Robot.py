@@ -62,6 +62,10 @@ class Robot(Node):
         print("waiting...")
         time.sleep(2)
         print("Publishers active.")
+        print("Waiting for subscribers...")
+        while self.sensors.gps.gps_pose is None:
+            rclpy.spin_once(self)
+            print("waiting...")
         return
 
 

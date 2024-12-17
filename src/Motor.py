@@ -9,7 +9,7 @@ class Motor:
     def set_speed(self, speed):
         assert -100 < speed < 100
         value = Int8()
-        value.data = speed
-        self.speed = speed
+        value.data = int(speed)
+        self.speed = int(speed)
         self._speed_pub.publish(value)
         print("speed published " + str(value))

@@ -37,13 +37,14 @@ class Robot_Mover:
         self.maintain_angle = 0
         self.correction_mult = 0.7
         self.correction_thres = 0.03 # radians off of maintain_angle (1 rad = around 58 degrees)
-        self.slow_thres = 0.5
+        self.slow_thres = 1
         self.slow_mult = 0.7
         self.slow_angle_thres = 0.05
         self.slow_angle_mult = 0.9
         self.correction_overshoot = 0.01 # To get closer to the original course, correct until we're this many radians past the correct angle
         self.left_turn_offset = -0.01 # When turning left, increase our rotation by this value to counteract constant errors
         self.right_turn_offset = 0.01 # When turning right, increase our rotation by this value to counteract errors
+        self.base_speed = 25
 
     def add_finish_listener(self, func):
         """
@@ -114,7 +115,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         thres = Movement_Threshold(Axes.IMU_ROT, True, high_correct, lambda: self.correct_right(False), "correct")
         sensors.add_listener(thres)
-        self.robot.set_speed(25)  # probably not right value
+        self.robot.set_speed(self.base_speed)  # probably not right value
 
     def move_backward(self, meters):
         """
@@ -178,7 +179,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         thres = Movement_Threshold(Axes.IMU_ROT, True, high_correct, lambda: self.correct_right(True), "correct")
         sensors.add_listener(thres)
-        self.robot.set_speed(-25)  # probably not right value
+        self.robot.set_speed(-self.base_speed)  # probably not right value
 
     def rotate_left(self, degrees):
         """
@@ -207,7 +208,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         sensors.add_listener(slow)
 
-        self.robot.set_speeds(-25, 25)
+        self.robot.set_speeds(-self.base_speed, self.base_speed)
 
     def rotate_left_imu(self, degrees):
         """
@@ -237,7 +238,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         sensors.add_listener(slow)
 
-        self.robot.set_speeds(-25, 25)
+        self.robot.set_speeds(-self.base_speed, self.base_speed)
 
     def rotate_right(self, degrees):
         """
@@ -266,7 +267,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         sensors.add_listener(slow)
         
-        self.robot.set_speeds(25, -25)
+        self.robot.set_speeds(self.base_speed, -self.base_speed)
 
     def rotate_right_imu(self, degrees):
         """
@@ -293,7 +294,7 @@ class Robot_Mover:
 
         sensors.add_listener(thres)
         sensors.add_listener(slow)
-        self.robot.set_speeds(25, -25)
+        self.robot.set_speeds(self.base_speed, -self.base_speed)
 
     def correct_right(self, backing_up):
         """

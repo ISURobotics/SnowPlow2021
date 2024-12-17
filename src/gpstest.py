@@ -16,16 +16,16 @@ class GPS(Node):
 
     def __init__(self):
         super().__init__("gps_node")
-        self.port = serial.Serial('/dev/ttyACM2', baudrate=9600, timeout=1)
-        self.gps = UbloxGps(self.port)
-        self.set_output_rate(10)
+        #self.port = serial.Serial('/dev/ttyACM0', baudrate=9600, timeout=1)
+        #self.gps = UbloxGps(self.port)
+        #self.set_output_rate(10)
         self.origin = [0, 0]
         self.x = 0.0
         self.y = 0.0
         self.calibrated = False
         self.imu_orientation = 0.0
         self.cal_orientations = []
-        self.starting_orientation = 90.0
+        self.starting_orientation = 352.0
         self.lat_factor = 0.0
         self.lon_factor = 0.0
         self.imu_sub = self.create_subscription(Float32MultiArray, '/imu/magnetometer', self.imu_callback, 10)
@@ -137,7 +137,8 @@ class GPS(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = 'map'
 
-        x, y = self.get_local_x_y()
+        x = float(input("Input X: "))
+        y = float(input("Input Y: "))
         msg.pose.position.x = x
         msg.pose.position.y = y
         msg.pose.position.z = 0.0
@@ -220,9 +221,7 @@ def main(args=None):
     gps = GPS()
     #while(not gps.calibrate_orientation()):
     #    rclpy.spin_once(gps)
-    gps.set_output_rate(10)
     print("Done Calibrating IMU")
-    gps.set_origin()
     rclpy.spin(gps)
     gps.destroy_node()
     rclpy.shutdown()

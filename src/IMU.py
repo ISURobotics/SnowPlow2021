@@ -1,19 +1,18 @@
 import rclpy
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Float32MultiArray
 import numpy as np
 
 class IMU:
     def __init__(self, sensors, node):
         self.sensors = sensors
         print("IMU sub activating...")
-        self._sub_euler = node.create_subscription(Float64MultiArray, "/imu_euler", self.callback_euler, 10)
+        self._sub_euler = node.create_subscription(Float32MultiArray, "/imu/euler_rotation", self.callback_euler, 10)
         # self._sub_euler = rclpy.Subscriber("/imu_euler", Float64MultiArray, self.callback_euler)
         self.euler = [0, 0, 0]
         
         print("IMU sub active")
 
     def callback_euler(self, data):
-        print("new imu data")
         x_rot = data.data[0] * np.pi / 180
         if x_rot > np.pi:
             x_rot -= 2 * np.pi

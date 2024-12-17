@@ -28,12 +28,13 @@ def main():
     # points = [(0, 0), (-0.5, 0), (-0.5, -0.5), (0, -0.5)] * 5
     
     # Uncomment for right box drill
-    # points = [(0, 0), (-0.5, 0), (-0.5, 0.5), (0, 0.5)] * 5
+    #points = [(0, 0), (-0.5, 0), (-0.5, 0.5), (0, 0.5)] * 5
 
+    #points = [(0, 0), (-1, 0)]
 
     print("Preparing path...")
 
-   # points = []
+    points = []
     if use_pathfinding:
         object_points = sensors.get_obstacle_points()
         print("Obstacles at: ")
@@ -41,8 +42,9 @@ def main():
         path_points = Path_Finder.path_generator(object_points)
         print(path_points)
         points = sensors.get_movement_points(path_points)
-    else:        
-        points = [[0, 0], [-10, 0]]
+    else:
+        pass
+        #points = [[0, 0], [-10, 0]]
     print(points)
     funcs = fg.get_funcs(points)
 
@@ -52,10 +54,11 @@ def main():
     # print "Wait for Ready, then press enter to continue"
     # x = raw_input()
     pe.apply_next_action()
+    print("running next action")
     # exit(0)
-    rclpy.spin(r)
-    while not rclpy.is_shutdown():
-        pass
+    #rclpy.spin(r)
+    while True:
+        rclpy.spin(r)
 
 
 if __name__ == "__main__":

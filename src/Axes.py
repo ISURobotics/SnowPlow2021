@@ -21,12 +21,16 @@ IMU_ROT = lambda p_pose, p_threshold: imu_z_rotation(p_pose, p_threshold)
 def x_axis(sensors, t):
     pose = sensors.get_pose()
     measured_val = pose.position.x
+    print("measured x position: ", measured_val)
+    print("target x position: ", t.value)
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
 def y_axis(sensors, t):
     pose = sensors.get_pose()
     measured_val = pose.position.y
+    print("measured y position: ", measured_val)
+    print("target y position: ", measured_val)
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
@@ -34,7 +38,7 @@ def lidar_z_rotation(sensors, t):
     lidar_pose = sensors.get_pose()
     eulers = utils.quaternion_to_euler(lidar_pose.orientation.x, lidar_pose.orientation.y, lidar_pose.orientation.z, lidar_pose.orientation.w)
     measured_val = eulers[2] # z rotation or yaw
-    print ("measured: " + str(measured_val))
+    #print ("measured: " + str(measured_val))
     # I tested and found some bugs with this implementation. Fixes are implemented
     # if t.trigger_when_above:
     #     if (t.value > np.pi / 2):

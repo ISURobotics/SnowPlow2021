@@ -38,6 +38,7 @@ class Sensors:
             To be run every time we get new data from a sensor. Iterates through the list of thresholds and runs their function if their
             axis_func returns true
         """
+        
         for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
             triggered = t.axis_func(self, t)
