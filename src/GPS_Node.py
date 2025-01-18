@@ -16,7 +16,7 @@ class GPS(Node):
 
     def __init__(self):
         super().__init__("gps_node")
-        self.port = serial.Serial('/dev/ttyACM2', baudrate=9600, timeout=1)
+        self.port = serial.Serial('/dev/ttyACM0', baudrate=9600, timeout=1)
         self.gps = UbloxGps(self.port)
         self.set_output_rate(10)
         self.origin = [0, 0]
@@ -25,7 +25,7 @@ class GPS(Node):
         self.calibrated = False
         self.imu_orientation = 0.0
         self.cal_orientations = []
-        self.starting_orientation = 90.0
+        self.starting_orientation = 0.0
         self.lat_factor = 0.0
         self.lon_factor = 0.0
         self.imu_sub = self.create_subscription(Float32MultiArray, '/imu/magnetometer', self.imu_callback, 10)

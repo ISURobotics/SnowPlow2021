@@ -23,8 +23,8 @@ class Arduino_Node(Node):
         self.working_data = ""
         self.data_started = False
         # Setting serial ports. These may need to be changed based on what the arduinos and GPS get assigned to
-        self.motor_ser = serial.Serial('/dev/ttyACM0', baudrate=115200) 
-        self.imu_ser = serial.Serial('/dev/ttyACM1',baudrate=115200)
+        self.motor_ser = serial.Serial('/dev/ttyACM1', baudrate=115200) 
+        self.imu_ser = serial.Serial('/dev/ttyACM2',baudrate=115200)
         print("Ports have been set")
         self.right_updated=False
         self.left_updated=False

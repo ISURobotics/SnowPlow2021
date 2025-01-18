@@ -36,14 +36,14 @@ class Robot_Mover:
         self.finish_listeners = [] # list of lambda functions
         self.maintain_angle = 0
         self.correction_mult = 0.7
-        self.correction_thres = 0.03 # radians off of maintain_angle (1 rad = around 58 degrees)
+        self.correction_thres = 0.015 # radians off of maintain_angle (1 rad = around 58 degrees)
         self.slow_thres = 1
         self.slow_mult = 0.7
         self.slow_angle_thres = 0.05
         self.slow_angle_mult = 0.9
         self.correction_overshoot = 0.01 # To get closer to the original course, correct until we're this many radians past the correct angle
-        self.left_turn_offset = -0.01 # When turning left, increase our rotation by this value to counteract constant errors
-        self.right_turn_offset = 0.01 # When turning right, increase our rotation by this value to counteract errors
+        self.left_turn_offset = -0.006 # When turning left, increase our rotation by this value to counteract constant errors
+        self.right_turn_offset = 0.013 # When turning right, increase our rotation by this value to counteract errors
         self.base_speed = 25
 
     def add_finish_listener(self, func):
