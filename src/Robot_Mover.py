@@ -67,6 +67,9 @@ class Robot_Mover:
         print(pose)
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         self.maintain_angle = angle
+        self.maintain_angle/=(np.pi/2)
+        self.maintain_angle=round(self.maintain_angle)
+        self.maintain_angle*=np.pi/2
         thres = None
         slow = None
         if (angle >= np.pi * -(1.0 / 4) and angle < np.pi * (1.0 / 4)): # Moving in roughly positive x direction
