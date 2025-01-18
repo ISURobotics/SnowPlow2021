@@ -35,7 +35,7 @@ class Robot_Mover:
         self.robot = robot
         self.finish_listeners = [] # list of lambda functions
         self.maintain_angle = 0
-        self.correction_mult = 0.7
+        self.correction_mult = 0.6
         self.correction_thres = 0.015 # radians off of maintain_angle (1 rad = around 58 degrees)
         self.slow_thres = 1
         self.slow_mult = 0.7
