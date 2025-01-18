@@ -69,7 +69,7 @@ class Robot_Mover:
         self.maintain_angle = angle
         self.maintain_angle/=(np.pi/2)
         self.maintain_angle=round(self.maintain_angle)
-        self.maintain_angle*=np.pi/2
+        self.maintain_angle*=(np.pi/2)
         thres = None
         slow = None
         if (angle >= np.pi * -(1.0 / 4) and angle < np.pi * (1.0 / 4)): # Moving in roughly positive x direction
@@ -197,6 +197,10 @@ class Robot_Mover:
         thres = None
         deltaRadians = degrees * (np.pi / 180) + self.left_turn_offset
         targetRadians = angle + deltaRadians
+        targetRadians /= (np.pi / 2)
+        targetRadians = round(targetRadians)
+        targetRadians *= (np.pi / 2)
+        targetRadians += self.left_turn_offset
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
         slowRadians = targetRadians - self.slow_angle_thres
@@ -225,8 +229,12 @@ class Robot_Mover:
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         angle = sensors.get_euler()[0]
         thres = None
-        deltaRadians = degrees * (np.pi / 180) + self.left_turn_offset
+        deltaRadians = degrees * (np.pi / 180)
         targetRadians = angle + deltaRadians
+        targetRadians /= (np.pi / 2)
+        targetRadians = round(targetRadians)
+        targetRadians *= (np.pi / 2)
+        targetRadians += self.left_turn_offset
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
         slowRadians = targetRadians - self.slow_angle_thres
@@ -254,8 +262,12 @@ class Robot_Mover:
         pose = sensors.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
-        deltaRadians = degrees * (np.pi / 180) + self.right_turn_offset
+        deltaRadians = degrees * (np.pi / 180)
         targetRadians = angle - deltaRadians
+        targetRadians /= (np.pi / 2)
+        targetRadians = round(targetRadians)
+        targetRadians *= (np.pi / 2)
+        targetRadians -= self.right_turn_offset
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
         slowRadians = targetRadians + self.slow_angle_thres
@@ -282,8 +294,12 @@ class Robot_Mover:
         print("Rotating right " + str(degrees))
         angle = sensors.get_euler()[0]
         thres = None
-        deltaRadians = degrees * (np.pi / 180) + self.right_turn_offset
+        deltaRadians = degrees * (np.pi / 180)
         targetRadians = angle - deltaRadians
+        targetRadians /= (np.pi / 2)
+        targetRadians = round(targetRadians)
+        targetRadians *= (np.pi / 2)
+        targetRadians -= self.right_turn_offset
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
         slowRadians = targetRadians + self.slow_angle_thres

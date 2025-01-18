@@ -30,7 +30,7 @@ def y_axis(sensors, t):
     pose = sensors.get_pose()
     measured_val = pose.position.y
     print("measured y position: ", measured_val)
-    print("target y position: ", measured_val)
+    print("target y position: ", t.value)
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
