@@ -1,4 +1,0 @@
-This is where we're putting all of our test and prototype scripts that might be helpful but aren't used in the final product.
-I grouped them by system that they test.
-
-I wouldn't advise deleting much of anything here, in case these tests turn out to be useful later.

@@ -1,0 +1,21 @@
+running egg_info
+writing build/SnowPlow2021/SnowPlow2021.egg-info/PKG-INFO
+writing dependency_links to build/SnowPlow2021/SnowPlow2021.egg-info/dependency_links.txt
+writing entry points to build/SnowPlow2021/SnowPlow2021.egg-info/entry_points.txt
+writing requirements to build/SnowPlow2021/SnowPlow2021.egg-info/requires.txt
+writing top-level names to build/SnowPlow2021/SnowPlow2021.egg-info/top_level.txt
+reading manifest file 'build/SnowPlow2021/SnowPlow2021.egg-info/SOURCES.txt'
+writing manifest file 'build/SnowPlow2021/SnowPlow2021.egg-info/SOURCES.txt'
+running build
+running build_py
+copying SnowPlow2021/__init__.py -> /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build/lib/SnowPlow2021
+running install
+running install_lib
+copying /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build/lib/SnowPlow2021/__init__.py -> /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021
+byte-compiling /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021/__init__.py to __init__.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021-0.0.0-py3.10.egg-info' (and everything under it)
+Copying build/SnowPlow2021/SnowPlow2021.egg-info to /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021-0.0.0-py3.10.egg-info
+running install_scripts
+writing list of installed files to '/home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/install.log'

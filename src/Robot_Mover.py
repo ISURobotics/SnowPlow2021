@@ -1,7 +1,7 @@
 # from multiprocessing.resource_sharer import stop
 import time
 # from matplotlib.hatch import SouthEastHatch
-# import rospy
+# import rclpy
 # import sys, os
 from Movement_Threshold import Movement_Threshold
 # import Robot
@@ -35,15 +35,16 @@ class Robot_Mover:
         self.robot = robot
         self.finish_listeners = [] # list of lambda functions
         self.maintain_angle = 0
-        self.correction_mult = 0.7
-        self.correction_thres = 0.03 # radians off of maintain_angle (1 rad = around 58 degrees)
-        self.slow_thres = 0.5
+        self.correction_mult = 0.6
+        self.correction_thres = 0.015 # radians off of maintain_angle (1 rad = around 58 degrees)
+        self.slow_thres = 1
         self.slow_mult = 0.7
         self.slow_angle_thres = 0.05
         self.slow_angle_mult = 0.9
         self.correction_overshoot = 0.01 # To get closer to the original course, correct until we're this many radians past the correct angle
-        self.left_turn_offset = -0.01 # When turning left, increase our rotation by this value to counteract constant errors
-        self.right_turn_offset = 0.01 # When turning right, increase our rotation by this value to counteract errors
+        self.left_turn_offset = -0.006 # When turning left, increase our rotation by this value to counteract constant errors
+        self.right_turn_offset = 0.013 # When turning right, increase our rotation by this value to counteract errors
+        self.base_speed = 25
 
     def add_finish_listener(self, func):
         """
@@ -66,6 +67,9 @@ class Robot_Mover:
         print (pose)
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         self.maintain_angle = angle
+        self.maintain_angle/=(np.pi/2)
+        self.maintain_angle=round(self.maintain_angle)
+        self.maintain_angle*=(np.pi/2)
         thres = None
         slow = None
         if (angle >= np.pi * -(1.0 / 4) and angle < np.pi * (1.0 / 4)): # Moving in roughly positive x direction
@@ -114,7 +118,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         thres = Movement_Threshold(Axes.IMU_ROT, True, high_correct, lambda: self.correct_right(False), "correct")
         sensors.add_listener(thres)
-        self.robot.set_speed(25)  # probably not right value
+        self.robot.set_speed(self.base_speed)  # probably not right value
 
     def move_backward(self, meters):
         """
@@ -178,7 +182,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         thres = Movement_Threshold(Axes.IMU_ROT, True, high_correct, lambda: self.correct_right(True), "correct")
         sensors.add_listener(thres)
-        self.robot.set_speed(-25)  # probably not right value
+        self.robot.set_speed(-self.base_speed)  # probably not right value
 
     def rotate_left(self, degrees):
         """
@@ -187,27 +191,31 @@ class Robot_Mover:
             degrees: The number of degrees to turn from the current pose before stopping
         """
         sensors = self.robot.sensors
-        print ("Rotating left " + str(degrees))
-        pose = sensors.get_lidar_pose()
+        print("Rotating left " + str(degrees))
+        pose = sensors.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
         deltaRadians = degrees * (np.pi / 180) + self.left_turn_offset
         targetRadians = angle + deltaRadians
+        targetRadians /= (np.pi / 2)
+        targetRadians = round(targetRadians)
+        targetRadians *= (np.pi / 2)
+        targetRadians += self.left_turn_offset
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
         slowRadians = targetRadians - self.slow_angle_thres
         if slowRadians < -np.pi:
             slowRadians += 2 * np.pi
 
-        print ("Current: " + str(angle))
-        print ("Target: " + str(targetRadians))
+        print("Current: " + str(angle))
+        print("Target: " + str(targetRadians))
         thres = Movement_Threshold(Axes.LIDAR_ROT, True, targetRadians, lambda: self.finish_step(), "rotate")
         slow = Movement_Threshold(Axes.LIDAR_ROT, True, slowRadians, lambda: self.slow_rotation(), "slow")
 
         sensors.add_listener(thres)
         sensors.add_listener(slow)
 
-        self.robot.set_speeds(-25, 25)
+        self.robot.set_speeds(-self.base_speed, self.base_speed)
 
     def rotate_left_imu(self, degrees):
         """
@@ -216,28 +224,32 @@ class Robot_Mover:
             degrees: The number of degrees to turn from the current pose before stopping
         """
         sensors = self.robot.sensors
-        print ("Rotating left " + str(degrees))
+        print("Rotating left " + str(degrees))
         #pose = lidar.get_pose()
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         angle = sensors.get_euler()[0]
         thres = None
-        deltaRadians = degrees * (np.pi / 180) + self.left_turn_offset
+        deltaRadians = degrees * (np.pi / 180)
         targetRadians = angle + deltaRadians
+        targetRadians /= (np.pi / 2)
+        targetRadians = round(targetRadians)
+        targetRadians *= (np.pi / 2)
+        targetRadians += self.left_turn_offset
         if targetRadians > np.pi:
             targetRadians -= 2 * np.pi # Going from positive angle to negative
         slowRadians = targetRadians - self.slow_angle_thres
         if slowRadians < -np.pi:
             slowRadians += 2 * np.pi
 
-        print ("Current: " + str(angle))
-        print ("Target: " + str(targetRadians))
+        print("Current: " + str(angle))
+        print("Target: " + str(targetRadians))
         thres = Movement_Threshold(Axes.IMU_ROT, True, targetRadians, lambda: self.finish_step(), "rotate")
         slow = Movement_Threshold(Axes.IMU_ROT, True, slowRadians, lambda: self.slow_rotation(), "slow")
 
         sensors.add_listener(thres)
         sensors.add_listener(slow)
 
-        self.robot.set_speeds(-25, 25)
+        self.robot.set_speeds(-self.base_speed, self.base_speed)
 
     def rotate_right(self, degrees):
         """
@@ -246,27 +258,30 @@ class Robot_Mover:
             degrees: The number of degrees to turn from the current pose before stopping
         """
         sensors = self.robot.sensors
-        print ("Rotating right " + str(degrees))
-        pose = sensors.get_lidar_pose()
+        print("Rotating right " + str(degrees))
+        pose = sensors.get_pose()
         angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         thres = None
-        deltaRadians = degrees * (np.pi / 180) + self.right_turn_offset
+        deltaRadians = degrees * (np.pi / 180)
         targetRadians = angle - deltaRadians
+        targetRadians /= (np.pi / 2)
+        targetRadians = round(targetRadians)
+        targetRadians *= (np.pi / 2)
+        targetRadians -= self.right_turn_offset
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
         slowRadians = targetRadians + self.slow_angle_thres
         if slowRadians > np.pi:
             slowRadians -= 2 * np.pi
-
-        print ("Current: " + str(angle))
-        print ("Target: " + str(targetRadians))
+        print("Current: " + str(angle))
+        print("Target: " + str(targetRadians))
         thres = Movement_Threshold(Axes.LIDAR_ROT, False, targetRadians, lambda: self.finish_step(), "rotate")
         slow = Movement_Threshold(Axes.LIDAR_ROT, False, slowRadians, lambda: self.slow_rotation(), "slow")
 
         sensors.add_listener(thres)
         sensors.add_listener(slow)
         
-        self.robot.set_speeds(25, -25)
+        self.robot.set_speeds(self.base_speed, -self.base_speed)
 
     def rotate_right_imu(self, degrees):
         """
@@ -275,32 +290,36 @@ class Robot_Mover:
             degrees: The number of degrees to turn from the current pose before stopping
         """
         sensors = self.robot.sensors
-        print ("Rotating right " + str(degrees))
+        print("Rotating right " + str(degrees))
         angle = sensors.get_euler()[0]
         thres = None
-        deltaRadians = degrees * (np.pi / 180) + self.right_turn_offset
+        deltaRadians = degrees * (np.pi / 180)
         targetRadians = angle - deltaRadians
+        targetRadians /= (np.pi / 2)
+        targetRadians = round(targetRadians)
+        targetRadians *= (np.pi / 2)
+        targetRadians -= self.right_turn_offset
         if targetRadians < -np.pi:
             targetRadians += 2 * np.pi # Going from negative angle to positive
         slowRadians = targetRadians + self.slow_angle_thres
         if slowRadians > np.pi:
             slowRadians -= 2 * np.pi
 
-        print ("Current: " + str(angle))
-        print ("Target: " + str(targetRadians))
+        print("Current: " + str(angle))
+        print("Target: " + str(targetRadians))
         thres = Movement_Threshold(Axes.IMU_ROT, False, targetRadians, lambda: self.finish_step(), "rotate")
         slow = Movement_Threshold(Axes.IMU_ROT, False, slowRadians, lambda: self.slow_rotation(), "slow")
 
         sensors.add_listener(thres)
         sensors.add_listener(slow)
-        self.robot.set_speeds(25, -25)
+        self.robot.set_speeds(self.base_speed, -self.base_speed)
 
     def correct_right(self, backing_up):
         """
             To use when the robot starts drifting left. Slows down the right wheels until the angle is back to straight
         """
         sensors = self.robot.sensors
-        print ("correcting to the right")
+        print("correcting to the right")
         targetAngle = self.maintain_angle - self.correction_overshoot
         if targetAngle < -np.pi:
             targetAngle += 2 * np.pi
@@ -316,7 +335,7 @@ class Robot_Mover:
         """
             To use when the robot starts drifting right. Slows down the left wheels until the angle is back to straight
         """
-        print ("correcting to the left")
+        print("correcting to the left")
         sensors = self.robot.sensors
         targetAngle = self.maintain_angle + self.correction_overshoot
         if targetAngle > np.pi:
@@ -333,7 +352,7 @@ class Robot_Mover:
         """
             Re-equalizes the speed of the wheels. Use when the robot is back to straight after correcting
         """
-        print ("back to straight")
+        print("back to straight")
         sensors = self.robot.sensors
         sensors.remove_listeners('stop correct')
         if correcting_right:
@@ -359,7 +378,7 @@ class Robot_Mover:
         """
         sensors = self.robot.sensors
         self.robot.stop()
-        print ("Step done")
+        print("Step done")
         sensors.remove_listeners('move')
         sensors.remove_listeners('rotate')
         sensors.remove_listeners('correct')
@@ -388,7 +407,7 @@ class Robot_Mover:
         """
             Stop all motion of the robot
         """
-        print ("STOPSTOPSTOPSTOP")
+        print("STOPSTOPSTOPSTOP")
         # rotating = 0
         # moving = 0
         self.robot.stop()

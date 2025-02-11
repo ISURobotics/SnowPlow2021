@@ -8,8 +8,8 @@ import numpy as np
     which wouldn't be possible without a good architecture, Sergio.
 """
 
-LIDAR_X = lambda p_pose, p_threshold: lidar_x_axis(p_pose, p_threshold)
-LIDAR_Y = lambda p_pose, p_threshold: lidar_y_axis(p_pose, p_threshold)
+LIDAR_X = lambda p_pose, p_threshold: x_axis(p_pose, p_threshold)
+LIDAR_Y = lambda p_pose, p_threshold: y_axis(p_pose, p_threshold)
 LIDAR_ROT = lambda p_pose, p_threshold: lidar_z_rotation(p_pose, p_threshold)
 IMU_ROT = lambda p_pose, p_threshold: imu_z_rotation(p_pose, p_threshold)
 
@@ -18,20 +18,24 @@ IMU_ROT = lambda p_pose, p_threshold: imu_z_rotation(p_pose, p_threshold)
     and false if it hasn't
 """
 
-def lidar_x_axis(sensors, t):
-    lidar_pose = sensors.get_lidar_pose()
-    measured_val = lidar_pose.position.x
+def x_axis(sensors, t):
+    pose = sensors.get_pose()
+    measured_val = pose.position.x
+    print("measured x position: ", measured_val)
+    print("target x position: ", t.value)
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
-def lidar_y_axis(sensors, t):
-    lidar_pose = sensors.get_lidar_pose()
-    measured_val = lidar_pose.position.y
+def y_axis(sensors, t):
+    pose = sensors.get_pose()
+    measured_val = pose.position.y
+    print("measured y position: ", measured_val)
+    print("target y position: ", t.value)
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
 def lidar_z_rotation(sensors, t):
-    lidar_pose = sensors.get_lidar_pose()
+    lidar_pose = sensors.get_pose()
     eulers = utils.quaternion_to_euler(lidar_pose.orientation.x, lidar_pose.orientation.y, lidar_pose.orientation.z, lidar_pose.orientation.w)
     measured_val = eulers[2] # z rotation or yaw
     print ("measured: " + str(measured_val))
@@ -63,7 +67,6 @@ def imu_z_rotation(sensors, t):
     above_thres = False
     eulers = sensors.get_euler()
     measured_val = eulers[0] # The IMU is oriented so that its x axis is up and down, so we need that
-    # NEEDS TESTING. LOTS OF TESTING.
     print ("measured: " + str(measured_val))
     print ("target: " + str(t.value))
     if t.trigger_when_above:
@@ -76,7 +79,9 @@ def imu_z_rotation(sensors, t):
             above_thres = (measured_val > t.value) or (measured_val <= t.value - np.pi / 2)
         else:
             above_thres = (measured_val > t.value) and (measured_val <= t.value + 3 * np.pi / 2)
+
     print (above_thres)
     print (t.trigger_when_above)
     print ("")
+
     return (above_thres == t.trigger_when_above)

@@ -1,5 +1,6 @@
 from Lidar import *
 from IMU import *
+from RobotGPS import *
 
 from Movement_Threshold import Movement_Threshold
 import numpy as np
@@ -10,16 +11,19 @@ class Sensors:
         This class acts as a facade for the sensors on the robot, currently including the Lidar and IMU.
         It also stores all active listeners for sensor values.
     """
-    def __init__(self):
-        self.lidar = Lidar(self)
-        self.imu = IMU(self)
-        self.lidar_pose = None
+    def __init__(self, node):
+        self.lidar = Lidar(self, node)
+        self.imu = IMU(self, node)
+        self.gps = RobotGPS(self, node)
         self.thresholds = []
 
-    def init_lidar(self):
-        self.lidar.wait_for_pose_set()
+    def init_lidar(self, node):
+        self.lidar.wait_for_pose_set(node)
 
     def init_imu(self):
+        pass
+
+    def init_gps(self):
         pass
     
     def callback_sensor_data(self):
@@ -34,6 +38,7 @@ class Sensors:
             To be run every time we get new data from a sensor. Iterates through the list of thresholds and runs their function if their
             axis_func returns true
         """
+        
         for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
             t = self.thresholds[i]
             triggered = t.axis_func(self, t)
@@ -52,8 +57,12 @@ class Sensors:
             if self.thresholds[i].tag == tag:
                 self.thresholds.pop(i)
 
-    def get_lidar_pose(self):
-        return self.lidar.get_pose()
+    def get_pose(self):
+        """
+            Uses our current method to get the robot's position.
+            Currently, we use the GPS
+        """
+        return self.gps.get_pose()
     
     def get_obstacle_points(self):
         return self.lidar.prepare_obstacle_points()

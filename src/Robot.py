@@ -2,7 +2,8 @@
 # from matplotlib.pyplot import axis
 import time
 
-import rospy
+import rclpy
+from rclpy.node import Node
 # from std_msgs.msg import Int8
 # from std_msgs.msg import Float64MultiArray
 # from sensor_msgs.msg import PointCloud2
@@ -14,23 +15,21 @@ import rospy
 # import numpy as np
 from Motor import *
 from Sensors import *
+import rclpy.topic_endpoint_info
 # import Lidar
 # from typing import List
 
-# Note: Before running this file, be sure to start roscore and rosrun the rosserial_python
-# >> rosrun rosserial_python serial_node.py
-
-class Robot:
+class Robot(Node):
     """
         This class controls the motors and keeps track of the sensors module. 
         Passing a robot into a function allows the function to get sensor data and run the speed functions
     """
-    def __init__(self, rospy_init=True):
-        if rospy_init:
-            rospy.init_node('Robot', anonymous=False)
-        self.left = Motor('left_motor')
-        self.right = Motor('right_motor')
-        self.sensors = Sensors()
+    def __init__(self, rclpy_init=True):
+        rclpy.init()
+        super().__init__("Robot")
+        self.left = Motor(self, 'left_motor')
+        self.right = Motor(self, 'right_motor')
+        self.sensors = Sensors(self)
         # self.lidar = Lidar()
 
     def stop(self):
@@ -55,13 +54,18 @@ class Robot:
 
     def wait_for_pub(self):
         print ("Waiting for publishers..")
-        topics = rospy.get_published_topics()
-        print (topics)
-        while not (['/left_motor/speed', 'std_msgs/Int8'] in topics) or not(['/right_motor/speed', 'std_msgs/Int8'] in topics):
-            topics = rospy.get_published_topics()
+        topics = self.get_topic_names_and_types()
+        while not (('/left_motor/speed', ['std_msgs/msg/Int8']) in topics) or not(('/right_motor/speed', ['std_msgs/msg/Int8']) in topics):
+            topics = self.get_topic_names_and_types()
+            print(topics)
             time.sleep(1)
-        time.sleep(20)
+        print ("waiting...")
+        time.sleep(2)
         print ("Publishers active.")
+        print ("Waiting for subscribers...")
+        while self.sensors.gps.gps_pose is None:
+            rclpy.spin_once(self)
+            print ("waiting...")
         return
 
 
@@ -70,7 +74,7 @@ class Robot:
 # This stuff has been copied and edited to work in separate files; keeping the old code commented in case we need it
 # class Motor:
 #     def __init__(self, path):
-#         self._speed_pub = rospy.Publisher("{}/speed".format(path), Int8, queue_size=5)
+#         self._speed_pub = rclpy.Publisher("{}/speed".format(path), Int8, queue_size=5)
 #         self.speed = 0
 
 #     def set_speed(self, speed):
@@ -86,8 +90,8 @@ class Robot:
 #     def __init__(self):
 #         self.points = []
 #         self.pose = None
-#         self._sub_points = rospy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
-#         self._sub_pose = rospy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
+#         self._sub_points = rclpy.Subscriber("/cloud", PointCloud2, self.callback_pointcloud)
+#         self._sub_pose = rclpy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
 #         self.thresholds = []
 #         self.pose_set = False
 
@@ -213,7 +217,7 @@ class Robot:
 # class IMU:
 #     def __init__(self):
 #         print("IMU sub activating...")
-#         self._sub_euler = rospy.Subscriber("/imu_euler", Float64MultiArray, self.callback_euler)
+#         self._sub_euler = rclpy.Subscriber("/imu_euler", Float64MultiArray, self.callback_euler)
 #         self.euler = [0, 0, 0]
 #         self.thresholds = []
         

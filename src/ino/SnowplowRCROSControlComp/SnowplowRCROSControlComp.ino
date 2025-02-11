@@ -34,44 +34,18 @@ Servo rightMotor;
 //setting node name
 ros::NodeHandle arduino;
 
-//input data for motor speeds given by ros
-int leftMotorInputROS = 0;
-int rightMotorInputROS = 0;
-
-
-
-//reads in left motor speed and verifies the value is -100 < x < 100
-void readInLeft(const std_msgs::Int8 &msg) {
-  //assigns data from msg to motor left motor input value
-  leftMotorInputROS = msg.data;
-
-  //Checks to make sure motor inputs are between bounds of -100 and 100
-  if (leftMotorInputROS > 100)
-    leftMotorInputROS = 100;
-  else if(leftMotorInputROS < -100)
-    leftMotorInputROS = -100;
-}
-
-//reads in right motor speed and verifies the value is -100 < x < 100
-void readInRight(const std_msgs::Int8 &msg) {
-  //assigns data from msg to right motor input value
-  rightMotorInputROS = msg.data;
-
-  //Checks to make sure motor inputs are between bounds of -100 and 100
-  if (rightMotorInputROS > 100)
-    rightMotorInputROS = 100;
-  else if(rightMotorInputROS < -100)
-    rightMotorInputROS = -100;
-}
-
 //creates subscriber object listening to /left_motor/speed topic and uses readInLeft as callback function
 ros::Subscriber<std_msgs::Int8> subLeft("/left_motor/speed", &readInLeft);
 //creates subscriber object listening to /right_motor/speed topic and uses readInRight as callback function
 ros::Subscriber<std_msgs::Int8> subRight("/right_motor/speed", &readInRight);
 
-
-
-
+//read input from serial terminal 2 integers back to back for each motor
+int motor1;
+int motor2;
+while(!Serial.available()){
+motor1 = Serial.readString().toInt();
+motor2 = Serial.readString().toInt();
+}
 
 //counter for how many throttle values were the same in a row, used to find if controller is disconnected
 int throttleValueCounter = 0;

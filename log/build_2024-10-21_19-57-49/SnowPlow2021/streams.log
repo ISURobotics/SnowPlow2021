@@ -1,0 +1,20 @@
+[1.367s] Invoking command in '/home/snowclone/colcon_ws/src/SnowPlow2021': PYTHONPATH=/home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/SnowPlow2021 build --build-base /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build install --record /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/install.log --single-version-externally-managed install_data
+[1.920s] running egg_info
+[1.921s] writing build/SnowPlow2021/SnowPlow2021.egg-info/PKG-INFO
+[1.922s] writing dependency_links to build/SnowPlow2021/SnowPlow2021.egg-info/dependency_links.txt
+[1.922s] writing entry points to build/SnowPlow2021/SnowPlow2021.egg-info/entry_points.txt
+[1.923s] writing requirements to build/SnowPlow2021/SnowPlow2021.egg-info/requires.txt
+[1.923s] writing top-level names to build/SnowPlow2021/SnowPlow2021.egg-info/top_level.txt
+[1.927s] reading manifest file 'build/SnowPlow2021/SnowPlow2021.egg-info/SOURCES.txt'
+[1.928s] writing manifest file 'build/SnowPlow2021/SnowPlow2021.egg-info/SOURCES.txt'
+[1.928s] running build
+[1.929s] running build_py
+[1.929s] running install
+[1.929s] running install_lib
+[1.932s] running install_data
+[1.932s] running install_egg_info
+[1.936s] removing '/home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021-0.0.0-py3.10.egg-info' (and everything under it)
+[1.937s] Copying build/SnowPlow2021/SnowPlow2021.egg-info to /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021-0.0.0-py3.10.egg-info
+[1.939s] running install_scripts
+[1.983s] writing list of installed files to '/home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/install.log'
+[2.053s] Invoked command in '/home/snowclone/colcon_ws/src/SnowPlow2021' returned '0': PYTHONPATH=/home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/SnowPlow2021 build --build-base /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build install --record /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/install.log --single-version-externally-managed install_data

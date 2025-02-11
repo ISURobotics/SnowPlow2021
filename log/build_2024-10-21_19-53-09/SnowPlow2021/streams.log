@@ -1,0 +1,33 @@
+[1.464s] Invoking command in '/home/snowclone/colcon_ws/src/SnowPlow2021': PYTHONPATH=/home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/SnowPlow2021 build --build-base /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build install --record /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/install.log --single-version-externally-managed install_data
+[2.005s] running egg_info
+[2.006s] creating build/SnowPlow2021/SnowPlow2021.egg-info
+[2.006s] writing build/SnowPlow2021/SnowPlow2021.egg-info/PKG-INFO
+[2.007s] writing dependency_links to build/SnowPlow2021/SnowPlow2021.egg-info/dependency_links.txt
+[2.008s] writing entry points to build/SnowPlow2021/SnowPlow2021.egg-info/entry_points.txt
+[2.008s] writing requirements to build/SnowPlow2021/SnowPlow2021.egg-info/requires.txt
+[2.008s] writing top-level names to build/SnowPlow2021/SnowPlow2021.egg-info/top_level.txt
+[2.009s] writing manifest file 'build/SnowPlow2021/SnowPlow2021.egg-info/SOURCES.txt'
+[2.011s] reading manifest file 'build/SnowPlow2021/SnowPlow2021.egg-info/SOURCES.txt'
+[2.013s] writing manifest file 'build/SnowPlow2021/SnowPlow2021.egg-info/SOURCES.txt'
+[2.013s] running build
+[2.013s] running build_py
+[2.014s] creating /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build
+[2.014s] creating /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build/lib
+[2.014s] creating /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build/lib/SnowPlow2021
+[2.015s] copying SnowPlow2021/__init__.py -> /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build/lib/SnowPlow2021
+[2.015s] running install
+[2.015s] running install_lib
+[2.016s] creating /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021
+[2.017s] copying /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build/lib/SnowPlow2021/__init__.py -> /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021
+[2.018s] byte-compiling /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021/__init__.py to __init__.cpython-310.pyc
+[2.019s] running install_data
+[2.019s] creating /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/share/ament_index
+[2.019s] creating /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/share/ament_index/resource_index
+[2.020s] creating /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/share/ament_index/resource_index/packages
+[2.020s] copying resource/SnowPlow2021 -> /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/share/ament_index/resource_index/packages
+[2.020s] copying package.xml -> /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/share/SnowPlow2021
+[2.020s] running install_egg_info
+[2.024s] Copying build/SnowPlow2021/SnowPlow2021.egg-info to /home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages/SnowPlow2021-0.0.0-py3.10.egg-info
+[2.026s] running install_scripts
+[2.071s] writing list of installed files to '/home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/install.log'
+[2.144s] Invoked command in '/home/snowclone/colcon_ws/src/SnowPlow2021' returned '0': PYTHONPATH=/home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/snowclone/colcon_ws/src/SnowPlow2021/install/SnowPlow2021/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base build/SnowPlow2021 build --build-base /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/build install --record /home/snowclone/colcon_ws/src/SnowPlow2021/build/SnowPlow2021/install.log --single-version-externally-managed install_data

@@ -10,6 +10,7 @@ class Func_Generator(object):
         """
             Returns a function to tell the mover to go forward meters meters
         """
+
         print ("move forward " + str(meters))
         if meters < 0:
             print ("returning move_backward instead")
@@ -21,6 +22,7 @@ class Func_Generator(object):
             Returns a function to tell the mover to go backward meters meters
             (unused)
         """
+
         print ("move back " + str(meters))
         if meters < 0:
             print ("returning move_forward instead")
@@ -31,6 +33,7 @@ class Func_Generator(object):
         """
             Returns a function to tell the mover to turn left degrees degrees
         """
+
         print ("rotate left " + str(degrees))
         #return lambda p_lidar: self.mover.rotate_left(p_lidar, degrees)
         return lambda: self.mover.rotate_left_imu(degrees)
@@ -39,6 +42,7 @@ class Func_Generator(object):
         """
             Returns a function to tell the mover to turn right degrees degrees
         """
+
         print ("rotate right " + str(degrees))
         #return lambda p_lidar: self.mover.rotate_right(p_lidar, degrees)
         return lambda: self.mover.rotate_right_imu(degrees)
@@ -66,7 +70,9 @@ class Func_Generator(object):
         down = 2
         right = 3
         dir = up
+        print("Points: ", points)
         for p in points:
+            print("Current forward count:", forward_count)
             if p == current:
                 continue
             if dir == up:
