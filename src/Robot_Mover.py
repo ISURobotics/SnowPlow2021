@@ -61,10 +61,10 @@ class Robot_Mover:
             meters: the number of meters to move before stopping
         """
         sensors = self.robot.sensors
-        print("Moving forward " + str(meters))
-        pose = sensors.get_pose()
+        print ("Moving forward " + str(meters))
+        pose = sensors.get_lidar_pose()
         angle = sensors.get_euler()[0]
-        print(pose)
+        print (pose)
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         self.maintain_angle = angle
         self.maintain_angle/=(np.pi/2)
@@ -79,7 +79,7 @@ class Robot_Mover:
                 slow_delta = (meters / 2) * np.cos(angle)
             thres = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + delta, lambda: self.finish_step(), "move")
             slow = Movement_Threshold(Axes.LIDAR_X, True, pose.position.x + slow_delta, lambda: self.slow_movement(), "slow")
-            print("moving in +x")
+            print ("moving in +x")
         elif (angle >= np.pi * (1.0 / 4) and angle < np.pi * (3.0 / 4)): # Roughly positive y
             delta = meters * np.sin(angle)
             slow_delta = (meters - self.slow_thres) * np.sin(angle)
@@ -87,7 +87,7 @@ class Robot_Mover:
                 slow_delta = (meters / 2) * np.sin(angle)
             thres = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + delta, lambda: self.finish_step(), "move")
             slow = Movement_Threshold(Axes.LIDAR_Y, True, pose.position.y + slow_delta, lambda: self.slow_movement(), "slow")
-            print("moving in +y")
+            print ("moving in +y")
         elif (angle >= np.pi * (3.0 / 4) or angle < np.pi * -(3.0 / 4)): # Roughly negative x
             delta = meters * np.cos(angle) # This will be negative
             slow_delta = (meters - self.slow_thres) * np.cos(angle)
@@ -95,7 +95,7 @@ class Robot_Mover:
                 slow_delta = (meters / 2) * np.cos(angle)
             thres = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + delta, lambda: self.finish_step(), "move")
             slow = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + slow_delta, lambda: self.slow_movement(), "slow")
-            print("moving in -x")
+            print ("moving in -x")
         elif (angle < np.pi * -(1.0 / 4) and angle > np.pi * -(3.0 / 4)): # Roughly negative y
             delta = meters * np.sin(angle) # Negative
             slow_delta = (meters - self.slow_thres) * np.sin(angle)
@@ -127,8 +127,8 @@ class Robot_Mover:
             meters: the number of meters to move before stopping
         """
         sensors = self.robot.sensors
-        print("Moving backward " + str(meters))
-        pose = sensors.get_pose()
+        print ("Moving backward " + str(meters))
+        pose = sensors.get_lidar_pose()
         angle = sensors.get_euler()[0]
         #angle = utils.quaternion_to_euler(pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w)[2]
         self.maintain_angle = angle
@@ -142,7 +142,7 @@ class Robot_Mover:
                 slow_delta = -(meters / 2) * np.cos(angle)
             thres = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + delta, lambda: self.finish_step(), "move")
             slow = Movement_Threshold(Axes.LIDAR_X, False, pose.position.x + slow_delta, lambda: self.slow_movement(), "slow")
-            print("positive x")
+            print ("positive x")
         elif (angle >= np.pi * (1.0 / 4) and angle < np.pi * (3.0 / 4)): # Roughly positive y
             delta = -meters * np.sin(angle)
             slow_delta = -(meters - self.slow_thres) * np.sin(angle)
@@ -273,7 +273,6 @@ class Robot_Mover:
         slowRadians = targetRadians + self.slow_angle_thres
         if slowRadians > np.pi:
             slowRadians -= 2 * np.pi
-
         print("Current: " + str(angle))
         print("Target: " + str(targetRadians))
         thres = Movement_Threshold(Axes.LIDAR_ROT, False, targetRadians, lambda: self.finish_step(), "rotate")

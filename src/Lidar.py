@@ -48,11 +48,11 @@ class Lidar:
     def get_pose(self):
         return self.pose
 
-    def wait_for_pose_set(self, node):
-        print("Waiting for Lidar data...")
-        while not self.points_set:
-            rclpy.spin_once(node)
-        print("Lidar data received.")
+    def wait_for_pose_set(self):
+        print ("Waiting for lidar data...")
+        while not self.pose_set:
+            time.sleep(1)
+        print ("Lidar data received.")
         return
 
     def plot_points(self):
