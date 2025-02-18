@@ -15,10 +15,16 @@ IMU_ROT = lambda p_pose, p_threshold: imu_z_rotation(p_pose, p_threshold)
 
 """
     These functions return true if the threshold t has been reached given the data accessed using the sensors facade
-    and false if it hasn't
+    and false if it hasn't.
+
+    The data stored in t is defined in Movement_Threshold.py. The properties relevant to these functions are
+    t.value and t.trigger_when_above
 """
 
 def x_axis(sensors, t):
+    """
+        For movement along the x axis using the GPS (formerly the Lidar)
+    """
     pose = sensors.get_pose()
     measured_val = pose.position.x
     print("measured x position: ", measured_val)
@@ -27,6 +33,9 @@ def x_axis(sensors, t):
     return (above_thres == t.trigger_when_above)
 
 def y_axis(sensors, t):
+    """
+        For movement along the y axis using the GPS (formerly the Lidar)
+    """
     pose = sensors.get_pose()
     measured_val = pose.position.y
     print("measured y position: ", measured_val)
@@ -35,6 +44,10 @@ def y_axis(sensors, t):
     return (above_thres == t.trigger_when_above)
 
 def lidar_z_rotation(sensors, t):
+    """
+        For rotation using the Lidar and SLAM. Not used since the IMU is more reliable
+        and Hector SLAM never got ported to ROS 2
+    """
     lidar_pose = sensors.get_pose()
     eulers = utils.quaternion_to_euler(lidar_pose.orientation.x, lidar_pose.orientation.y, lidar_pose.orientation.z, lidar_pose.orientation.w)
     measured_val = eulers[2] # z rotation or yaw
@@ -63,6 +76,9 @@ def lidar_z_rotation(sensors, t):
     return (above_thres == t.trigger_when_above)
 
 def imu_z_rotation(sensors, t):
+    """
+        For rotation using the IMU's gyroscope and magnetometer
+    """
     measured_val = 0
     above_thres = False
     eulers = sensors.get_euler()

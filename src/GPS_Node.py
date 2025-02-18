@@ -182,7 +182,7 @@ class GPS(Node):
 
 
     def main(self):
-        '''start_time = time.time()
+        """start_time = time.time()
         try:
             while True:
                 try:
@@ -205,7 +205,7 @@ class GPS(Node):
 
         finally:
             self.close_port()
-        '''
+        """
         for i in range(5):
             print(self.get_local_x_y())
         self.set_output_rate(10)
