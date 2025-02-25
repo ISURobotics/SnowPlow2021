@@ -1,5 +1,43 @@
 # Ryan Madigan
+# This code functions as a ROS2 node that interacts with our GPS RTK system. The GPS RTK system we use and documentation about it can be found
+# at this link (https://www.sparkfun.com/sparkfun-gps-rtk-sma-kit.html). The GPS RTK system works similar to a regular GPS system, receiving
+# signals from satilites which allow it to determine its position with accuracy being on the scale of meters. However, to get more accurate 
+# positioning, the GPS RTK system uses "correction data" to get accuracy down to the centimeter scale. This correction data needs to come from
+# another GPS RTK module that is in the area which is called a base station. This station is sedentary and does not move ever. Because it 
+# it doesn't move, we know its precise positioning on the earth. And so we can generate correction data by looking at the differences between 
+# where the live GPS data says the base station is, and where we know it actually is. All of the math and calculations required to use the
+# correction data to get more accurate position data is handled on board the GPS RTK module and doens't need to be worried about by us. Using 
+# this generated correction data, any other GPS RTK system that is in the same general area (within ~10km radius) can accurately determine its 
+# position. Luckily for us, both Minnesota and Iowa have freely available correction data that can be streamed over the internet. This is how 
+# we get our correction data. We use a Raspberry pi that is connected to someone's phone's hotspot, and stream that correction data and pipe 
+# it into the GPS RTK module on board the robot. After receiving the correction data, the GPS take a little while to work its magic (can up up to
+# a few minutes) and then is ready to give precise positioning over a USB serial wire which is connected directly to the Jetson Nano
 #
+#
+# HOW TO SETUP GPS TO GIVE ACCURATE GPS DATA
+# 1. Make sure GPS antenna (black box about 2"x2"x1") with SMA connector is fully connected to GPS
+# 2. Setup the correction data machine (Raspberry pi)
+#       - Ensure Serial Basic Breakout module (Tiny red board with usb c and 6ish output pins) is plugged into Raspberry Pi via usb c cable
+#       - Connect Serial Basic Breakout to GPS RTK 
+#           - Searial Basic Pin  | GPS RTK Pin
+#                           TX0  | RX2 (One near USB C)
+#                           GND  | GND (One near RX2) 
+# 3. Turn on GPS by plugging it into Jetson Nano and powering on Jetson Nano
+# 4. Wait a few minutes (no exact time, at least 2 minutes though)
+# 5. At this point take the GPS outside if it isn't already otherwise the GPS won't be able to see any satelites
+# 6. Start the correction data by turning on Raspberry pi, connecting it to wifi or hotspot and starting one of the bash scripts on the home 
+# screen by double clicking, and pressing execute in terminal
+#   - There is one bash script for Ames, and one for St. Paul/Minneapolis so run the appropriate one for your location
+# 7. At this point, the TX light on the Serial Basic Breakout should start blinking or just be lit up, if not, no data is being sent from the Pi
+# 8. Also at this point (although it could take a few seconds) the RTK light on the GPS RTK module should go from ON to blinking.
+#   - if it doesn't start blinking within a minute and the Serial Basic Breakout TX light is blinking, then just unplug and plug back in the GPS
+# 9. After about 30 seconds (although can take up to a few minutes) the RTK light should stop blinking and turn off. At this point, it is sending
+# accurate data over serial to the Jetson Nano.
+#
+#
+# SparkFuns Official Hookup Guide (https://learn.sparkfun.com/tutorials/gps-rtk2-hookup-guide)
+
+
 
 import rclpy
 from rclpy.node import Node
