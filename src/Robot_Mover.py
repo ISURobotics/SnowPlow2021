@@ -429,5 +429,5 @@ class Robot_Mover:
             velocity=.3#this is arbitrary, can be changed
             percieved_delta_theta=delta_theta*1#We can tune this number as we see fit. Smaller than one and it favors turning. Less and it favors going straight.
             linear_velocity=velocity*math.cos(percieved_delta_theta)
-            rot_velocity=velocity*math.sin(percieved_delta_theta)*2/1.0#trackwidth
+            rot_velocity=velocity*math.sin(percieved_delta_theta)
             self.robot.set_speeds(linear_velocity-rot_velocity,linear_velocity-rot_velocity)
