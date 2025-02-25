@@ -19,7 +19,7 @@ import Axes
 # import math
 # from matplotlib import pyplot as plt
 import utils
-
+import math
 last_loop = time.time()
 
 
@@ -411,3 +411,23 @@ class Robot_Mover:
         # rotating = 0
         # moving = 0
         self.robot.stop()
+    
+    
+    def pursue(self, pt):
+        delta_theta=0
+        #We only do 90 degree turns so we can measure if we have passed the goal as if we need to turn around to pursue it back
+        while delta_theta<135:
+            cur_pt=self.robot.sensors.get_pose()
+            theta=self.robot.sensors.get_euler()[0]
+            delta_pt=pt-cur_pt
+            des_theta=math.atan2(delta_pt[1],delta_pt[0])
+            delta_theta=des_theta-theta
+            if delta_theta > 180:
+                delta_theta -= 360
+            elif delta_theta < -180:
+                delta_theta += 360
+            velocity=.3#this is arbitrary, can be changed
+            percieved_delta_theta=delta_theta*1#We can tune this number as we see fit. Smaller than one and it favors turning. Less and it favors going straight.
+            linear_velocity=velocity*math.cos(percieved_delta_theta)
+            rot_velocity=velocity*math.sin(percieved_delta_theta)*2/1.0#trackwidth
+            self.robot.set_speeds(linear_velocity-rot_velocity,linear_velocity-rot_velocity)
