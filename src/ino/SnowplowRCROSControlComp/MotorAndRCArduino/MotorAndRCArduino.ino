@@ -170,7 +170,13 @@ void setup(void)
 
   Serial.begin(115200);
   Serial.setTimeout(50);
- 
+  while(1){
+    if(Serial.available()){
+      if(Serial.read()=='A')break;
+    }
+    Serial.println("0");
+    delay(50);
+  }
 
 
 }

@@ -68,7 +68,12 @@ void setup(void)
   }
 
   bno.setExtCrystalUse(true);
-
+  while(1){
+    if(Serial.available()){
+      if(Serial.read()=='A')break;
+    }
+    Serial.print("1");
+  }
 }
 String lastInput="";
 void loop(void)
