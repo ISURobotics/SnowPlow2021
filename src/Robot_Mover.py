@@ -416,7 +416,7 @@ class Robot_Mover:
     def pursue(self, pt):
         delta_theta=0
         #We only do 90 degree turns so we can measure if we have passed the goal as if we need to turn around to pursue it back
-        while delta_theta<135:
+        while abs(delta_theta)<135:
             cur_pt=self.robot.sensors.get_pose()
             theta=self.robot.sensors.get_euler()[0]
             delta_pt=pt-cur_pt
