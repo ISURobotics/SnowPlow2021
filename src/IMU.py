@@ -6,7 +6,7 @@ class IMU:
     """
         This class handles the IMU subscription on the Robot node.
         It subscribes to the /imu/euler_rotation topic (Arduino_Node.py publishes to it)
-        To get data from the IMU in an actual full-scale test, create a Sensors class and run the get_euler function
+        The Sensors class automatically creates one of these when instantiated
     """
     def __init__(self, sensors, node):
         self.sensors = sensors
@@ -18,6 +18,11 @@ class IMU:
         print("IMU sub active")
 
     def callback_euler(self, data):
+        """
+            Callback for the /imu/euler_rotation topic;
+            this sets the self.euler variable, which can be accessed
+            using the get_euler function
+        """
         x_rot = data.data[0] * np.pi / 180
         if x_rot > np.pi:
             x_rot -= 2 * np.pi
@@ -31,5 +36,7 @@ class IMU:
             Returns the [x, y, z] rotation in radians.
             With the way the IMU is normally oriented in the electronics box,
             x is our yaw rotation.
+
+            Called by Sensors.get_euler
         """
         return self.euler

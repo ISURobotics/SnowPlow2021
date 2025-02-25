@@ -1,31 +1,16 @@
-# from multiprocessing.resource_sharer import stop
 import time
-# from matplotlib.hatch import SouthEastHatch
-# import rclpy
-# import sys, os
 from Movement_Threshold import Movement_Threshold
-# import Robot
-
-# from sensor_msgs.msg import Image, PointCloud2, LaserScan
-# from std_msgs.msg import Int16, Int32
-# from cv_bridge import CvBridge, CvBridgeError
-# from sensor_msgs.msg import PointCloud2, LaserScan
-# from sensor_msgs import point_cloud2
-# from geometry_msgs.msg import Transform, Vector3, Quaternion, Point, Pose, PoseStamped
-# import ros_numpy
-# import cv2
 import numpy as np
 import Axes
-# import math
-# from matplotlib import pyplot as plt
 import utils
+from Robot import Robot
 
 last_loop = time.time()
 
 
 class Robot_Mover:
 
-    def __init__(self, robot):
+    def __init__(self, robot: Robot):
         """
         :param robot: A Robot object. The functions to set motor speeds will be run on it.
         """

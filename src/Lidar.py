@@ -3,6 +3,7 @@ from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry
 import time
+from Sensors import Sensors
 import utils
 # from Movement_Threshold import Movement_Threshold
 import ros2_numpy
@@ -13,7 +14,7 @@ class Lidar:
         It subscribes to the /cloud topic (sick_scan publishes to it)
         The Sensors class automatically creates one of these when instantiated
     """
-    def __init__(self, sensors, node):
+    def __init__(self, sensors: Sensors, node: rclpy.Node):
         self.sensors = sensors
         self.points = []
         self.pose = None
@@ -79,25 +80,6 @@ class Lidar:
             time.sleep(1)
         print ("SLAM data received.")
         return
-
-    def plot_points(self):
-        """
-            Used once upon a time to show all the points seen by the Lidar graphically.
-            It has been ages since anyone tried to use this function, and we don't even
-            import the matplotlib library in this file anymore. 
-        """
-        points = self.points
-        x_pts = [pt[0] for pt in points]
-        y_pts = [pt[1] for pt in points]
-        col = [pt[3] for pt in points]
-
-        plt.figure()
-        plt.scatter(x_pts, y_pts, c=col)
-        # plt.axes([0, 10, 0, 10])
-        plt.ylim(-15, 15)
-        plt.xlim(0, 15)
-        # plt.axes(xlim=(-5, 5), ylim=(0, 3.5))
-        plt.show()
 
     def prepare_obstacle_points(self):
         """

@@ -3,8 +3,6 @@ from IMU import *
 from RobotGPS import *
 
 from Movement_Threshold import Movement_Threshold
-import numpy as np
-import utils
 
 class Sensors:
     """
@@ -40,16 +38,16 @@ class Sensors:
         """
         
         for i in range(len(self.thresholds) - 1, -1, -1): # Gotta iterate backwards as stuff might get removed from the list
-            t = self.thresholds[i]
+            t: Movement_Threshold = self.thresholds[i]
             triggered = t.axis_func(self, t)
             if triggered:
                 self.thresholds.pop(i)
                 t.function() # run the lamba associated with the threshold
 
-    def add_listener(self, threshold):
+    def add_listener(self, threshold: Movement_Threshold):
         self.thresholds.append(threshold)
 
-    def remove_listeners(self, tag):
+    def remove_listeners(self, tag: str):
         """
             Removes all listeners with the given tag
         """
