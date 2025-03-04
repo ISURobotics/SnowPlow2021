@@ -1,30 +1,17 @@
-# from turtle import right
-# from matplotlib.pyplot import axis
 import time
 
 import rclpy
 from rclpy.node import Node
-# from std_msgs.msg import Int8
-# from std_msgs.msg import Float64MultiArray
-# from sensor_msgs.msg import PointCloud2
-# from geometry_msgs.msg import PoseStamped
-# from Movement_Threshold import Movement_Threshold
-# import ros_numpy
-# import matplotlib.pyplot as plt
-# import utils
-# import numpy as np
 from Motor import *
 from Sensors import *
 import rclpy.topic_endpoint_info
-# import Lidar
-# from typing import List
 
 class Robot(Node):
     """
         This class controls the motors and keeps track of the sensors module. 
         Passing a robot into a function allows the function to get sensor data and run the speed functions
     """
-    def __init__(self, rclpy_init=True):
+    def __init__(self):
         rclpy.init()
         super().__init__("Robot")
         self.left = Motor(self, 'left_motor')
@@ -36,17 +23,17 @@ class Robot(Node):
         self.left.set_speed(0)
         self.right.set_speed(0)
 
-    def set_speed(self, speed):
+    def set_speed(self, speed: float):
         self.left.set_speed(speed)
         self.right.set_speed(speed)
         print ("speed set")
 
-    def set_speeds(self, leftSpeed, rightSpeed):
+    def set_speeds(self, leftSpeed: float, rightSpeed: float):
         self.left.set_speed(leftSpeed)
         self.right.set_speed(rightSpeed)
         print ("speeds set")
 
-    def get_speeds(self):
+    def get_speeds(self) -> tuple[float]:
         """
             Returns (left speed, right speed)
         """

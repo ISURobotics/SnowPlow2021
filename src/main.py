@@ -3,7 +3,6 @@ from Robot_Mover import *
 from Path_Executor import *
 from Func_Generator import *
 import Path_Finder
-import time
 import Sensors
 
 def main():
@@ -18,12 +17,12 @@ def main():
     # for debugging - set to True for competition, False for testing with a preprogrammed path
     use_pathfinding = True
 
-    r = Robot()
-    sensors = r.sensors
-    rm = Robot_Mover(r)
-    fg = Func_Generator(rm)
+    r: Robot = Robot()
+    sensors: Sensors = r.sensors
+    rm: Robot_Mover = Robot_Mover(r)
+    fg: Func_Generator = Func_Generator(rm)
 
-    sensors.init_lidar(r)
+    sensors.init_lidar()
     sensors.init_imu()
 
     points = []

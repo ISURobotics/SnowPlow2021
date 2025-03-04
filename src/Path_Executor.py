@@ -1,5 +1,7 @@
+from Robot_Mover import Robot_Mover
+
 class Path_Executor:
-    def __init__(self, mover, path):
+    def __init__(self, mover: Robot_Mover, path: list):
         """
             Initializes with a sequence of movement functions
             :param: mover: The in-use instance of the Robot_Mover object.

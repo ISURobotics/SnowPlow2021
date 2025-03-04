@@ -4,7 +4,6 @@ import time
 from rclpy.node import Node
 from std_msgs.msg import Int8
 from std_msgs.msg import Float32MultiArray
-from serial import SerialException
 
 class Arduino_Node(Node):
     """
@@ -20,8 +19,8 @@ class Arduino_Node(Node):
     def __init__(self):
         super().__init__("imu_node")
         # self.counter_ = 0
-        self.left_speed=0
-        self.right_speed=0
+        self.left_speed=0 # From -100 to 100
+        self.right_speed=0 # From -100 to 100
         self.left_subscriber = self.create_subscription(Int8, "/left_motor/speed", self.left_callback, 10)
         self.right_subscriber = self.create_subscription(Int8, "/right_motor/speed", self.right_callback, 10)
         self.imu_orientation_euler = [0, 0, 0]
@@ -38,7 +37,7 @@ class Arduino_Node(Node):
         self.right_updated=False
         self.left_updated=False
 
-    def left_callback(self, val):
+    def left_callback(self, val: int):
         """
             called when ROS updates the topic for the left motor
         """
@@ -48,7 +47,7 @@ class Arduino_Node(Node):
         self.update_motor_serial()
         time.sleep(0.1) # Needed to prevent the serial connection from getting confused when we send and receive data on it at the same time
 
-    def right_callback(self, val):
+    def right_callback(self, val: int):
         """
             called when ROS updates the topic for the right motor
         """

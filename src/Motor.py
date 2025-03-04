@@ -1,5 +1,5 @@
 from std_msgs.msg import Int8
-import rclpy
+from rclpy.node import Node
 
 class Motor:
     """
@@ -8,11 +8,11 @@ class Motor:
         left/speed and right/speed topics. Use the set_speed command 
         to send data over the topic
     """
-    def __init__(self, node: rclpy.Node, path):
+    def __init__(self, node: Node, path: str):
         self._speed_pub = node.create_publisher(Int8, "{}/speed".format(path), 10)
         self.speed = 0
 
-    def set_speed(self, speed):
+    def set_speed(self, speed: float):
         """
             Sets this motor to run at a certain speed.
             The speed can be anywhere from -100 to 100; 

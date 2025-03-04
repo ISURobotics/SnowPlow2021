@@ -1,13 +1,12 @@
 import numpy as np
 
-def quaternion_to_euler(x, y, z, w):
+def quaternion_to_euler(x: float, y: float, z: float, w: float) -> tuple[float]:
     """
         Convert a quaternion into euler angles (roll, pitch, yaw)
         returns the tuple (roll, pitch, yaw)
         roll is rotation around x in radians (counterclockwise)
         pitch is rotation around y in radians (counterclockwise)
         yaw is rotation around z in radians (counterclockwise)
-        This one IS used regularly
     """
     t0 = +2.0 * (w * x + y * z)
     t1 = +1.0 - 2.0 * (x * x + y * y)

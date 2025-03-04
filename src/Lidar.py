@@ -1,10 +1,8 @@
-import rclpy
+from rclpy.node import Node
 from sensor_msgs.msg import PointCloud2
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry
-import time
-from Sensors import Sensors
-import utils
+# from Sensors import Sensors
 # from Movement_Threshold import Movement_Threshold
 import ros2_numpy
 
@@ -14,9 +12,9 @@ class Lidar:
         It subscribes to the /cloud topic (sick_scan publishes to it)
         The Sensors class automatically creates one of these when instantiated
     """
-    def __init__(self, sensors: Sensors, node: rclpy.Node):
+    def __init__(self, sensors, node: Node):
         self.sensors = sensors
-        self.points = []
+        self.points: list[tuple] = []
         self.pose = None
         self._sub_points = node.create_subscription(PointCloud2, "/cloud", self.callback_pointcloud, 10)
         self.grid_res = 4     # Must be a multiple of 4
@@ -37,14 +35,14 @@ class Lidar:
         # ret.pose.orientation = msg_object.pose.pose.orientation
         return msg_object.pose
 
-    def callback_pointcloud(self, data):
+    def callback_pointcloud(self, data: PointCloud2):
         """
             Callback function for the /pointcloud topic;
             it stores the data in the self.points list.
             To get the points, run get_points
         """
 
-        self.points = ros2_numpy.point_cloud2.point_cloud2_to_array(data)  # type: List[tuple]
+        self.points = ros2_numpy.point_cloud2.point_cloud2_to_array(data)
         # points data is returned as (x, y, color)
         self.points_set = True
 
@@ -55,33 +53,33 @@ class Lidar:
     #     self.pose = self.extract_pose(data.pose)
     #     self.sensors.callback_sensor_data()
 
-    def get_points(self):
+    def get_points(self) -> list[tuple]:
         """
             Gets the most recent available points, for spotting obstacles
         """
         return self.points  # points data is returned as (x, y, color)
 
-    def get_pose(self):
-        """
-            Returns the estimated pose based on the SLAM algorithm
-            Currently, we don't use SLAM and the library we used for it (Hector SLAM)
-            is not available in ROS 2, so this is unused and nonfunctional
-        """
-        return self.pose
+    # def get_pose(self) -> PoseStamped:
+    #     """
+    #         Returns the estimated pose based on the SLAM algorithm
+    #         Currently, we don't use SLAM and the library we used for it (Hector SLAM)
+    #         is not available in ROS 2, so this is unused and nonfunctional
+    #     """
+    #     return self.pose
 
-    def wait_for_pose_set(self):
-        """
-            Stops execution until the first SLAM data message is received.
-            Currently nonfunctional as we don't use SLAM right now.
-            Also, I think time.sleep prevents us from receiving subscriptions in ROS 2
-        """
-        print ("Waiting for SLAM data...")
-        while not self.pose_set:
-            time.sleep(1)
-        print ("SLAM data received.")
-        return
+    # def wait_for_pose_set(self):
+    #     """
+    #         Stops execution until the first SLAM data message is received.
+    #         Currently nonfunctional as we don't use SLAM right now.
+    #         Also, I think time.sleep prevents us from receiving subscriptions in ROS 2
+    #     """
+    #     print ("Waiting for SLAM data...")
+    #     while not self.pose_set:
+    #         time.sleep(1)
+    #     print ("SLAM data received.")
+    #     return
 
-    def prepare_obstacle_points(self):
+    def prepare_obstacle_points(self) -> list[tuple]:
         """
             Converts the self.points array into a list of obsacle points.
             This IS used in normal runs; Sensors.get_obstacle_points calls it.
@@ -114,7 +112,7 @@ class Lidar:
         #Return list of points
         return final_list
 
-    def prepare_movement_points(self, points_list):
+    def prepare_movement_points(self, points_list: list[tuple]) -> list[tuple]:
         """
             This takes a list of points on a grid from Path_Finder.path_generator 
             and converts the distances into meters.
