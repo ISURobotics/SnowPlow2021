@@ -28,7 +28,7 @@ class GPS(Node):
         self.calibrated = False
         self.imu_orientation = 0.0
         self.cal_orientations = []
-        self.starting_orientation = 90.0
+        self.starting_orientation = 0.0
         self.lat_factor = 0.0
         self.lon_factor = 0.0
         self.imu_sub = self.create_subscription(Float32MultiArray, '/imu/magnetometer', self.imu_callback, 10)

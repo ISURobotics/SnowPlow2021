@@ -39,12 +39,12 @@ class Robot(Node):
     def set_speed(self, speed):
         self.left.set_speed(speed)
         self.right.set_speed(speed)
-        print("speed set")
+        print ("speed set")
 
     def set_speeds(self, leftSpeed, rightSpeed):
         self.left.set_speed(leftSpeed)
         self.right.set_speed(rightSpeed)
-        print("speeds set")
+        print ("speeds set")
 
     def get_speeds(self):
         """
@@ -53,19 +53,19 @@ class Robot(Node):
         return (self.left.speed, self.right.speed)
 
     def wait_for_pub(self):
-        print("Waiting for publishers..")
+        print ("Waiting for publishers..")
         topics = self.get_topic_names_and_types()
         while not (('/left_motor/speed', ['std_msgs/msg/Int8']) in topics) or not(('/right_motor/speed', ['std_msgs/msg/Int8']) in topics):
             topics = self.get_topic_names_and_types()
             print(topics)
             time.sleep(1)
-        print("waiting...")
+        print ("waiting...")
         time.sleep(2)
-        print("Publishers active.")
-        print("Waiting for subscribers...")
+        print ("Publishers active.")
+        print ("Waiting for subscribers...")
         while self.sensors.gps.gps_pose is None:
             rclpy.spin_once(self)
-            print("waiting...")
+            print ("waiting...")
         return
 
 
