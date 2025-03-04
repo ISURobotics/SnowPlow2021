@@ -72,7 +72,7 @@ void setup(void)
     if(Serial.available()){
       if(Serial.read()=='A')break;
     }
-    Serial.print("1");
+    Serial.println("IAMIMU");
   }
 }
 String lastInput="";

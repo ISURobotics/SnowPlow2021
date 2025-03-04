@@ -16,7 +16,9 @@ class GPS(Node):
 
     def __init__(self):
         super().__init__("gps_node")
-        self.port = serial.Serial('/dev/ttyACM2', baudrate=9600, timeout=1)
+        with open("serial_ports.txt",'r') as f:
+            _,_,port_name=f.readline().split(" ")
+        self.port = serial.Serial(port_name, baudrate=9600, timeout=1)
         self.gps = UbloxGps(self.port)
         self.set_output_rate(10)
         self.origin = [0, 0]
