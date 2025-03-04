@@ -1,17 +1,26 @@
 import serial
 import time
-for i in range(10):
+#Use this on jetson
+# vals=range(4)
+# prefix='/dev/ttyACM'
+#Use this for windows testing
+vals=range(10)
+prefix='COM'
+rc='no'
+imu='no'
+for i in vals:
     try:
-        arduino = serial.Serial(port='COM'+str(i), baudrate=115200,timeout=3)
+        arduino = serial.Serial(port=prefix+str(i), baudrate=115200,timeout=3)
     except:
-        print("done with "+str(i))
         continue
     read=str(arduino.read())
-    print(read)
     if '0' in read:
         print(str(i)+" is RC!")
-        arduino.write('A')
+        rc=prefix+str(i)
+        arduino.write(b'A')
     if '1' in read:
         print(str(i)+" is IMU!")
-        arduino.write('A'.encode('utf-8'))
-    print("done with "+str(i))
+        imu=prefix+str(i)
+        arduino.write(b'A')
+with open("serial_ports.txt",'w') as f:
+    f.write(rc+" "+imu)
