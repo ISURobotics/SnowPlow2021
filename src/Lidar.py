@@ -13,7 +13,7 @@ class Lidar:
         self.points = []
         self.pose = None
         self._sub_points = node.create_subscription(PointCloud2, "/cloud", self.callback_pointcloud, 10)
-        self.grid_res = 100     # Must be a multiple of 4
+        self.grid_res = 4     # Must be a multiple of 4
         assert (self.grid_res % 4 == 0)
         # self._sub_pose = node.create_subscription(Odometry, "/odom_rf2o", self.callback_slam_pose, 10)
         # self._sub_pose = rclpy.Subscriber("/slam_out_pose", PoseStamped, self.callback_slam_pose)
@@ -48,11 +48,11 @@ class Lidar:
     def get_pose(self):
         return self.pose
 
-    def wait_for_pose_set(self, node):
-        print("Waiting for Lidar data...")
-        while not self.points_set:
-            rclpy.spin_once(node)
-        print("Lidar data received.")
+    def wait_for_pose_set(self):
+        print ("Waiting for lidar data...")
+        while not self.pose_set:
+            time.sleep(1)
+        print ("Lidar data received.")
         return
 
     def plot_points(self):
