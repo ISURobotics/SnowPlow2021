@@ -1,5 +1,7 @@
 import utils
 import numpy as np
+from Sensors import Sensors
+from Movement_Threshold import Movement_Threshold
 
 """
     These lambdas are to be used as part of a strategy pattern for checking whether a movement threshold has been reached.
@@ -8,17 +10,23 @@ import numpy as np
     which wouldn't be possible without a good architecture, Sergio.
 """
 
-LIDAR_X = lambda p_pose, p_threshold: x_axis(p_pose, p_threshold)
-LIDAR_Y = lambda p_pose, p_threshold: y_axis(p_pose, p_threshold)
-LIDAR_ROT = lambda p_pose, p_threshold: lidar_z_rotation(p_pose, p_threshold)
-IMU_ROT = lambda p_pose, p_threshold: imu_z_rotation(p_pose, p_threshold)
+LIDAR_X = lambda p_sensors, p_threshold: x_axis(p_sensors, p_threshold)
+LIDAR_Y = lambda p_sensors, p_threshold: y_axis(p_sensors, p_threshold)
+LIDAR_ROT = lambda p_sensors, p_threshold: lidar_z_rotation(p_sensors, p_threshold)
+IMU_ROT = lambda p_sensors, p_threshold: imu_z_rotation(p_sensors, p_threshold)
 
 """
     These functions return true if the threshold t has been reached given the data accessed using the sensors facade
-    and false if it hasn't
+    and false if it hasn't.
+
+    The data stored in t is defined in Movement_Threshold.py. The properties relevant to these functions are
+    t.value and t.trigger_when_above
 """
 
-def x_axis(sensors, t):
+def x_axis(sensors: Sensors, t: Movement_Threshold):
+    """
+        For movement along the x axis using the GPS (formerly the Lidar)
+    """
     pose = sensors.get_pose()
     measured_val = pose.position.x
     print("measured x position: ", measured_val)
@@ -26,7 +34,10 @@ def x_axis(sensors, t):
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
-def y_axis(sensors, t):
+def y_axis(sensors: Sensors, t: Movement_Threshold):
+    """
+        For movement along the y axis using the GPS (formerly the Lidar)
+    """
     pose = sensors.get_pose()
     measured_val = pose.position.y
     print("measured y position: ", measured_val)
@@ -34,7 +45,11 @@ def y_axis(sensors, t):
     above_thres = (measured_val >= t.value)
     return (above_thres == t.trigger_when_above)
 
-def lidar_z_rotation(sensors, t):
+def lidar_z_rotation(sensors: Sensors, t: Movement_Threshold):
+    """
+        For rotation using the Lidar and SLAM. Not used since the IMU is more reliable
+        and Hector SLAM never got ported to ROS 2
+    """
     lidar_pose = sensors.get_pose()
     eulers = utils.quaternion_to_euler(lidar_pose.orientation.x, lidar_pose.orientation.y, lidar_pose.orientation.z, lidar_pose.orientation.w)
     measured_val = eulers[2] # z rotation or yaw
@@ -62,7 +77,10 @@ def lidar_z_rotation(sensors, t):
             above_thres = (measured_val > t.value) and (measured_val <= t.value + 3 * np.pi / 2)
     return (above_thres == t.trigger_when_above)
 
-def imu_z_rotation(sensors, t):
+def imu_z_rotation(sensors: Sensors, t: Movement_Threshold):
+    """
+        For rotation using the IMU's gyroscope and magnetometer
+    """
     measured_val = 0
     above_thres = False
     eulers = sensors.get_euler()

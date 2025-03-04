@@ -1,6 +1,7 @@
+
 class Movement_Threshold:
 
-    def __init__(self, axis_func, trigger_when_above, value, function, tag):
+    def __init__(self, axis_func, trigger_when_above: bool, value: float, function, tag: str):
         """
             :param: axis_func: A lambda pointing to a function in Axes.py that returns true if the sensor data has passed this threshold or false otherwise
             :param: trigger_when_above: true if this threshold should trigger when a value greater than this is detected, false otherwise
