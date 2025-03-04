@@ -174,7 +174,7 @@ void setup(void)
     if(Serial.available()){
       if(Serial.read()=='A')break;
     }
-    Serial.println("IAMRC");
+    Serial.print("IAMRC");
     delay(50);
   }
 
