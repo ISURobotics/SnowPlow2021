@@ -16,6 +16,7 @@ class GPS(Node):
 
     def __init__(self):
         super().__init__("gps_node")
+        # Reset arduinos and run Serial_Detect.py first to set the values in this file. This file puts the port names of various devices into a file
         with open("serial_ports.txt",'r') as f:
             _,_,port_name=f.readline().split(" ")
         self.port = serial.Serial(port_name, baudrate=9600, timeout=1)

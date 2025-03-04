@@ -68,6 +68,7 @@ void setup(void)
   }
 
   bno.setExtCrystalUse(true);
+  //Continnuosly spits "IAMIMU" to the serial for detection. Once it recieves a good to go back it stops and continnues on with life
   while(1){
     if(Serial.available()){
       if(Serial.read()=='A')break;
