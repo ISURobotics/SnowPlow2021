@@ -2,6 +2,8 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
+# This is used to set some parameters for the Colcon workspace
+
 package_name = 'SnowPlow2021'
 
 data_files = [

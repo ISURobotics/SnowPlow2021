@@ -1,6 +1,7 @@
-import time
+from Robot_Mover import Robot_Mover
+
 class Path_Executor:
-    def __init__(self, mover, path):
+    def __init__(self, mover: Robot_Mover, path: list):
         """
             Initializes with a sequence of movement functions
             :param: mover: The in-use instance of the Robot_Mover object.
@@ -12,12 +13,6 @@ class Path_Executor:
         # The robot mover has a listener system for when it finishes an action
         self.mover.add_finish_listener(lambda: self.mover_finished_action())
         self.path = path
-        # self.path = [
-        #     lambda p_lidar: mover.rotate_left(p_lidar, 45), 
-        #     lambda p_lidar: mover.move_forward(p_lidar, .5),
-        #     lambda p_lidar: mover.move_backward(p_lidar, .5),
-        #     lambda p_lidar: mover.rotate_right(p_lidar, 45)
-        # ]
         self.current_step = 0
 
     def apply_next_action(self):

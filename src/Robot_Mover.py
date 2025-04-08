@@ -1,39 +1,25 @@
-# from multiprocessing.resource_sharer import stop
 import time
-# from matplotlib.hatch import SouthEastHatch
-# import rclpy
-# import sys, os
 from Movement_Threshold import Movement_Threshold
-# import Robot
-
-# from sensor_msgs.msg import Image, PointCloud2, LaserScan
-# from std_msgs.msg import Int16, Int32
-# from cv_bridge import CvBridge, CvBridgeError
-# from sensor_msgs.msg import PointCloud2, LaserScan
-# from sensor_msgs import point_cloud2
-# from geometry_msgs.msg import Transform, Vector3, Quaternion, Point, Pose, PoseStamped
-# import ros_numpy
-# import cv2
 import numpy as np
 import Axes
-# import math
-# from matplotlib import pyplot as plt
 import utils
+<<<<<<< HEAD
 import math
+=======
+from Robot import Robot
+
+>>>>>>> master
 last_loop = time.time()
-
-
-# https://robotics.stackexchange.com/questions/19290/what-is-the-definition-of-the-contents-of-pointcloud2/20401#20401
 
 
 class Robot_Mover:
 
-    def __init__(self, robot):
+    def __init__(self, robot: Robot):
         """
         :param robot: A Robot object. The functions to set motor speeds will be run on it.
         """
         self.robot = robot
-        self.finish_listeners = [] # list of lambda functions
+        self.finish_listeners: list[function] = [] # list of lambda functions
         self.maintain_angle = 0
         self.correction_mult = 0.6
         self.correction_thres = 0.015 # radians off of maintain_angle (1 rad = around 58 degrees)
@@ -54,7 +40,7 @@ class Robot_Mover:
         """
         self.finish_listeners.append(func)
 
-    def move_forward(self, meters):
+    def move_forward(self, meters: float):
         """
             Starts moving forward and creates a listener to stop at a certain distance
             sensors: a sensors object to add listeners to
@@ -120,7 +106,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         self.robot.set_speed(self.base_speed)  # probably not right value
 
-    def move_backward(self, meters):
+    def move_backward(self, meters: float):
         """
             Starts moving backward and creates a listener to stop at a certain distance
             sensors: a sensors object to add listeners to
@@ -184,7 +170,7 @@ class Robot_Mover:
         sensors.add_listener(thres)
         self.robot.set_speed(-self.base_speed)  # probably not right value
 
-    def rotate_left(self, degrees):
+    def rotate_left(self, degrees: float):
         """
             Starts a left/counterclockwise rotation and creates a listener to stop at a certain angle
             sensors: a sensors object to add listeners to
@@ -217,7 +203,7 @@ class Robot_Mover:
 
         self.robot.set_speeds(-self.base_speed, self.base_speed)
 
-    def rotate_left_imu(self, degrees):
+    def rotate_left_imu(self, degrees:float):
         """
             Starts a left/counterclockwise rotation
             lidar: a lidar object to add listeners to
@@ -251,7 +237,7 @@ class Robot_Mover:
 
         self.robot.set_speeds(-self.base_speed, self.base_speed)
 
-    def rotate_right(self, degrees):
+    def rotate_right(self, degrees: float):
         """
             Starts a right/clockwise rotation and creates a listener to stop at a certain angle
             sensors: a sensors object to add listeners to
@@ -283,7 +269,7 @@ class Robot_Mover:
         
         self.robot.set_speeds(self.base_speed, -self.base_speed)
 
-    def rotate_right_imu(self, degrees):
+    def rotate_right_imu(self, degrees: float):
         """
             Starts a right/clockwise rotation
             lidar: a lidar object to add listeners to
@@ -314,7 +300,7 @@ class Robot_Mover:
         sensors.add_listener(slow)
         self.robot.set_speeds(self.base_speed, -self.base_speed)
 
-    def correct_right(self, backing_up):
+    def correct_right(self, backing_up: bool):
         """
             To use when the robot starts drifting left. Slows down the right wheels until the angle is back to straight
         """
@@ -331,7 +317,7 @@ class Robot_Mover:
         sensors.remove_listeners('correct')
         sensors.add_listener(thres)
 
-    def correct_left(self, backing_up):
+    def correct_left(self, backing_up: bool):
         """
             To use when the robot starts drifting right. Slows down the left wheels until the angle is back to straight
         """
@@ -348,7 +334,7 @@ class Robot_Mover:
         sensors.remove_listeners('correct')
         sensors.add_listener(thres)
 
-    def stop_correcting(self, correcting_right, backing_up):
+    def stop_correcting(self, correcting_right: bool, backing_up: bool):
         """
             Re-equalizes the speed of the wheels. Use when the robot is back to straight after correcting
         """

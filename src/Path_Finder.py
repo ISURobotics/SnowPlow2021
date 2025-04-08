@@ -86,7 +86,7 @@ def timer():
 # returns distance between the two points on the grid
 #
 # Calculates distance between two points on the grid  
-def distance(pt1, pt2):
+def distance(pt1: tuple[float], pt2: tuple[float]):
     return int(((pt1[0] - pt2[0])**2 + (pt1[1] - pt2[1])**2)**0.5)
 
 
@@ -109,7 +109,7 @@ def grid_res_check():
 # dimensions being larger. To account for this, and make sure the snowplow will not hit the cones, buffer
 # will be placed in all directions around the cones. This method, takes in the current position of the cones and returns
 # all the points of the aforementioned buffer
-def find_cone_buffer(grid, pos_of_cones):
+def find_cone_buffer(grid: np.ndarray[float], pos_of_cones: list[tuple]):
     # array of tuples which represent the points on the grid/snowfield where a buffer is to be placed
     cone_buffer = []
     # loops for number of cones on the field
@@ -143,7 +143,7 @@ def find_cone_buffer(grid, pos_of_cones):
 # Right                                     Down
 # Up                                        Left
 # Down                                      Right
-def find_pos_nearby_end(grid, start, end):
+def find_pos_nearby_end(grid: np.ndarray[float], start: tuple, end: tuple):
     # if the endpoint is not where a cone is, return the given endpoint
     if grid[end] != 0 and grid[end] != float('inf'):
         return end
@@ -190,7 +190,7 @@ def find_pos_nearby_end(grid, start, end):
 # Down          Left
 # Left          Down
 # Right         Up
-def identify_direction(grid, start, end):
+def identify_direction(grid: np.ndarray[float], start: tuple, end: tuple):
     # >0 if going right, <0 if going left
     rl = end[1] - start[1]
     # >0 if going down, <0 if going up
@@ -291,7 +291,7 @@ def identify_direction(grid, start, end):
 # the shortest path between two points by implementing
 # breadth first search on a weighted 2D array (where the value at each position in the array represents the "weight" or
 # distance of that point. The higher the weight, the more it "costs" to travel through that point)
-def path_finder(grid, start, end):
+def path_finder(grid: np.ndarray[float], start: tuple, end: tuple):
 
     # creates a copy of the grid as to not change the inputted grid
     grid_copy = np.array(grid, copy=True)
@@ -381,7 +381,7 @@ def path_finder(grid, start, end):
 #
 # Creates 2D array representing the snowfield as defined for this competition with various weights for the various sections
 # of the snowfield as defined above
-def make_grid():
+def make_grid() -> np.ndarray[float]:
     grid_res_check()        #checks to make sure the grid_res variable at top of file is correctly valued
 
     grid = np.ones((7*grid_res, 14*grid_res))
@@ -416,7 +416,7 @@ def make_grid():
 # return  inputted grid except with 0s placed where cones are
 #
 # Places cones in the snowfield
-def place_cones_on_grid(grid, pos_of_cones_with_buffer):
+def place_cones_on_grid(grid: np.ndarray[float], pos_of_cones_with_buffer):
 
     for i in range(len(pos_of_cones_with_buffer)):
         grid[pos_of_cones_with_buffer[i][0], pos_of_cones_with_buffer[i][1]] = 0
@@ -445,7 +445,7 @@ def delete_duplicates(path):
 # Visual representation of the snowplow traveling along the given path
 #
 # DOESN'T WORK WELL FOR HIGH GRID RESOLUTIONS
-def display_path(grid, path):
+def display_path(grid: np.ndarray[float], path):
     pyplot.imshow(grid, cmap='magma')
     pyplot.pause(2)
     for point in range(len(path)):
@@ -460,7 +460,7 @@ def display_path(grid, path):
 # return  2D array of tuples representing the full path which the snowplow will travel along
 #
 # Main function which only requires the position of cones on the field to find the full path which the snowplow will travel along
-def path_generator(pos_of_cones):
+def path_generator(pos_of_cones: list[tuple]):
 
     # creates grid
     grid = make_grid()
