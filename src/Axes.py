@@ -103,3 +103,25 @@ def imu_z_rotation(sensors: Sensors, t: Movement_Threshold):
     print ("")
 
     return (above_thres == t.trigger_when_above)
+
+def imu_z_rotation_point(sensors: Sensors, t: Movement_Threshold, target_pt):
+    above_thres = False
+    pose = sensors.get_pose()
+    eulers = sensors.get_euler()
+    delta_position = target_pt - [pose.position.x, pose.position.y]
+    target_angle = np.arctan(delta_position[1] / delta_position[0])
+    current_angle = eulers[0]
+    above_thres = False
+    if t.trigger_when_above:
+        if (target_angle + t.value > np.pi / 2):
+            above_thres = (current_angle >= target_angle + t.value) or (current_angle < target_angle - 3 * np.pi / 2 + t.value) # target is close to 180 degrees (pi radians)
+        else:
+            above_thres = (current_angle >= target_angle + t.value) and (current_angle < target_angle + np.pi / 2 + t.value)
+    else:
+        if (target_angle - t.value > -np.pi / 2):
+            above_thres = (current_angle > target_angle - t.value) or (current_angle <= target_angle - np.pi / 2 - t.value)
+        else:
+            above_thres = (current_angle > target_angle - t.value) and (current_angle <= target_angle + 3 * np.pi / 2 - t.value)
+
+    return (above_thres == t.trigger_when_above)
+
