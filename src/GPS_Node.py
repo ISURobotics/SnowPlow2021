@@ -70,6 +70,7 @@ class GPS(Node):
         self.calibrated = False                                                                                 # True if IMU has undergone its own internal calibration
         self.imu_orientation = 0.0                                                                              # Orientation of the imu's compass                                                                            
         self.cal_orientations = []
+        self.quat_orientation = []
         self.starting_orientation = 0.0
         self.lat_factor = 0.0                                                                                   # when multiplied by the latitude, gives the position in meters relative to 0, 0 on the latitude longitude scale (somewhere in Africa)
         self.lon_factor = 0.0                                                                                   # # when multiplied by the longitude, gives the position in meters relative to 0, 0 on the latitude longitude scale (somewhere in Africa)
@@ -201,10 +202,11 @@ class GPS(Node):
         msg.pose.position.y = y
         msg.pose.position.z = 0.0
 
-        msg.pose.orientation.x = 0.0
-        msg.pose.orientation.y = 0.0
-        msg.pose.orientation.z = self.imu_orientation
-        msg.pose.orientation.w = 0.0
+        quat_orientation.append(euler_to_quaternion(0, 0, self.imu_orientation))
+        msg.pose.orientation.x = quat_orientation[0]    #previous 0
+        msg.pose.orientation.y = quat_orientation[1]
+        msg.pose.orientation.z = quat_orientation[2] # previous function self.imu_orientation #might be issue from eulers to quaternion (roll)
+        msg.pose.orientation.w = quat_orientation[3]
         
         return msg
 
