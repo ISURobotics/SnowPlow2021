@@ -170,7 +170,14 @@ void setup(void)
 
   Serial.begin(115200);
   Serial.setTimeout(50);
- 
+  //Continnuosly spits "IAMRC" to the serial for detection. Once it recieves a good to go back it stops and continnues on with life
+  while(1){
+    if(Serial.available()){
+      if(Serial.read()=='A')break;
+    }
+    Serial.print("IAMRC");
+    delay(50);
+  }
 
 
 }

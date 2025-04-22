@@ -61,14 +61,17 @@ class GPS(Node):
 
     def __init__(self):
         super().__init__("gps_node")
-        self.port = serial.Serial('/dev/ttyACM0', baudrate=9600, timeout=1)                                     # serial port to talk to GPS over USB cord
-        self.gps = UbloxGps(self.port)                                                                          # initializes GPS using Ublox's package
-        self.set_output_rate(10)                                                                                # sets the output rate of the GPS to 10 Hz
-        self.origin = [0, 0]                                                                                    # where the snowplow started relative to 0, 0 on the longitude latitude scale
-        self.x = 0.0                                                                                            # x position relative to origin
-        self.y = 0.0                                                                                            # y positioin relative to origin
-        self.calibrated = False                                                                                 # True if IMU has undergone its own internal calibration
-        self.imu_orientation = 0.0                                                                              # Orientation of the imu's compass                                                                            
+        # Reset arduinos and run Serial_Detect.py first to set the values in this file. This file puts the port names of various devices into a file
+        with open("serial_ports.txt",'r') as f:
+            _,_,port_name=f.readline().split(" ")
+        self.port = serial.Serial(port_name, baudrate=9600, timeout=1)
+        self.gps = UbloxGps(self.port)
+        self.set_output_rate(10)
+        self.origin = [0, 0]
+        self.x = 0.0
+        self.y = 0.0
+        self.calibrated = False
+        self.imu_orientation = 0.0
         self.cal_orientations = []
         self.starting_orientation = 0.0
         self.lat_factor = 0.0                                                                                   # when multiplied by the latitude, gives the position in meters relative to 0, 0 on the latitude longitude scale (somewhere in Africa)

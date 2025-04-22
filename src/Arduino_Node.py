@@ -30,9 +30,11 @@ class Arduino_Node(Node):
         self.timer = self.create_timer(1/50, self.timer_callback)
         self.working_data = ""
         self.data_started = False
-        # Setting serial ports. These may need to be changed based on what the arduinos and GPS get assigned to
-        self.motor_ser = serial.Serial('/dev/ttyACM1', baudrate=115200) 
-        self.imu_ser = serial.Serial('/dev/ttyACM2',baudrate=115200)
+        # Reset arduinos and run Serial_Detect.py first to set the values in this file. This file puts the port names of various devices into a file
+        with open("serial_ports.txt") as f:
+            rc_port, imu_port=f.readline().split(" ")
+        self.motor_ser = serial.Serial(rc_port, baudrate=115200) 
+        self.imu_ser = serial.Serial(imu_port,baudrate=115200)
         print("Ports have been set")
         self.right_updated=False
         self.left_updated=False
