@@ -4,15 +4,23 @@ import time
 from rclpy.node import Node
 from std_msgs.msg import Int8
 from std_msgs.msg import Float32MultiArray
-from serial import SerialException
 
 class Arduino_Node(Node):
+    """
+        This node connects our Arduinos to ROS. We do this to simulate the Arduinos
+        having their own node that actually runs on them. We used to actually send the
+        topic messages over the serial connection, but ROS 2 doesn't have a library 
+        that works with Arduino MEGAs. 
+
+        Instead, this node runs on the jetson itself and relays messages to and from the Arduinos
+        using Pyserial.
+    """
 
     def __init__(self):
         super().__init__("imu_node")
         # self.counter_ = 0
-        self.left_speed=0
-        self.right_speed=0
+        self.left_speed=0 # From -100 to 100
+        self.right_speed=0 # From -100 to 100
         self.left_subscriber = self.create_subscription(Int8, "/left_motor/speed", self.left_callback, 10)
         self.right_subscriber = self.create_subscription(Int8, "/right_motor/speed", self.right_callback, 10)
         self.imu_orientation_euler = [0, 0, 0]
@@ -31,24 +39,32 @@ class Arduino_Node(Node):
         self.right_updated=False
         self.left_updated=False
 
-    #called when ROS updates the topic for the left motor
-    def left_callback(self, val):
+    def left_callback(self, val: int):
+        """
+            called when ROS updates the topic for the left motor
+        """
         print("left callback")
         self.left_speed=val.data
         self.left_updated=True
         self.update_motor_serial()
-        time.sleep(0.1)
+        time.sleep(0.1) # Needed to prevent the serial connection from getting confused when we send and receive data on it at the same time
 
-    #called when ROS updates the topic for the right motor
-    def right_callback(self, val):
+    def right_callback(self, val: int):
+        """
+            called when ROS updates the topic for the right motor
+        """
         print("right callback")
         self.right_speed=val.data
         self.right_updated=True
         self.update_motor_serial()
-        time.sleep(0.1)
+        time.sleep(0.1) # Needed to prevent the serial connection from getting confused when we send and receive data on it at the same time
+
 
     def timer_callback(self):
-        # This should clear up the serial buffer, then let the callback finish
+        """
+            Run 50 or so times a second to check for new IMU data.
+            If a complete packet is received, this publishes on the /imu/ topics
+        """
         while self.imu_ser.in_waiting > 0:
             newest_byte = self.imu_ser.read(1)
             if (newest_byte is None or newest_byte == b"\r"):
@@ -72,10 +88,12 @@ class Arduino_Node(Node):
                 self.working_data = ""
             elif self.data_started:
                 self.working_data += newest_byte.decode("utf-8")
-    #takes the stored values for the right and left motor speeds and outputs that to the Serial
 
 
     def update_motor_serial(self):
+        """
+            Sends the latest motor speed data across the Serial connection
+        """
        # if not self.right_updated or not self.left_updated:
        #     return
         self.right_updated=False
